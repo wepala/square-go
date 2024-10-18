@@ -158,6 +158,256 @@ paths:
       x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
       x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
       x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+  /v2/orders:
+    post:
+      tags:
+        - Orders
+      summary: CreateOrder
+      description: "Creates a new [order](entity:Order) that can include information\
+          \ about products for\npurchase and settings to apply to the purchase.\n\n\
+          To pay for a created order, see \n[Pay for Orders](https://developer.squareup.com/docs/orders-api/pay-for-orders).\n\
+          \nYou can modify open orders using the [UpdateOrder](api-endpoint:Orders-UpdateOrder)\
+          \ endpoint."
+      externalDocs:
+        description: Create Orders
+        url: https://developer.squareup.com/docs/orders-api/create-orders
+      operationId: CreateOrder
+      parameters: [ ]
+      requestBody:
+        description: |-
+          An object containing the fields to POST for the request.
+          
+          See the corresponding object definition for field details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResponse'
+      security:
+        - oauth2:
+            - ORDERS_WRITE
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+  /v2/orders/{order_id}:
+    get:
+      tags:
+        - Orders
+      summary: RetrieveOrder
+      description: Retrieves an [Order](entity:Order) by ID.
+      operationId: RetrieveOrder
+      parameters:
+        - name: order_id
+          in: path
+          description: The ID of the order to retrieve.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrieveOrderResponse'
+      security:
+        - oauth2:
+            - ORDERS_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+    put:
+      tags:
+        - Orders
+      summary: UpdateOrder
+      description: "Updates an open [order](entity:Order) by adding, replacing, or\
+          \ deleting\nfields. Orders with a `COMPLETED` or `CANCELED` state cannot be\
+          \ updated.\n\nAn `UpdateOrder` request requires the following:\n\n- The `order_id`\
+          \ in the endpoint path, identifying the order to update.\n- The latest `version`\
+          \ of the order to update.\n- The [sparse order](https://developer.squareup.com/docs/orders-api/manage-orders/update-orders#sparse-order-objects)\n\
+          containing only the fields to update and the version to which the update is\n\
+          being applied.\n- If deleting fields, the [dot notation paths](https://developer.squareup.com/docs/orders-api/manage-orders#on-dot-notation)\n\
+          identifying the fields to clear.\n\nTo pay for an order, see \n[Pay for Orders](https://developer.squareup.com/docs/orders-api/pay-for-orders)."
+      externalDocs:
+        description: Update orders
+        url: https://developer.squareup.com/docs/orders-api/manage-orders#update-orders
+      operationId: UpdateOrder
+      parameters:
+        - name: order_id
+          in: path
+          description: The ID of the order to update.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: |-
+          An object containing the fields to POST for the request.
+          
+          See the corresponding object definition for field details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderRequest'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateOrderResponse'
+      security:
+        - oauth2:
+            - ORDERS_WRITE
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+      x-is-sparse-update: true
+  /v2/payouts:
+    get:
+      tags:
+        - Payouts
+      summary: ListPayouts
+      description: "Retrieves a list of all payouts for the default location. \nYou\
+          \ can filter payouts by location ID, status, time range, and order them in\
+          \ ascending or descending order. \nTo call this endpoint, set `PAYOUTS_READ`\
+          \ for the OAuth scope."
+      externalDocs:
+        description: Payouts Guide
+        url: https://developer.squareup.com/docs/payouts-api/overview#list-payouts
+      operationId: ListPayouts
+      parameters:
+        - name: location_id
+          in: query
+          description: "The ID of the location for which to list the payouts. \nBy default,\
+            \ payouts are returned for the default (main) location associated with the\
+            \ seller."
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: If provided, only payouts with the given status are returned.
+          required: false
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/PayoutStatus'
+        - name: begin_time
+          in: query
+          description: |-
+            The timestamp for the beginning of the payout creation time, in RFC 3339 format.
+            Inclusive. Default: The current time minus one year.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: end_time
+          in: query
+          description: |-
+            The timestamp for the end of the payout creation time, in RFC 3339 format.
+            Default: The current time.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: sort_order
+          in: query
+          description: The order in which payouts are listed.
+          required: false
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/SortOrder'
+        - name: cursor
+          in: query
+          description: |-
+            A pagination cursor returned by a previous call to this endpoint.
+            Provide this cursor to retrieve the next set of results for the original query.
+            For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+            If request parameters change between requests, subsequent results may contain duplicates or missing records.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: |-
+            The maximum number of results to be returned in a single page.
+            It is possible to receive fewer results than the specified limit on a given page.
+            The default value of 100 is also the maximum allowed value. If the provided value is
+            greater than 100, it is ignored and the default value is used instead.
+            Default: `100`
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPayoutsResponse'
+      security:
+        - oauth2: [ ]
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/service.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+  /v2/payouts/{payout_id}:
+    get:
+      tags:
+        - Payouts
+      summary: GetPayout
+      description: "Retrieves details of a specific payout identified by a payout\
+        \ ID. \nTo call this endpoint, set `PAYOUTS_READ` for the OAuth scope."
+      externalDocs:
+        description: Payouts Guide
+        url: https://developer.squareup.com/docs/payouts-api/overview#get-payout
+      operationId: GetPayout
+      parameters:
+        - name: payout_id
+          in: path
+          description: The ID of the payout to retrieve the information for.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPayoutResponse'
+      security:
+        - oauth2: [ ]
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/service.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
 
 components:
   schemas:
@@ -2327,6 +2577,127 @@ components:
       x-proto-location: /orders/orders-proto/src/main/proto/squareup/omg/model/orders.proto
       x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
       x-object-name: OrderLineItemPricingBlocklistsBlockedDiscount
+    RetrieveOrderResponse:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/Order'
+        errors:
+          type: array
+          description: Any errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      example:
+        order:
+          id: CAISENgvlJ6jLWAzERDzjyHVybY
+          location_id: D7AVYMEAPJ3A3
+          line_items:
+            - uid: ULkg0tQTRK2bkU9fNv3IJD
+              quantity: "1"
+              name: Item 1
+              base_price_money:
+                amount: 500
+                currency: USD
+              gross_sales_money:
+                amount: 500
+                currency: USD
+              total_tax_money:
+                amount: 0
+                currency: USD
+              total_discount_money:
+                amount: 250
+                currency: USD
+              total_money:
+                amount: 250
+                currency: USD
+              variation_total_price_money:
+                amount: 500
+                currency: USD
+              applied_discounts:
+                - uid: 9zr9S4dxvPAixvn0lpa1VC
+                  discount_uid: zGsRZP69aqSSR9lq9euSPB
+                  applied_money:
+                    amount: 250
+                    currency: USD
+            - uid: mumY8Nun4BC5aKe2yyx5a
+              quantity: "2"
+              name: Item 2
+              base_price_money:
+                amount: 300
+                currency: USD
+              gross_sales_money:
+                amount: 600
+                currency: USD
+              total_tax_money:
+                amount: 0
+                currency: USD
+              total_discount_money:
+                amount: 300
+                currency: USD
+              total_money:
+                amount: 300
+                currency: USD
+              variation_total_price_money:
+                amount: 600
+                currency: USD
+              applied_discounts:
+                - uid: qa8LwwZK82FgSEkQc2HYVC
+                  discount_uid: zGsRZP69aqSSR9lq9euSPB
+                  applied_money:
+                    amount: 300
+                    currency: USD
+          discounts:
+            - uid: zGsRZP69aqSSR9lq9euSPB
+              name: 50% Off
+              percentage: "50"
+              applied_money:
+                amount: 550
+                currency: USD
+              type: FIXED_PERCENTAGE
+              scope: ORDER
+          created_at: 2020-05-18T16:30:49.614Z
+          updated_at: 2020-05-18T16:30:49.614Z
+          state: OPEN
+          version: 1
+          total_tax_money:
+            amount: 0
+            currency: USD
+          total_discount_money:
+            amount: 550
+            currency: USD
+          total_tip_money:
+            amount: 0
+            currency: USD
+          total_money:
+            amount: 550
+            currency: USD
+          total_service_charge_money:
+            amount: 0
+            currency: USD
+          net_amounts:
+            total_money:
+              amount: 550
+              currency: USD
+            tax_money:
+              amount: 0
+              currency: USD
+            discount_money:
+              amount: 550
+              currency: USD
+            tip_money:
+              amount: 0
+              currency: USD
+            service_charge_money:
+              amount: 0
+              currency: USD
+      x-property-order:
+        - order
+        - errors
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+      x-object-name: RetrieveOrderResponse
     OrderLineItem:
       required:
         - quantity
@@ -3034,6 +3405,157 @@ components:
       x-proto-location: /orders/orders-proto/src/main/proto/squareup/omg/model/orders.proto
       x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
       x-object-name: OrderFulfillmentShipmentDetails
+    UpdateOrderRequest:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/Order'
+        fields_to_clear:
+          type: array
+          description: |-
+            The [dot notation paths](https://developer.squareup.com/docs/orders-api/manage-orders#on-dot-notation)
+            fields to clear. For example, `line_items[uid].note`.
+            For more information, see [Deleting fields](https://developer.squareup.com/docs/orders-api/manage-orders#delete-fields).
+          items:
+            type: string
+        idempotency_key:
+          maxLength: 192
+          type: string
+          description: |-
+            A value you specify that uniquely identifies this update request.
+            
+            If you are unsure whether a particular update was applied to an order successfully,
+            you can reattempt it with the same idempotency key without
+            worrying about creating duplicate updates to the order.
+            The latest order version is returned.
+            
+            For more information, see [Idempotency](https://developer.squareup.com/docs/basics/api101/idempotency).
+      description: |-
+        Defines the fields that are included in requests to the
+        [UpdateOrder](api-endpoint:Orders-UpdateOrder) endpoint.
+      example:
+        idempotency_key: UNIQUE_STRING
+        order:
+          version: 1
+          line_items:
+            - uid: cookie_uid
+              quantity: "2"
+              name: COOKIE
+              base_price_money:
+                amount: 200
+                currency: USD
+        fields_to_clear:
+          - discounts
+      x-property-order:
+        - order
+        - fields_to_clear
+        - order_locks_for_update
+        - idempotency_key
+        - precalculated_order
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+      x-object-name: UpdateOrderRequest
+    UpdateOrderResponse:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/Order'
+        errors:
+          type: array
+          description: Any errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      description: |-
+        Defines the fields that are included in the response body of
+        a request to the [UpdateOrder](api-endpoint:Orders-UpdateOrder) endpoint.
+      example:
+        order:
+          version: 2
+          total_money:
+            currency: USD
+            amount: 900
+          source:
+            name: Cookies
+          line_items:
+            - total_tax_money:
+                currency: USD
+                amount: 0
+              total_money:
+                amount: 500
+                currency: USD
+              gross_sales_money:
+                amount: 500
+                currency: USD
+              base_price_money:
+                amount: 500
+                currency: USD
+              quantity: "1"
+              total_discount_money:
+                currency: USD
+                amount: 0
+              name: Small Coffee
+              uid: EuYkakhmu3ksHIds5Hiot
+              variation_total_price_money:
+                amount: 500
+                currency: USD
+            - total_money:
+                amount: 400
+                currency: USD
+              gross_sales_money:
+                currency: USD
+                amount: 400
+              total_tax_money:
+                currency: USD
+                amount: 0
+              variation_total_price_money:
+                currency: USD
+                amount: 400
+              name: COOKIE
+              uid: cookie_uid
+              base_price_money:
+                amount: 200
+                currency: USD
+              quantity: "2"
+              total_discount_money:
+                amount: 0
+                currency: USD
+          state: OPEN
+          total_service_charge_money:
+            amount: 0
+            currency: USD
+          id: DREk7wJcyXNHqULq8JJ2iPAsluJZY
+          location_id: MXVQSVNDGN3C8
+          total_tax_money:
+            amount: 0
+            currency: USD
+          created_at: 2019-08-23T18:26:18.243Z
+          total_discount_money:
+            amount: 0
+            currency: USD
+          net_amounts:
+            service_charge_money:
+              currency: USD
+              amount: 0
+            total_money:
+              amount: 900
+              currency: USD
+            discount_money:
+              currency: USD
+              amount: 0
+            tax_money:
+              currency: USD
+              amount: 0
+          updated_at: 2019-08-23T18:33:47.523Z
+      x-property-order:
+        - order
+        - errors
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+      x-object-name: UpdateOrderResponse
     OrderLineItemTaxType:
       type: string
       description: Indicates how the tax is applied to the associated line item or
@@ -5238,6 +5760,572 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/common/money.proto
       x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
       x-object-name: Currency
+    CreateOrderRequest:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/Order'
+        idempotency_key:
+          maxLength: 192
+          type: string
+          description: |-
+            A value you specify that uniquely identifies this
+            order among orders you have created.
+            
+            If you are unsure whether a particular order was created successfully,
+            you can try it again with the same idempotency key without
+            worrying about creating duplicate orders.
+            
+            For more information, see [Idempotency](https://developer.squareup.com/docs/basics/api101/idempotency).
+      example:
+        idempotency_key: 8193148c-9586-11e6-99f9-28cfe92138cf
+        order:
+          reference_id: my-order-001
+          location_id: 057P5VYJ4A5X1
+          line_items:
+            - name: New York Strip Steak
+              quantity: "1"
+              base_price_money:
+                amount: 1599
+                currency: USD
+            - quantity: "2"
+              catalog_object_id: BEMYCSMIJL46OCDV4KYIKXIB
+              modifiers:
+                - catalog_object_id: CHQX7Y4KY6N5KINJKZCFURPZ
+              applied_discounts:
+                - discount_uid: one-dollar-off
+          taxes:
+            - uid: state-sales-tax
+              name: State Sales Tax
+              percentage: "9"
+              scope: ORDER
+          discounts:
+            - uid: labor-day-sale
+              name: Labor Day Sale
+              percentage: "5"
+              scope: ORDER
+            - uid: membership-discount
+              catalog_object_id: DB7L55ZH2BGWI4H23ULIWOQ7
+              scope: ORDER
+            - uid: one-dollar-off
+              name: Sale - $1.00 off
+              amount_money:
+                amount: 100
+                currency: USD
+              scope: LINE_ITEM
+      x-property-order:
+        - order
+        - location_id
+        - idempotency_key
+        - reference_id
+        - line_items
+        - taxes
+        - discounts
+        - fulfillments
+        - precalculated_order
+        - creation_processing_mode
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/create_order.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+      x-object-name: CreateOrderRequest
+    CreateOrderResponse:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/Order'
+        errors:
+          type: array
+          description: Any errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      description: |-
+        Defines the fields that are included in the response body of
+        a request to the `CreateOrder` endpoint.
+        
+        Either `errors` or `order` is present in a given response, but never both.
+      example:
+        order:
+          id: CAISENgvlJ6jLWAzERDzjyHVybY
+          location_id: 057P5VYJ4A5X1
+          line_items:
+            - uid: 8uSwfzvUImn3IRrvciqlXC
+              name: New York Strip Steak
+              quantity: "1"
+              applied_taxes:
+                - uid: aKG87ArnDpvMLSZJHxWUl
+                  tax_uid: state-sales-tax
+                  applied_money:
+                    amount: 136
+                    currency: USD
+              applied_discounts:
+                - uid: jWdgP1TpHPFBuVrz81mXVC
+                  discount_uid: membership-discount
+                  applied_money:
+                    amount: 8
+                    currency: USD
+                - uid: jnZOjjVY57eRcQAVgEwFuC
+                  discount_uid: labor-day-sale
+                  applied_money:
+                    amount: 79
+                    currency: USD
+              base_price_money:
+                amount: 1599
+                currency: USD
+              gross_sales_money:
+                amount: 1599
+                currency: USD
+              total_tax_money:
+                amount: 136
+                currency: USD
+              total_discount_money:
+                amount: 87
+                currency: USD
+              total_money:
+                amount: 1648
+                currency: USD
+              variation_total_price_money:
+                amount: 1599
+                currency: USD
+            - uid: v8ZuEXpOJpb0bazLuvrLDB
+              name: New York Steak
+              quantity: "2"
+              catalog_object_id: BEMYCSMIJL46OCDV4KYIKXIB
+              variation_name: Larger
+              modifiers:
+                - uid: Lo3qMMckDluu9Qsb58d4CC
+                  catalog_object_id: CHQX7Y4KY6N5KINJKZCFURPZ
+                  name: Well
+                  base_price_money:
+                    amount: 50
+                    currency: USD
+                  total_price_money:
+                    amount: 100
+                    currency: USD
+              applied_taxes:
+                - uid: v1dAgrfUVUPTnVTf9sRPz
+                  tax_uid: state-sales-tax
+                  applied_money:
+                    amount: 374
+                    currency: USD
+              applied_discounts:
+                - uid: nUXvdsIItfKko0dbYtY58C
+                  discount_uid: membership-discount
+                  applied_money:
+                    amount: 22
+                    currency: USD
+                - uid: qSdkOOOernlVQqsJ94SPjB
+                  discount_uid: labor-day-sale
+                  applied_money:
+                    amount: 224
+                    currency: USD
+                - uid: y7bVl4njrWAnfDwmz19izB
+                  discount_uid: one-dollar-off
+                  applied_money:
+                    amount: 100
+                    currency: USD
+              base_price_money:
+                amount: 2200
+                currency: USD
+              gross_sales_money:
+                amount: 4500
+                currency: USD
+              total_tax_money:
+                amount: 374
+                currency: USD
+              total_discount_money:
+                amount: 346
+                currency: USD
+              total_money:
+                amount: 4528
+                currency: USD
+              variation_total_price_money:
+                amount: 4400
+                currency: USD
+          taxes:
+            - uid: state-sales-tax
+              name: State Sales Tax
+              type: ADDITIVE
+              percentage: "9"
+              applied_money:
+                amount: 510
+                currency: USD
+              scope: ORDER
+          discounts:
+            - uid: membership-discount
+              catalog_object_id: DB7L55ZH2BGWI4H23ULIWOQ7
+              name: Membership Discount
+              type: FIXED_PERCENTAGE
+              percentage: "0.5"
+              applied_money:
+                amount: 30
+                currency: USD
+              scope: ORDER
+            - uid: labor-day-sale
+              name: Labor Day Sale
+              type: FIXED_PERCENTAGE
+              percentage: "5"
+              applied_money:
+                amount: 303
+                currency: USD
+              scope: ORDER
+            - uid: one-dollar-off
+              name: Sale - $1.00 off
+              type: FIXED_AMOUNT
+              amount_money:
+                amount: 100
+                currency: USD
+              applied_money:
+                amount: 100
+                currency: USD
+              scope: LINE_ITEM
+          created_at: 2020-01-17T20:47:53.293Z
+          updated_at: 2020-01-17T20:47:53.293Z
+          state: OPEN
+          version: 1
+          reference_id: my-order-001
+          total_money:
+            amount: 6176
+            currency: USD
+          total_tax_money:
+            amount: 510
+            currency: USD
+          total_discount_money:
+            amount: 433
+            currency: USD
+          total_tip_money:
+            amount: 0
+            currency: USD
+          total_service_charge_money:
+            amount: 0
+            currency: USD
+          net_amounts:
+            total_money:
+              amount: 6176
+              currency: USD
+            tax_money:
+              amount: 510
+              currency: USD
+            discount_money:
+              amount: 433
+              currency: USD
+            tip_money:
+              amount: 0
+              currency: USD
+            service_charge_money:
+              amount: 0
+              currency: USD
+          source:
+            name: My App
+        x-property-order:
+          - order
+          - errors
+        x-release-status: PUBLIC
+        x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+        x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/create_order.proto
+        x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+        x-object-name: CreateOrderResponse
+    PayoutStatus:
+      type: string
+      description: Payout status types
+      enum:
+        - UNKNOWN_PAYOUT_STATUS_DO_NOT_USE
+        - SENT
+        - FAILED
+        - PAID
+      x-enum-elements:
+        - name: SENT
+          description: Indicates that the payout was successfully sent to the banking
+            destination.
+          x-release-status: PUBLIC
+        - name: FAILED
+          description: Indicates that the payout was rejected by the banking destination.
+          x-release-status: PUBLIC
+        - name: PAID
+          description: Indicates that the payout has successfully completed.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PayoutStatus
+    PayoutType:
+      type: string
+      description: |-
+        The type of payout: “BATCH” or “SIMPLE”.
+        BATCH payouts include a list of payout entries that can be considered settled.
+        SIMPLE payouts do not have any payout entries associated with them
+        and will show up as one of the payout entries in a future BATCH payout.
+      enum:
+        - UNKNOWN_PAYOUT_TYPE_DO_NOT_USE
+        - BATCH
+        - SIMPLE
+      x-enum-elements:
+        - name: BATCH
+          description: Payouts that include a list of payout entries that can be considered
+            settled.
+          x-release-status: PUBLIC
+        - name: SIMPLE
+          description: |-
+            Payouts that do not have any payout entries associated with them and will
+            show up as one of the payout entries in a future BATCH payout.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PayoutType
+    PayoutFeeType:
+      type: string
+      description: Represents the type of payout fee that can incur as part of a payout.
+      enum:
+        - UNKNOWN_PAYOUT_FEE_TYPE_DO_NOT_USE
+        - TRANSFER_FEE
+        - TAX_ON_TRANSFER_FEE
+      x-enum-elements:
+        - name: TRANSFER_FEE
+          description: Fee type associated with transfers.
+          x-release-status: PUBLIC
+        - name: TAX_ON_TRANSFER_FEE
+          description: Taxes associated with the transfer fee.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PayoutFeeType
+    Payout:
+      required:
+        - id
+        - location_id
+      type: object
+      properties:
+        id:
+          minLength: 1
+          type: string
+          description: A unique ID for the payout.
+        status:
+          $ref: '#/components/schemas/PayoutStatus'
+        location_id:
+          minLength: 1
+          type: string
+          description: The ID of the location associated with the payout.
+        created_at:
+          type: string
+          description: The timestamp of when the payout was created and submitted
+            for deposit to the seller's banking destination, in RFC 3339 format.
+        updated_at:
+          type: string
+          description: The timestamp of when the payout was last updated, in RFC 3339
+            format.
+        amount_money:
+          $ref: '#/components/schemas/Money'
+        destination:
+          $ref: '#/components/schemas/Destination'
+        version:
+          type: integer
+          description: |-
+            The version number, which is incremented each time an update is made to this payout record.
+            The version number helps developers receive event notifications or feeds out of order.
+        type:
+          $ref: '#/components/schemas/PayoutType'
+        payout_fee:
+          type: array
+          description: A list of transfer fees and any taxes on the fees assessed
+            by Square for this payout.
+          items:
+            $ref: '#/components/schemas/PayoutFee'
+        arrival_date:
+          type: string
+          description: The calendar date, in ISO 8601 format (YYYY-MM-DD), when the
+            payout is due to arrive in the seller’s banking destination.
+      description: |-
+        An accounting of the amount owed the seller and record of the actual transfer to their
+        external bank account or to the Square balance.
+      x-property-order:
+        - id
+        - status
+        - location_id
+        - created_at
+        - updated_at
+        - amount_money
+        - destination
+        - version
+        - type
+        - payout_fee
+        - arrival_date
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: Payout
+    GetPayoutResponse:
+      type: object
+      properties:
+        payout:
+          $ref: '#/components/schemas/Payout'
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      example:
+        payout:
+          id: po_f3c0fb38-a5ce-427d-b858-52b925b72e45
+          status: PAID
+          location_id: L88917AVBK2S5
+          created_at: 2022-03-24T03:07:09Z
+          updated_at: 2022-03-24T03:07:09Z
+          amount_money:
+            amount: -103
+            currency_code: USD
+          destination:
+            type: BANK_ACCOUNT
+            id: bact:ZPp3oedR3AeEUNd3z7
+          version: 1
+          type: BATCH
+          arrival_date: 2022-03-24
+      x-property-order:
+        - payout
+        - errors
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/service.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: GetPayoutResponse
+    PayoutFee:
+      type: object
+      properties:
+        amount_money:
+          $ref: '#/components/schemas/Money'
+        effective_at:
+          type: string
+          description: The timestamp of when the fee takes effect, in RFC 3339 format.
+        type:
+          $ref: '#/components/schemas/PayoutFeeType'
+      description: Represents a payout fee that can incur as part of a payout.
+      x-property-order:
+        - amount_money
+        - effective_at
+        - type
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PayoutFee
+    ListPayoutsResponse:
+      type: object
+      properties:
+        payouts:
+          type: array
+          description: The requested list of payouts.
+          items:
+            $ref: '#/components/schemas/Payout'
+        cursor:
+          type: string
+          description: |-
+            The pagination cursor to be used in a subsequent request. If empty, this is the final response.
+            For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      description: The response to retrieve payout records entries.
+      example:
+        payouts:
+          - id: po_b345d2c7-90b3-4f0b-a2aa-df1def7f8afc
+            status: PAID
+            location_id: L88917AVBK2S5
+            created_at: 2022-03-29T16:12:31Z
+            updated_at: 2022-03-30T01:07:22.875Z
+            amount_money:
+              amount: 6259
+              currency_code: USD
+            destination:
+              type: CARD
+              id: ccof:ZPp3oedR3AeEUNd3z7
+            version: 2
+            type: BATCH
+            payout_fee:
+              - amount_money:
+                  amount: 95
+                  currency_code: USD
+                effective_at: 2022-03-29T16:12:31Z
+                type: TRANSFER_FEE
+            arrival_date: 2022-03-29
+          - id: po_f3c0fb38-a5ce-427d-b858-52b925b72e45
+            status: PAID
+            location_id: L88917AVBK2S5
+            created_at: 2022-03-24T03:07:09Z
+            updated_at: 2022-03-24T03:07:09Z
+            amount_money:
+              amount: -103
+              currency_code: USD
+            destination:
+              type: BANK_ACCOUNT
+              id: bact:ZPp3oedR3AeEUNd3z7
+            version: 1
+            type: BATCH
+            arrival_date: 2022-03-24
+        cursor: EMPCyStibo64hS8wLayZPp3oedR3AeEUNd3z7u6zphi72LQZFIEMbkKVvot9eefpU
+      x-property-order:
+        - payouts
+        - cursor
+        - errors
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/service.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: ListPayoutsResponse
+    Destination:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/DestinationType'
+        id:
+          type: string
+          description: Square issued unique ID (also known as the instrument ID) associated
+            with this destination.
+      description: Information about the destination against which the payout was
+        made.
+      x-property-order:
+        - type
+        - id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: Destination
+    DestinationType:
+      type: string
+      description: List of possible destinations against which a payout can be made.
+      enum:
+        - UNKNOWN_DESTINATION_TYPE_DO_NOT_USE
+        - BANK_ACCOUNT
+        - CARD
+        - SQUARE_BALANCE
+        - SQUARE_STORED_BALANCE
+      x-enum-elements:
+        - name: BANK_ACCOUNT
+          description: An external bank account outside of Square.
+          x-release-status: PUBLIC
+        - name: CARD
+          description: An external card outside of Square used for the transfer.
+          x-release-status: PUBLIC
+        - name: SQUARE_BALANCE
+          description: ""
+          x-release-status: DEPRECATED
+        - name: SQUARE_STORED_BALANCE
+          description: |-
+            Square Checking or Savings account (US), Square Card (CA), Square Current account (UK),
+            Square Compte Courant (FR), Cuenta Corriente Square (ES)
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: DestinationType
     Error:
       required:
         - category

@@ -3,7 +3,7 @@ groups:
   local:
     generators:
       - name: fernapi/fern-go-sdk
-        version: 0.22.0
+        version: 0.27.0
         output:
           location: local-file-system
           path: ../api
