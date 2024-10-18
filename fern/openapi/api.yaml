@@ -408,6 +408,247 @@ paths:
       x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
       x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/service.proto
       x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+  /v2/refunds:
+    get:
+      tags:
+        - Refunds
+      summary: ListPaymentRefunds
+      description: |-
+        Retrieves a list of refunds for the account making the request.
+        
+        Results are eventually consistent, and new refunds or changes to refunds might take several
+        seconds to appear.
+        
+        The maximum results per page is 100.
+      externalDocs:
+        description: Retrieve Payments and Refunds
+        url: https://developer.squareup.com/docs/payments-api/retrieve-payments
+      operationId: ListPaymentRefunds
+      parameters:
+        - name: begin_time
+          in: query
+          description: |-
+            The timestamp for the beginning of the requested reporting period, in RFC 3339 format.
+
+            Default: The current time minus one year.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: end_time
+          in: query
+          description: |-
+            The timestamp for the end of the requested reporting period, in RFC 3339 format.
+
+            Default: The current time.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: sort_order
+          in: query
+          description: |-
+            The order in which results are listed:
+            - `ASC` - Oldest to newest.
+            - `DESC` - Newest to oldest (default).
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          description: |-
+            A pagination cursor returned by a previous call to this endpoint.
+            Provide this cursor to retrieve the next set of results for the original query.
+
+            For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: location_id
+          in: query
+          description: |-
+            Limit results to the location supplied. By default, results are returned
+            for all locations associated with the seller.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: |-
+            If provided, only refunds with the given status are returned.
+            For a list of refund status values, see [PaymentRefund](entity:PaymentRefund).
+
+            Default: If omitted, refunds are returned regardless of their status.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: source_type
+          in: query
+          description: |-
+            If provided, only returns refunds whose payments have the indicated source type.
+            Current values include `CARD`, `BANK_ACCOUNT`, `WALLET`, `CASH`, and `EXTERNAL`.
+            For information about these payment source types, see
+            [Take Payments](https://developer.squareup.com/docs/payments-api/take-payments).
+
+            Default: If omitted, refunds are returned regardless of the source type.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: |-
+            The maximum number of results to be returned in a single page.
+
+            It is possible to receive fewer results than the specified limit on a given page.
+
+            If the supplied value is greater than 100, no more than 100 results are returned.
+
+            Default: 100
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPaymentRefundsResponse'
+      security:
+        - oauth2:
+            - PAYMENTS_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_service.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+    post:
+      tags:
+        - Refunds
+      summary: RefundPayment
+      description: "Refunds a payment. You can refund the entire payment amount or\
+          \ a\nportion of it. You can use this endpoint to refund a card payment or\
+          \ record a \nrefund of a cash or external payment. For more information, see\n\
+          [Refund Payment](https://developer.squareup.com/docs/payments-api/refund-payments)."
+      externalDocs:
+        description: Refund a payment
+        url: https://developer.squareup.com/docs/payments-api/refund-payments#refund-a-payment
+      operationId: RefundPayment
+      parameters: [ ]
+      requestBody:
+        description: |-
+          An object containing the fields to POST for the request.
+          
+          See the corresponding object definition for field details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundPaymentRequest'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundPaymentResponse'
+      security:
+        - oauth2:
+            - PAYMENTS_WRITE
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_service.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-endpoint-errors:
+        - error-code: AMOUNT_TOO_HIGH
+        - error-code: CARD_TOKEN_USED
+        - error-code: INVALID_CARD
+        - error-code: INVALID_CARD_DATA
+        - error-code: PAYMENT_NOT_REFUNDABLE
+        - error-code: REFUND_AMOUNT_INVALID
+        - error-code: REFUND_DECLINED
+        - error-code: VERSION_MISMATCH
+  /v2/refunds/{refund_id}:
+    get:
+      tags:
+        - Refunds
+      summary: GetPaymentRefund
+      description: Retrieves a specific refund using the `refund_id`.
+      externalDocs:
+        description: Retrieve refund information
+        url: https://developer.squareup.com/docs/payments-api/refund-payments#retrieve-refund-information
+      operationId: GetPaymentRefund
+      parameters:
+        - name: refund_id
+          in: path
+          description: The unique ID for the desired `PaymentRefund`.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPaymentRefundResponse'
+      security:
+        - oauth2:
+            - PAYMENTS_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_service.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+  /v2/merchants/{merchant_id}:
+    get:
+      tags:
+        - Merchants
+      summary: RetrieveMerchant
+      description: Retrieves the `Merchant` object for the given `merchant_id`.
+      externalDocs:
+        description: Merchants API Overview
+        url: https://developer.squareup.com/docs/merchants-api
+      operationId: RetrieveMerchant
+      parameters:
+        - name: merchant_id
+          in: path
+          description: |-
+            The ID of the merchant to retrieve. If the string "me" is supplied as the ID,
+            then retrieve the merchant that is currently accessible to this call.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrieveMerchantResponse'
+      security:
+        - oauth2:
+            - MERCHANT_PROFILE_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/merchant.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
 
 components:
   schemas:
@@ -6326,6 +6567,429 @@ components:
       x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
       x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
       x-object-name: DestinationType
+    RefundPaymentResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        refund:
+          $ref: '#/components/schemas/PaymentRefund'
+      description: |-
+        Defines the response returned by
+        [RefundPayment](api-endpoint:Refunds-RefundPayment).
+        
+        If there are errors processing the request, the `refund` field might not be
+        present, or it might be present with a status of `FAILED`.
+      example:
+        refund:
+          id: R2B3Z8WMVt3EAmzYWLZvz7Y69EbZY_KlWP8IC1557ddwc9QWTKrCVU6m0JXDz15R2Qym5eQfR
+          status: PENDING
+          amount_money:
+            amount: 1000
+            currency: USD
+          payment_id: R2B3Z8WMVt3EAmzYWLZvz7Y69EbZY
+          order_id: 1JLEUZeEooAIX8HMqm9kvWd69aQZY
+          created_at: 2021-10-13T21:23:19.116Z
+          updated_at: 2021-10-13T21:23:19.508Z
+          app_fee_money:
+            amount: 10
+            currency: USD
+          location_id: L88917AVBK2S5
+          reason: Example
+      x-property-order:
+        - errors
+        - refund
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/refunds_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: RefundPaymentResponse
+    RefundPaymentRequest:
+      required:
+        - amount_money
+        - idempotency_key
+      type: object
+      properties:
+        idempotency_key:
+          minLength: 1
+          type: string
+          description: |2-
+             A unique string that identifies this `RefundPayment` request. The key can be any valid string
+            but must be unique for every `RefundPayment` request.
+          
+            Keys are limited to a max of 45 characters - however, the number of allowed characters might be
+            less than 45, if multi-byte characters are used.
+          
+            For more information, see [Idempotency](https://developer.squareup.com/docs/working-with-apis/idempotency).
+        amount_money:
+          $ref: '#/components/schemas/Money'
+        app_fee_money:
+          $ref: '#/components/schemas/Money'
+        payment_id:
+          type: string
+          description: The unique ID of the payment being refunded. Must be provided
+            and non-empty.
+        reason:
+          maxLength: 192
+          type: string
+          description: A description of the reason for the refund.
+        payment_version_token:
+          type: string
+          description: |2-
+             Used for optimistic concurrency. This opaque token identifies the current `Payment`
+            version that the caller expects. If the server has a different version of the Payment,
+            the update fails and a response with a VERSION_MISMATCH error is returned.
+            If the versions match, or the field is not provided, the refund proceeds as normal.
+          x-release-status: BETA
+        team_member_id:
+          maxLength: 192
+          type: string
+          description: An optional [TeamMember](entity:TeamMember) ID to associate
+            with this refund.
+      description: Describes a request to refund a payment using [RefundPayment](api-endpoint:Refunds-RefundPayment).
+      example:
+        idempotency_key: 9b7f2dcf-49da-4411-b23e-a2d6af21333a
+        payment_id: R2B3Z8WMVt3EAmzYWLZvz7Y69EbZY
+        amount_money:
+          amount: 1000
+          currency: USD
+        app_fee_money:
+          amount: 10
+          currency: USD
+        reason: Example
+      x-property-order:
+        - idempotency_key
+        - amount_money
+        - app_fee_money
+        - refund_fees_spec
+        - payment_id
+        - order_id
+        - destination_id
+        - unlinked
+        - location_id
+        - customer_id
+        - reason
+        - payment_version_token
+        - team_member_id
+        - device_details
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/refunds_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: RefundPaymentRequest
+    RetrieveMerchantResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Information on errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        merchant:
+          $ref: '#/components/schemas/Merchant'
+      description: The response object returned by the [RetrieveMerchant](api-endpoint:Merchants-RetrieveMerchant)
+        endpoint.
+      example:
+        merchant:
+          id: DM7VKY8Q63GNP
+          business_name: Apple A Day
+          country: US
+          language_code: en-US
+          currency: USD
+          status: ACTIVE
+          main_location_id: 9A65CGC72ZQG1
+          created_at: 2021-12-10T19:25:52.484Z
+      x-property-order:
+        - errors
+        - merchant
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/merchant.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+      x-object-name: RetrieveMerchantResponse
+    Merchant:
+      required:
+        - country
+      type: object
+      properties:
+        id:
+          type: string
+          description: The Square-issued ID of the merchant.
+        business_name:
+          type: string
+          description: The name of the merchant's overall business.
+        country:
+          $ref: '#/components/schemas/Country'
+        language_code:
+          type: string
+          description: The code indicating the [language preferences](https://developer.squareup.com/docs/build-basics/general-considerations/language-preferences)
+            of the merchant, in [BCP 47 format](https://tools.ietf.org/html/bcp47#appendix-A).
+            For example, `en-US` or `fr-CA`.
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          $ref: '#/components/schemas/MerchantStatus'
+        main_location_id:
+          type: string
+          description: The ID of the [main `Location`](https://developer.squareup.com/docs/locations-api#about-the-main-location)
+            for this merchant.
+        created_at:
+          type: string
+          description: |-
+            The time when the merchant was created, in RFC 3339 format.
+               For more information, see [Working with Dates](https://developer.squareup.com/docs/build-basics/working-with-dates).
+          readOnly: true
+      description: Represents a business that sells with Square.
+      x-property-order:
+        - id
+        - business_name
+        - country
+        - language_code
+        - currency
+        - status
+        - main_location_id
+        - owner_email
+        - capabilities
+        - created_at
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/merchant.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+      x-object-name: Merchant
+    MerchantStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+      x-enum-elements:
+        - name: ACTIVE
+          description: A fully operational merchant account. The merchant can interact
+            with Square products and APIs.
+          x-release-status: PUBLIC
+        - name: INACTIVE
+          description: |-
+            A functionally limited merchant account. The merchant can only have limited interaction
+            via Square APIs. The merchant cannot log in or access the seller dashboard.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/merchant.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+      x-object-name: MerchantStatus
+    ProcessingFee:
+      type: object
+      properties:
+        effective_at:
+          type: string
+          description: The timestamp of when the fee takes effect, in RFC 3339 format.
+        type:
+          type: string
+          description: The type of fee assessed or adjusted. The fee type can be `INITIAL`
+            or `ADJUSTMENT`.
+        amount_money:
+          $ref: '#/components/schemas/Money'
+      description: Represents the Square processing fee.
+      x-property-order:
+        - effective_at
+        - type
+        - amount_money
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: ProcessingFee
+    ListPaymentRefundsResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        refunds:
+          type: array
+          description: The list of requested refunds.
+          items:
+            $ref: '#/components/schemas/PaymentRefund'
+        cursor:
+          type: string
+          description: |-
+            The pagination cursor to be used in a subsequent request. If empty,
+            this is the final response.
+            
+            For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+      description: |-
+        Defines the response returned by [ListPaymentRefunds](api-endpoint:Refunds-ListPaymentRefunds).
+        
+        Either `errors` or `refunds` is present in a given response (never both).
+      example:
+        refunds:
+          - id: bP9mAsEMYPUGjjGNaNO5ZDVyLhSZY_69MmgHubkLqx9wGhnmenRUHOaKitE6llfZuxcWYjGxd
+            status: COMPLETED
+            amount_money:
+              amount: 555
+              currency: USD
+            payment_id: bP9mAsEMYPUGjjGNaNO5ZDVyLhSZY
+            order_id: 9ltv0bx5PuvGXUYHYHxYSKEqC3IZY
+            created_at: 2021-10-13T19:59:05.342Z
+            updated_at: 2021-10-13T20:00:03.497Z
+            processing_fee:
+              - effective_at: 2021-10-13T21:34:35.000Z
+                type: INITIAL
+                amount_money:
+                  amount: -34
+                  currency: USD
+            location_id: L88917AVBK2S5
+            reason: Example Refund
+        cursor: 5evquW1YswHoT4EoyUhzMmTsCnsSXBU9U0WJ4FU4623nrMQcocH0RGU6Up1YkwfiMcF59ood58EBTEGgzMTGHQJpocic7ExOL0NtrTXCeWcv0UJIJNk8eXb
+      x-property-order:
+        - errors
+        - refunds
+        - cursor
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/refunds_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: ListPaymentRefundsResponse
+    GetPaymentRefundResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        refund:
+          $ref: '#/components/schemas/PaymentRefund'
+      description: |-
+        Defines the response returned by [GetRefund](api-endpoint:Refunds-GetPaymentRefund).
+        
+        Note: If there are errors processing the request, the refund field might not be
+        present or it might be present in a FAILED state.
+      example:
+        refund:
+          id: bP9mAsEMYPUGjjGNaNO5ZDVyLhSZY_69MmgHubkLqx9wGhnmenRUHOaKitE6llfZuxcWYjGxd
+          status: COMPLETED
+          amount_money:
+            amount: 555
+            currency: USD
+          payment_id: bP9mAsEMYPUGjjGNaNO5ZDVyLhSZY
+          order_id: 9ltv0bx5PuvGXUYHYHxYSKEqC3IZY
+          created_at: 2021-10-13T19:59:05.073Z
+          updated_at: 2021-10-13T20:00:02.442Z
+          processing_fee:
+            - effective_at: 2021-10-13T21:34:35.000Z
+              type: INITIAL
+              amount_money:
+                amount: -34
+                currency: USD
+          location_id: L88917AVBK2S5
+          reason: Example Refund
+      x-property-order:
+        - errors
+        - refund
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/refunds_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: GetPaymentRefundResponse
+    PaymentRefund:
+      required:
+        - amount_money
+        - id
+      type: object
+      properties:
+        id:
+          maxLength: 255
+          minLength: 1
+          type: string
+          description: The unique ID for this refund, generated by Square.
+        status:
+          maxLength: 50
+          type: string
+          description: |-
+            The refund's status:
+            - `PENDING` - Awaiting approval.
+            - `COMPLETED` - Successfully completed.
+            - `REJECTED` - The refund was rejected.
+            - `FAILED` - An error occurred.
+        location_id:
+          maxLength: 50
+          type: string
+          description: The location ID associated with the payment this refund is
+            attached to.
+        amount_money:
+          $ref: '#/components/schemas/Money'
+        app_fee_money:
+          $ref: '#/components/schemas/Money'
+        processing_fee:
+          type: array
+          description: Processing fees and fee adjustments assessed by Square for
+            this refund.
+          items:
+            $ref: '#/components/schemas/ProcessingFee'
+        payment_id:
+          maxLength: 192
+          type: string
+          description: The ID of the payment associated with this refund.
+        order_id:
+          maxLength: 192
+          type: string
+          description: The ID of the order associated with the refund.
+        reason:
+          maxLength: 192
+          type: string
+          description: The reason for the refund.
+        created_at:
+          maxLength: 32
+          type: string
+          description: The timestamp of when the refund was created, in RFC 3339 format.
+          readOnly: true
+        updated_at:
+          maxLength: 32
+          type: string
+          description: The timestamp of when the refund was last updated, in RFC 3339
+            format.
+          readOnly: true
+        team_member_id:
+          maxLength: 192
+          type: string
+          description: An optional ID of the team member associated with taking the
+            payment.
+          readOnly: true
+      description: |-
+        Represents a refund of a payment made using Square. Contains information about
+        the original payment and the amount of money refunded.
+      x-property-order:
+        - id
+        - status
+        - account_id
+        - location_id
+        - unlinked
+        - destination_type
+        - destination_subtype
+        - amount_money
+        - app_fee_money
+        - refund_fees_spec
+        - processing_fee
+        - app_processing_fee
+        - payment_id
+        - order_id
+        - reason
+        - created_at
+        - updated_at
+        - team_member_id
+        - device_details
+        - foreign_exchange
+        - version
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/refunds_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: PaymentRefund
     Error:
       required:
         - category
