@@ -133,6 +133,52 @@ func (a *Address) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+// Defines the fields that are included in the response body of
+// a request to the `BatchRetrieveOrders` endpoint.
+type BatchRetrieveOrdersResponse struct {
+	// The requested orders. This will omit any requested orders that do not exist.
+	Orders []*Order `json:"orders,omitempty" url:"orders,omitempty"`
+	// Any errors that occurred during the request.
+	Errors []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BatchRetrieveOrdersResponse) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BatchRetrieveOrdersResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler BatchRetrieveOrdersResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BatchRetrieveOrdersResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BatchRetrieveOrdersResponse) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
 // Indicates the country associated with another entity, such as a business.
 // Values are in [ISO 3166-1-alpha-2 format](http://www.iso.org/iso/home/standards/country_codes.htm).
 type Country string

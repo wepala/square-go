@@ -197,6 +197,44 @@ paths:
       x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
       x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
       x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+  /v2/orders/batch-retrieve:
+    post:
+      tags:
+        - Orders
+      summary: BatchRetrieveOrders
+      description: |-
+        Retrieves a set of [orders](entity:Order) by their IDs.
+        
+        If a given order ID does not exist, the ID is ignored instead of generating an error.
+      externalDocs:
+        description: Retrieve orders
+        url: https://developer.squareup.com/docs/orders-api/manage-orders#retrieve-orders
+      operationId: BatchRetrieveOrders
+      parameters: [ ]
+      requestBody:
+        description: |-
+          An object containing the fields to POST for the request.
+          
+          See the corresponding object definition for field details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchRetrieveOrdersRequest'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchRetrieveOrdersResponse'
+      security:
+        - oauth2:
+            - ORDERS_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
   /v2/orders/{order_id}:
     get:
       tags:
@@ -652,6 +690,94 @@ paths:
 
 components:
   schemas:
+    BatchRetrieveOrdersRequest:
+      required:
+        - order_ids
+      type: object
+      properties:
+        location_id:
+          type: string
+          description: |-
+            The ID of the location for these orders. This field is optional: omit it to retrieve
+            orders within the scope of the current authorization's merchant ID.
+        order_ids:
+          type: array
+          description: The IDs of the orders to retrieve. A maximum of 100 orders
+            can be retrieved per request.
+          items:
+            minLength: 1
+            type: string
+      description: |-
+        Defines the fields that are included in requests to the
+        `BatchRetrieveOrders` endpoint.
+      example:
+        location_id: 057P5VYJ4A5X1
+        order_ids:
+          - CAISEM82RcpmcFBM0TfOyiHV3es
+          - CAISENgvlJ6jLWAzERDzjyHVybY
+      x-property-order:
+        - location_id
+        - order_ids
+        - merchant_id
+        - resolve_returns
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+      x-object-name: BatchRetrieveOrdersRequest
+    BatchRetrieveOrdersResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          description: The requested orders. This will omit any requested orders that
+            do not exist.
+          items:
+            $ref: '#/components/schemas/Order'
+        errors:
+          type: array
+          description: Any errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      description: |-
+        Defines the fields that are included in the response body of
+        a request to the `BatchRetrieveOrders` endpoint.
+      example:
+        orders:
+          - id: CAISEM82RcpmcFBM0TfOyiHV3es
+            location_id: 057P5VYJ4A5X1
+            reference_id: my-order-001
+            line_items:
+              - uid: 945986d1-9586-11e6-ad5a-28cfe92138cf
+                name: Awesome product
+                quantity: "1"
+                base_price_money:
+                  amount: 1599
+                  currency: USD
+                total_money:
+                  amount: 1599
+                  currency: USD
+              - uid: a8f4168c-9586-11e6-bdf0-28cfe92138cf
+                name: Another awesome product
+                quantity: "3"
+                base_price_money:
+                  amount: 2000
+                  currency: USD
+                total_money:
+                  amount: 6000
+                  currency: USD
+            total_money:
+              amount: 7599
+              currency: USD
+      x-property-order:
+        - orders
+        - errors
+        - unconvertible_transaction_ids
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
+      x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
+      x-object-name: BatchRetrieveOrdersResponse
     Country:
       type: string
       description: |-

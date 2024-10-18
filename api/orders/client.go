@@ -130,6 +130,47 @@ func (c *Client) CreateOrder(
 	return response, nil
 }
 
+// Retrieves a set of [orders](entity:Order) by their IDs.
+//
+// If a given order ID does not exist, the ID is ignored instead of generating an error.
+func (c *Client) BatchRetrieveOrders(
+	ctx context.Context,
+	request *api.BatchRetrieveOrdersRequest,
+	opts ...option.RequestOption,
+) (*api.BatchRetrieveOrdersResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://connect.squareup.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := baseURL + "/v2/orders/batch-retrieve"
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	var response *api.BatchRetrieveOrdersResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPost,
+			MaxAttempts:     options.MaxAttempts,
+			Headers:         headers,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 // Retrieves an [Order](entity:Order) by ID.
 func (c *Client) RetrieveOrder(
 	ctx context.Context,

@@ -2,6 +2,14 @@
 
 package api
 
+type BatchRetrieveOrdersRequest struct {
+	// The ID of the location for these orders. This field is optional: omit it to retrieve
+	// orders within the scope of the current authorization's merchant ID.
+	LocationId *string `json:"location_id,omitempty" url:"-"`
+	// The IDs of the orders to retrieve. A maximum of 100 orders can be retrieved per request.
+	OrderIds []string `json:"order_ids,omitempty" url:"-"`
+}
+
 type CreateOrderRequest struct {
 	Order *Order `json:"order,omitempty" url:"-"`
 	// A value you specify that uniquely identifies this
