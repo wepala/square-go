@@ -179,6 +179,144 @@ func (b *BatchRetrieveOrdersResponse) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+// The hours of operation for a location.
+type BusinessHours struct {
+	// The list of time periods during which the business is open. There can be at most 10 periods per day.
+	Periods []*BusinessHoursPeriod `json:"periods,omitempty" url:"periods,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BusinessHours) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BusinessHours) UnmarshalJSON(data []byte) error {
+	type unmarshaler BusinessHours
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BusinessHours(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BusinessHours) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+// Represents a period of time during which a business location is open.
+type BusinessHoursPeriod struct {
+	DayOfWeek *DayOfWeek `json:"day_of_week,omitempty" url:"day_of_week,omitempty"`
+	// The start time of a business hours period, specified in local time using partial-time
+	// RFC 3339 format. For example, `8:30:00` for a period starting at 8:30 in the morning.
+	// Note that the seconds value is always :00, but it is appended for conformance to the RFC.
+	StartLocalTime *string `json:"start_local_time,omitempty" url:"start_local_time,omitempty"`
+	// The end time of a business hours period, specified in local time using partial-time
+	// RFC 3339 format. For example, `21:00:00` for a period ending at 9:00 in the evening.
+	// Note that the seconds value is always :00, but it is appended for conformance to the RFC.
+	EndLocalTime *string `json:"end_local_time,omitempty" url:"end_local_time,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BusinessHoursPeriod) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BusinessHoursPeriod) UnmarshalJSON(data []byte) error {
+	type unmarshaler BusinessHoursPeriod
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BusinessHoursPeriod(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BusinessHoursPeriod) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+// Latitude and longitude coordinates.
+type Coordinates struct {
+	// The latitude of the coordinate expressed in degrees.
+	Latitude *float64 `json:"latitude,omitempty" url:"latitude,omitempty"`
+	// The longitude of the coordinate expressed in degrees.
+	Longitude *float64 `json:"longitude,omitempty" url:"longitude,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *Coordinates) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *Coordinates) UnmarshalJSON(data []byte) error {
+	type unmarshaler Coordinates
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = Coordinates(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *Coordinates) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 // Indicates the country associated with another entity, such as a business.
 // Values are in [ISO 3166-1-alpha-2 format](http://www.iso.org/iso/home/standards/country_codes.htm).
 type Country string
@@ -947,6 +1085,50 @@ func (c Country) Ptr() *Country {
 	return &c
 }
 
+// The response object returned by the [CreateLocation](api-endpoint:Locations-CreateLocation) endpoint.
+type CreateLocationResponse struct {
+	// Information about [errors](https://developer.squareup.com/docs/build-basics/handling-errors) encountered during the request.
+	Errors   []*Error  `json:"errors,omitempty" url:"errors,omitempty"`
+	Location *Location `json:"location,omitempty" url:"location,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CreateLocationResponse) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CreateLocationResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreateLocationResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CreateLocationResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CreateLocationResponse) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 // Defines the fields that are included in the response body of
 // a request to the `CreateOrder` endpoint.
 //
@@ -1553,6 +1735,44 @@ func NewCurrencyFromString(s string) (Currency, error) {
 
 func (c Currency) Ptr() *Currency {
 	return &c
+}
+
+// Indicates the specific day of the week.
+type DayOfWeek string
+
+const (
+	DayOfWeekSun DayOfWeek = "SUN"
+	DayOfWeekMon DayOfWeek = "MON"
+	DayOfWeekTue DayOfWeek = "TUE"
+	DayOfWeekWed DayOfWeek = "WED"
+	DayOfWeekThu DayOfWeek = "THU"
+	DayOfWeekFri DayOfWeek = "FRI"
+	DayOfWeekSat DayOfWeek = "SAT"
+)
+
+func NewDayOfWeekFromString(s string) (DayOfWeek, error) {
+	switch s {
+	case "SUN":
+		return DayOfWeekSun, nil
+	case "MON":
+		return DayOfWeekMon, nil
+	case "TUE":
+		return DayOfWeekTue, nil
+	case "WED":
+		return DayOfWeekWed, nil
+	case "THU":
+		return DayOfWeekThu, nil
+	case "FRI":
+		return DayOfWeekFri, nil
+	case "SAT":
+		return DayOfWeekSat, nil
+	}
+	var t DayOfWeek
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (d DayOfWeek) Ptr() *DayOfWeek {
+	return &d
 }
 
 // Information about the destination against which the payout was made.
@@ -2332,6 +2552,54 @@ func (g *GetPayoutResponse) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
+// Defines the fields that are included in the response body of a request
+// to the [ListLocations](api-endpoint:Locations-ListLocations) endpoint.
+//
+// Either `errors` or `locations` is present in a given response (never both).
+type ListLocationsResponse struct {
+	// Any errors that occurred during the request.
+	Errors []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+	// The business locations.
+	Locations []*Location `json:"locations,omitempty" url:"locations,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (l *ListLocationsResponse) GetExtraProperties() map[string]interface{} {
+	return l.extraProperties
+}
+
+func (l *ListLocationsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ListLocationsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = ListLocationsResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *l)
+	if err != nil {
+		return err
+	}
+	l.extraProperties = extraProperties
+
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListLocationsResponse) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
 // Defines the response returned by [ListPaymentRefunds](api-endpoint:Refunds-ListPaymentRefunds).
 //
 // Either `errors` or `refunds` is present in a given response (never both).
@@ -2430,6 +2698,176 @@ func (l *ListPayoutsResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
+}
+
+// Represents one of a business' [locations](https://developer.squareup.com/docs/locations-api).
+type Location struct {
+	// A short generated string of letters and numbers that uniquely identifies this location instance.
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
+	// The name of the location.
+	// This information appears in the Seller Dashboard as the nickname.
+	// A location name must be unique within a seller account.
+	Name    *string  `json:"name,omitempty" url:"name,omitempty"`
+	Address *Address `json:"address,omitempty" url:"address,omitempty"`
+	// The [IANA time zone](https://www.iana.org/time-zones) identifier for
+	// the time zone of the location. For example, `America/Los_Angeles`.
+	Timezone *string `json:"timezone,omitempty" url:"timezone,omitempty"`
+	// The Square features that are enabled for the location.
+	// See [LocationCapability](entity:LocationCapability) for possible values.
+	// See [LocationCapability](#type-locationcapability) for possible values
+	Capabilities []LocationCapability `json:"capabilities,omitempty" url:"capabilities,omitempty"`
+	Status       *LocationStatus      `json:"status,omitempty" url:"status,omitempty"`
+	// The time when the location was created, in RFC 3339 format.
+	// For more information, see [Working with Dates](https://developer.squareup.com/docs/build-basics/working-with-dates).
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The ID of the merchant that owns the location.
+	MerchantId *string  `json:"merchant_id,omitempty" url:"merchant_id,omitempty"`
+	Country    *Country `json:"country,omitempty" url:"country,omitempty"`
+	// The language associated with the location, in
+	// [BCP 47 format](https://tools.ietf.org/html/bcp47#appendix-A).
+	// For more information, see [Language Preferences](https://developer.squareup.com/docs/build-basics/general-considerations/language-preferences).
+	LanguageCode *string   `json:"language_code,omitempty" url:"language_code,omitempty"`
+	Currency     *Currency `json:"currency,omitempty" url:"currency,omitempty"`
+	// The phone number of the location. For example, `+1 855-700-6000`.
+	PhoneNumber *string `json:"phone_number,omitempty" url:"phone_number,omitempty"`
+	// The name of the location's overall business. This name is present on receipts and other customer-facing branding.
+	BusinessName *string       `json:"business_name,omitempty" url:"business_name,omitempty"`
+	Type         *LocationType `json:"type,omitempty" url:"type,omitempty"`
+	// The website URL of the location. For example, `https://squareup.com`.
+	WebsiteUrl    *string        `json:"website_url,omitempty" url:"website_url,omitempty"`
+	BusinessHours *BusinessHours `json:"business_hours,omitempty" url:"business_hours,omitempty"`
+	// The email address of the location. This can be unique to the location and is not always the email address for the business owner or administrator.
+	BusinessEmail *string `json:"business_email,omitempty" url:"business_email,omitempty"`
+	// The description of the location. For example, `Main Street location`.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The Twitter username of the location without the '@' symbol. For example, `Square`.
+	TwitterUsername *string `json:"twitter_username,omitempty" url:"twitter_username,omitempty"`
+	// The Instagram username of the location without the '@' symbol. For example, `square`.
+	InstagramUsername *string `json:"instagram_username,omitempty" url:"instagram_username,omitempty"`
+	// The Facebook profile URL of the location. The URL should begin with 'facebook.com/'. For example, `https://www.facebook.com/square`.
+	FacebookUrl *string      `json:"facebook_url,omitempty" url:"facebook_url,omitempty"`
+	Coordinates *Coordinates `json:"coordinates,omitempty" url:"coordinates,omitempty"`
+	// The URL of the logo image for the location. When configured in the Seller
+	// Dashboard (Receipts section), the logo appears on transactions (such as receipts and invoices) that Square generates on behalf of the seller.
+	// This image should have a roughly square (1:1) aspect ratio and should be at least 200x200 pixels.
+	LogoUrl *string `json:"logo_url,omitempty" url:"logo_url,omitempty"`
+	// The URL of the Point of Sale background image for the location.
+	PosBackgroundUrl *string `json:"pos_background_url,omitempty" url:"pos_background_url,omitempty"`
+	// A four-digit number that describes the kind of goods or services sold at the location.
+	// The [merchant category code (MCC)](https://developer.squareup.com/docs/locations-api#initialize-a-merchant-category-code) of the location as standardized by ISO 18245.
+	// For example, `5045`, for a location that sells computer goods and software.
+	Mcc *string `json:"mcc,omitempty" url:"mcc,omitempty"`
+	// The URL of a full-format logo image for the location. When configured in the Seller
+	// Dashboard (Receipts section), the logo appears on transactions (such as receipts and invoices) that Square generates on behalf of the seller.
+	// This image can be wider than it is tall and should be at least 1280x648 pixels.
+	FullFormatLogoUrl *string `json:"full_format_logo_url,omitempty" url:"full_format_logo_url,omitempty"`
+	TaxIds            *TaxIds `json:"tax_ids,omitempty" url:"tax_ids,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (l *Location) GetExtraProperties() map[string]interface{} {
+	return l.extraProperties
+}
+
+func (l *Location) UnmarshalJSON(data []byte) error {
+	type unmarshaler Location
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = Location(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *l)
+	if err != nil {
+		return err
+	}
+	l.extraProperties = extraProperties
+
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *Location) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
+// The capabilities a location might have.
+type LocationCapability string
+
+const (
+	LocationCapabilityCreditCardProcessing LocationCapability = "CREDIT_CARD_PROCESSING"
+	LocationCapabilityAutomaticTransfers   LocationCapability = "AUTOMATIC_TRANSFERS"
+)
+
+func NewLocationCapabilityFromString(s string) (LocationCapability, error) {
+	switch s {
+	case "CREDIT_CARD_PROCESSING":
+		return LocationCapabilityCreditCardProcessing, nil
+	case "AUTOMATIC_TRANSFERS":
+		return LocationCapabilityAutomaticTransfers, nil
+	}
+	var t LocationCapability
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (l LocationCapability) Ptr() *LocationCapability {
+	return &l
+}
+
+// A location's status.
+type LocationStatus string
+
+const (
+	LocationStatusActive   LocationStatus = "ACTIVE"
+	LocationStatusInactive LocationStatus = "INACTIVE"
+)
+
+func NewLocationStatusFromString(s string) (LocationStatus, error) {
+	switch s {
+	case "ACTIVE":
+		return LocationStatusActive, nil
+	case "INACTIVE":
+		return LocationStatusInactive, nil
+	}
+	var t LocationStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (l LocationStatus) Ptr() *LocationStatus {
+	return &l
+}
+
+// A location's type.
+type LocationType string
+
+const (
+	LocationTypePhysical LocationType = "PHYSICAL"
+	LocationTypeMobile   LocationType = "MOBILE"
+)
+
+func NewLocationTypeFromString(s string) (LocationType, error) {
+	switch s {
+	case "PHYSICAL":
+		return LocationTypePhysical, nil
+	case "MOBILE":
+		return LocationTypeMobile, nil
+	}
+	var t LocationType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (l LocationType) Ptr() *LocationType {
+	return &l
 }
 
 // Represents a unit of measurement to use with a quantity, such as ounces
@@ -6649,6 +7087,61 @@ func NewSortOrderFromString(s string) (SortOrder, error) {
 
 func (s SortOrder) Ptr() *SortOrder {
 	return &s
+}
+
+// Identifiers for the location used by various governments for tax purposes.
+type TaxIds struct {
+	// The EU VAT number for this location. For example, `IE3426675K`.
+	// If the EU VAT number is present, it is well-formed and has been
+	// validated with VIES, the VAT Information Exchange System.
+	EuVat *string `json:"eu_vat,omitempty" url:"eu_vat,omitempty"`
+	// The SIRET (Système d'Identification du Répertoire des Entreprises et de leurs Etablissements)
+	// number is a 14-digit code issued by the French INSEE. For example, `39922799000021`.
+	FrSiret *string `json:"fr_siret,omitempty" url:"fr_siret,omitempty"`
+	// The French government uses the NAF (Nomenclature des Activités Françaises) to display and
+	// track economic statistical data. This is also called the APE (Activite Principale de l’Entreprise) code.
+	// For example, `6910Z`.
+	FrNaf *string `json:"fr_naf,omitempty" url:"fr_naf,omitempty"`
+	// The NIF (Numero de Identificacion Fiscal) number is a nine-character tax identifier used in Spain.
+	// If it is present, it has been validated. For example, `73628495A`.
+	EsNif *string `json:"es_nif,omitempty" url:"es_nif,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (t *TaxIds) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *TaxIds) UnmarshalJSON(data []byte) error {
+	type unmarshaler TaxIds
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TaxIds(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TaxIds) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
 }
 
 // Represents a generic time range. The start and end values are

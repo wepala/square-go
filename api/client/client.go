@@ -4,6 +4,7 @@ package client
 
 import (
 	core "github.com/wepala/square-go/api/core"
+	locations "github.com/wepala/square-go/api/locations"
 	merchants "github.com/wepala/square-go/api/merchants"
 	option "github.com/wepala/square-go/api/option"
 	orders "github.com/wepala/square-go/api/orders"
@@ -21,6 +22,7 @@ type Client struct {
 	Payouts   *payouts.Client
 	Refunds   *refunds.Client
 	Merchants *merchants.Client
+	Locations *locations.Client
 }
 
 func NewClient(opts ...option.RequestOption) *Client {
@@ -38,5 +40,6 @@ func NewClient(opts ...option.RequestOption) *Client {
 		Payouts:   payouts.NewClient(opts...),
 		Refunds:   refunds.NewClient(opts...),
 		Merchants: merchants.NewClient(opts...),
+		Locations: locations.NewClient(opts...),
 	}
 }

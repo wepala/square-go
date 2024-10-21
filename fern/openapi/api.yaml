@@ -687,6 +687,92 @@ paths:
       x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
       x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/merchant.proto
       x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+  /v2/locations:
+    get:
+      tags:
+        - Locations
+      summary: ListLocations
+      description: |-
+        Provides details about all of the seller's [locations](https://developer.squareup.com/docs/locations-api),
+        including those with an inactive status.
+      externalDocs:
+        description: Retrieve a list of locations
+        url: https://developer.squareup.com/docs/locations-api#listlocations
+      operationId: ListLocations
+      parameters: [ ]
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListLocationsResponse'
+      security:
+        - oauth2:
+            - MERCHANT_PROFILE_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+      x-unitTests:
+        - request:
+            method: GET
+            uri: /v2/locations
+          expectedResponse:
+            x-allowExtraHeaders: true
+            x-bodyMatchMode: NONE
+            x-arrayOrderedMatching: false
+            x-arrayCheckCount: false
+            x-matchResponseSchema: true
+            statusCode: "200"
+            headers: { }
+          x-testShouldPass: true
+          x-testEnabled: true
+          x-testName: ListLocations
+    post:
+      tags:
+        - Locations
+      summary: CreateLocation
+      description: |-
+        Creates a [location](https://developer.squareup.com/docs/locations-api).
+        Creating new locations allows for separate configuration of receipt layouts, item prices,
+        and sales reports. Developers can use locations to separate sales activity through applications
+        that integrate with Square from sales activity elsewhere in a seller's account.
+        Locations created programmatically with the Locations API last forever and
+        are visible to the seller for their own management. Therefore, ensure that
+        each location has a sensible and unique name.
+      externalDocs:
+        description: Create a location
+        url: https://developer.squareup.com/docs/locations-api#createalocation
+      operationId: CreateLocation
+      parameters: [ ]
+      requestBody:
+        description: |-
+          An object containing the fields to POST for the request.
+          
+          See the corresponding object definition for field details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLocationRequest'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLocationResponse'
+      security:
+        - oauth2:
+            - MERCHANT_PROFILE_WRITE
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+      x-endpoint-errors:
+        - error-code: BAD_REQUEST
+      x-is-sparse-update: true
 
 components:
   schemas:
@@ -778,6 +864,177 @@ components:
       x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/service.proto
       x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
       x-object-name: BatchRetrieveOrdersResponse
+    BusinessHours:
+      type: object
+      properties:
+        periods:
+          type: array
+          description: The list of time periods during which the business is open.
+            There can be at most 10 periods per day.
+          items:
+            $ref: '#/components/schemas/BusinessHoursPeriod'
+      description: The hours of operation for a location.
+      x-property-order:
+        - periods
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
+      x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
+      x-object-name: BusinessHours
+    BusinessHoursPeriod:
+      type: object
+      properties:
+        day_of_week:
+          $ref: '#/components/schemas/DayOfWeek'
+        start_local_time:
+          type: string
+          description: |-
+            The start time of a business hours period, specified in local time using partial-time
+            RFC 3339 format. For example, `8:30:00` for a period starting at 8:30 in the morning.
+            Note that the seconds value is always :00, but it is appended for conformance to the RFC.
+        end_local_time:
+          type: string
+          description: |-
+            The end time of a business hours period, specified in local time using partial-time
+            RFC 3339 format. For example, `21:00:00` for a period ending at 9:00 in the evening.
+            Note that the seconds value is always :00, but it is appended for conformance to the RFC.
+      description: Represents a period of time during which a business location is
+        open.
+      x-property-order:
+        - day_of_week
+        - start_local_time
+        - end_local_time
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
+      x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
+      x-object-name: BusinessHoursPeriod
+    DayOfWeek:
+      type: string
+      description: Indicates the specific day  of the week.
+      enum:
+        - SUN
+        - MON
+        - TUE
+        - WED
+        - THU
+        - FRI
+        - SAT
+      x-enum-elements:
+        - name: SUN
+          description: Sunday
+          x-release-status: PUBLIC
+        - name: MON
+          description: Monday
+          x-release-status: PUBLIC
+        - name: TUE
+          description: Tuesday
+          x-release-status: PUBLIC
+        - name: WED
+          description: Wednesday
+          x-release-status: PUBLIC
+        - name: THU
+          description: Thursday
+          x-release-status: PUBLIC
+        - name: FRI
+          description: Friday
+          x-release-status: PUBLIC
+        - name: SAT
+          description: Saturday
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/common/day_of_week.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: DayOfWeek
+    CreateLocationRequest:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/Location'
+      description: The request object for the [CreateLocation](api-endpoint:Locations-CreateLocation)
+        endpoint.
+      example:
+        location:
+          name: Midtown
+          description: Midtown Atlanta store
+          address:
+            address_line_1: 1234 Peachtree St. NE
+            locality: Atlanta
+            administrative_district_level_1: GA
+            postal_code: "30309"
+      x-property-order:
+        - location
+        - fields_to_clear
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+      x-object-name: CreateLocationRequest
+    CreateLocationResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Information about [errors](https://developer.squareup.com/docs/build-basics/handling-errors)
+            encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        location:
+          $ref: '#/components/schemas/Location'
+      description: The response object returned by the [CreateLocation](api-endpoint:Locations-CreateLocation)
+        endpoint.
+      example:
+        location:
+          id: 3Z4V4WHQK64X9
+          name: Midtown
+          address:
+            address_line_1: 1234 Peachtree St. NE
+            locality: Atlanta
+            administrative_district_level_1: GA
+            postal_code: "30309"
+          timezone: America/New_York
+          capabilities:
+            - CREDIT_CARD_PROCESSING
+          status: ACTIVE
+          created_at: 2022-02-19T17:58:25Z
+          merchant_id: 3MYCJG5GVYQ8Q
+          country: US
+          language_code: en-US
+          currency: USD
+          type: PHYSICAL
+          description: Midtown Atlanta store
+          coordinates:
+            latitude: 33.7889
+            longitude: -84.3841
+          business_name: Jet Fuel Coffee
+          mcc: "7299"
+      x-property-order:
+        - errors
+        - location
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+      x-object-name: CreateLocationResponse
+    Coordinates:
+      type: object
+      properties:
+        latitude:
+          type: number
+          description: The latitude of the coordinate expressed in degrees.
+        longitude:
+          type: number
+          description: The longitude of the coordinate expressed in degrees.
+      description: Latitude and longitude coordinates.
+      x-property-order:
+        - latitude
+        - longitude
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/common/coordinates.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: Coordinates
     Country:
       type: string
       description: |-
@@ -1790,6 +2047,306 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/country.proto
       x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
       x-object-name: Country
+    ListLocationsResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Any errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        locations:
+          type: array
+          description: The business locations.
+          items:
+            $ref: '#/components/schemas/Location'
+      description: |-
+        Defines the fields that are included in the response body of a request
+        to the [ListLocations](api-endpoint:Locations-ListLocations) endpoint.
+        
+        Either `errors` or `locations` is present in a given response (never both).
+      example:
+        locations:
+          - id: 18YC4JDH91E1H
+            name: Grant Park
+            address:
+              address_line_1: 123 Main St
+              locality: San Francisco
+              administrative_district_level_1: CA
+              postal_code: "94114"
+              country: US
+            timezone: America/Los_Angeles
+            capabilities:
+              - CREDIT_CARD_PROCESSING
+            status: ACTIVE
+            created_at: 2016-09-19T17:33:12Z
+            merchant_id: 3MYCJG5GVYQ8Q
+            country: US
+            language_code: en-US
+            currency: USD
+            phone_number: +1 650-354-7217
+            business_name: Jet Fuel Coffee
+          - id: 3Z4V4WHQK64X9
+            name: Midtown
+            address:
+              address_line_1: 1234 Peachtree St. NE
+              locality: Atlanta
+              administrative_district_level_1: GA
+              postal_code: "30309"
+            timezone: America/New_York
+            capabilities:
+              - CREDIT_CARD_PROCESSING
+            status: ACTIVE
+            created_at: 2022-02-19T17:58:25Z
+            merchant_id: 3MYCJG5GVYQ8Q
+            country: US
+            language_code: en-US
+            currency: USD
+            type: PHYSICAL
+            description: Midtown Atlanta store
+            coordinates:
+              latitude: 33.7889
+              longitude: -84.3841
+            business_name: Jet Fuel Coffee
+            mcc: "7299"
+      x-property-order:
+        - errors
+        - locations
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
+      x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
+      x-object-name: ListLocationsResponse
+    LocationCapability:
+      type: string
+      description: The capabilities a location might have.
+      enum:
+        - CREDIT_CARD_PROCESSING
+        - AUTOMATIC_TRANSFERS
+      x-enum-elements:
+        - name: CREDIT_CARD_PROCESSING
+          description: The capability to process credit card transactions with Square.
+          x-release-status: PUBLIC
+        - name: AUTOMATIC_TRANSFERS
+          description: The capability to receive automatic transfers from Square.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
+      x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
+      x-object-name: LocationCapability
+    LocationStatus:
+      type: string
+      description: A location's status.
+      enum:
+        - ACTIVE
+        - INACTIVE
+      x-enum-elements:
+        - name: ACTIVE
+          description: A location that is active for business.
+          x-release-status: PUBLIC
+        - name: INACTIVE
+          description: |-
+            A location that is not active for business. Inactive locations provide historical
+            information. Hide inactive locations unless the user has requested to see them.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
+      x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
+      x-object-name: LocationStatus
+    LocationType:
+      type: string
+      description: A location's type.
+      enum:
+        - PHYSICAL
+        - MOBILE
+      x-enum-elements:
+        - name: PHYSICAL
+          description: A place of business with a physical location.
+          x-release-status: PUBLIC
+        - name: MOBILE
+          description: A place of business that is mobile, such as a food truck or online
+            store.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
+      x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
+      x-object-name: LocationType
+    Location:
+      type: object
+      properties:
+        id:
+          maxLength: 32
+          type: string
+          description: A short generated string of letters and numbers that uniquely
+            identifies this location instance.
+          readOnly: true
+        name:
+          maxLength: 255
+          type: string
+          description: |-
+            The name of the location.
+            This information appears in the Seller Dashboard as the nickname.
+            A location name must be unique within a seller account.
+        address:
+          $ref: '#/components/schemas/Address'
+        timezone:
+          maxLength: 30
+          type: string
+          description: |-
+            The [IANA time zone](https://www.iana.org/time-zones) identifier for
+            the time zone of the location. For example, `America/Los_Angeles`.
+        capabilities:
+          type: array
+          description: |-
+            The Square features that are enabled for the location.
+            See [LocationCapability](entity:LocationCapability) for possible values.
+            See [LocationCapability](#type-locationcapability) for possible values
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/LocationCapability'
+        status:
+          $ref: '#/components/schemas/LocationStatus'
+        created_at:
+          maxLength: 25
+          minLength: 20
+          type: string
+          description: |-
+            The time when the location was created, in RFC 3339 format.
+            For more information, see [Working with Dates](https://developer.squareup.com/docs/build-basics/working-with-dates).
+          readOnly: true
+        merchant_id:
+          maxLength: 32
+          type: string
+          description: The ID of the merchant that owns the location.
+          readOnly: true
+        country:
+          $ref: '#/components/schemas/Country'
+        language_code:
+          maxLength: 5
+          minLength: 2
+          type: string
+          description: |-
+            The language associated with the location, in
+            [BCP 47 format](https://tools.ietf.org/html/bcp47#appendix-A).
+            For more information, see [Language Preferences](https://developer.squareup.com/docs/build-basics/general-considerations/language-preferences).
+        currency:
+          $ref: '#/components/schemas/Currency'
+        phone_number:
+          maxLength: 17
+          type: string
+          description: The phone number of the location. For example, `+1 855-700-6000`.
+        business_name:
+          maxLength: 255
+          type: string
+          description: The name of the location's overall business. This name is present
+            on receipts and other customer-facing branding.
+        type:
+          $ref: '#/components/schemas/LocationType'
+        website_url:
+          maxLength: 255
+          type: string
+          description: The website URL of the location.  For example, `https://squareup.com`.
+        business_hours:
+          $ref: '#/components/schemas/BusinessHours'
+        business_email:
+          maxLength: 255
+          type: string
+          description: The email address of the location. This can be unique to the
+            location and is not always the email address for the business owner or
+            administrator.
+        description:
+          maxLength: 1024
+          type: string
+          description: The description of the location. For example, `Main Street
+            location`.
+        twitter_username:
+          maxLength: 15
+          minLength: 1
+          type: string
+          description: The Twitter username of the location without the '@' symbol.
+            For example, `Square`.
+        instagram_username:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: The Instagram username of the location without the '@' symbol.
+            For example, `square`.
+        facebook_url:
+          maxLength: 255
+          type: string
+          description: The Facebook profile URL of the location. The URL should begin
+            with 'facebook.com/'. For example, `https://www.facebook.com/square`.
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        logo_url:
+          maxLength: 255
+          type: string
+          description: |-
+            The URL of the logo image for the location. When configured in the Seller
+            Dashboard (Receipts section), the logo appears on transactions (such as receipts and invoices) that Square generates on behalf of the seller.
+            This image should have a roughly square (1:1) aspect ratio and should be at least 200x200 pixels.
+          readOnly: true
+        pos_background_url:
+          maxLength: 255
+          type: string
+          description: The URL of the Point of Sale background image for the location.
+          readOnly: true
+        mcc:
+          maxLength: 4
+          minLength: 4
+          type: string
+          description: |-
+            A four-digit number that describes the kind of goods or services sold at the location.
+            The [merchant category code (MCC)](https://developer.squareup.com/docs/locations-api#initialize-a-merchant-category-code) of the location as standardized by ISO 18245.
+            For example, `5045`, for a location that sells computer goods and software.
+          x-release-status: BETA
+        full_format_logo_url:
+          type: string
+          description: |-
+            The URL of a full-format logo image for the location. When configured in the Seller
+            Dashboard (Receipts section), the logo appears on transactions (such as receipts and invoices) that Square generates on behalf of the seller.
+            This image can be wider than it is tall and should be at least 1280x648 pixels.
+          readOnly: true
+        tax_ids:
+          $ref: '#/components/schemas/TaxIds'
+      description: Represents one of a business' [locations](https://developer.squareup.com/docs/locations-api).
+      x-property-order:
+        - id
+        - name
+        - address
+        - timezone
+        - capabilities
+        - status
+        - created_at
+        - merchant_id
+        - country
+        - language_code
+        - currency
+        - phone_number
+        - business_name
+        - type
+        - website_url
+        - business_hours
+        - special_hours
+        - business_email
+        - description
+        - twitter_username
+        - instagram_username
+        - facebook_url
+        - coordinates
+        - logo_url
+        - pos_background_url
+        - mcc
+        - full_format_logo_url
+        - tax_ids
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
+      x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
+      x-object-name: Location
     SearchOrdersSortField:
       type: string
       description: Specifies which timestamp to use to sort `SearchOrder` results.
@@ -2022,6 +2579,43 @@ components:
       x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/search_orders.proto
       x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
       x-object-name: SearchOrdersDateTimeFilter
+    TaxIds:
+      type: object
+      properties:
+        eu_vat:
+          type: string
+          description: |-
+            The EU VAT number for this location. For example, `IE3426675K`.
+            If the EU VAT number is present, it is well-formed and has been
+            validated with VIES, the VAT Information Exchange System.
+        fr_siret:
+          type: string
+          description: |-
+            The SIRET (Système d'Identification du Répertoire des Entreprises et de leurs Etablissements)
+            number is a 14-digit code issued by the French INSEE. For example, `39922799000021`.
+        fr_naf:
+          type: string
+          description: |-
+            The French government uses the NAF (Nomenclature des Activités Françaises) to display and
+            track economic statistical data. This is also called the APE (Activite Principale de l’Entreprise) code.
+            For example, `6910Z`.
+        es_nif:
+          type: string
+          description: |-
+            The NIF (Numero de Identificacion Fiscal) number is a nine-character tax identifier used in Spain.
+            If it is present, it has been validated. For example, `73628495A`.
+      description: Identifiers for the location used by various governments for tax
+        purposes.
+      x-property-order:
+        - eu_vat
+        - fr_siret
+        - fr_naf
+        - es_nif
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
+      x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
+      x-object-name: TaxIds
     TimeRange:
       type: object
       properties:
