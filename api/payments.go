@@ -137,3 +137,12 @@ type ListPaymentsRequest struct {
 	// Default: `100`
 	Limit *int `json:"-" url:"limit,omitempty"`
 }
+
+type UpdatePaymentRequest struct {
+	Payment *Payment `json:"payment,omitempty" url:"-"`
+	// A unique string that identifies this `UpdatePayment` request. Keys can be any valid string
+	// but must be unique for every `UpdatePayment` request.
+	//
+	// For more information, see [Idempotency](https://developer.squareup.com/docs/basics/api101/idempotency).
+	IdempotencyKey string `json:"idempotency_key" url:"-"`
+}

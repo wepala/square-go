@@ -1179,6 +1179,96 @@ paths:
         - error-code: TEMPORARY_ERROR
         - error-code: TRANSACTION_LIMIT
         - error-code: VOICE_FAILURE
+  /v2/payments/{payment_id}:
+    get:
+      tags:
+        - Payments
+      summary: GetPayment
+      description: Retrieves details for a specific payment.
+      externalDocs:
+        description: Retrieve Payments and Refunds
+        url: https://developer.squareup.com/docs/payments-api/retrieve-payments
+      operationId: GetPayment
+      parameters:
+        - name: payment_id
+          in: path
+          description: A unique ID for the desired payment.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPaymentResponse'
+      security:
+        - oauth2:
+            - PAYMENTS_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_service.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+    put:
+      tags:
+        - Payments
+      summary: UpdatePayment
+      description: |-
+        Updates a payment with the APPROVED status.
+        You can update the `amount_money` and `tip_money` using this endpoint.
+      externalDocs:
+        description: Update Payment
+        url: https://developer.squareup.com/docs/payments-api/update-payments
+      operationId: UpdatePayment
+      parameters:
+        - name: payment_id
+          in: path
+          description: The ID of the payment to update.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: |-
+          An object containing the fields to POST for the request.
+          
+          See the corresponding object definition for field details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePaymentRequest'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatePaymentResponse'
+      security:
+        - oauth2:
+            - PAYMENTS_WRITE
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_service.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-endpoint-errors:
+        - error-code: AMOUNT_TOO_HIGH
+        - error-code: CARDHOLDER_INSUFFICIENT_PERMISSIONS
+        - error-code: CHIP_INSERTION_REQUIRED
+        - error-code: CVV_FAILURE
+        - error-code: GENERIC_DECLINE
+        - error-code: INSUFFICIENT_FUNDS
+        - error-code: INVALID_FEES
+        - error-code: PAN_FAILURE
+        - error-code: PAYMENT_LIMIT_EXCEEDED
+        - error-code: TEMPORARY_ERROR
+        - error-code: TRANSACTION_LIMIT
+        - error-code: VOICE_FAILURE
 
 components:
   schemas:
@@ -5342,6 +5432,80 @@ components:
       x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
       x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
       x-object-name: ExternalPaymentDetails
+    GetPaymentResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        payment:
+          $ref: '#/components/schemas/Payment'
+      description: Defines the response returned by [GetPayment](api-endpoint:Payments-GetPayment).
+      example:
+        payment:
+          id: bP9mAsEMYPUGjjGNaNO5ZDVyLhSZY
+          created_at: 2021-10-13T19:34:33.524Z
+          updated_at: 2021-10-13T19:34:34.339Z
+          amount_money:
+            amount: 555
+            currency: USD
+          status: COMPLETED
+          delay_duration: PT168H
+          source_type: CARD
+          card_details:
+            status: CAPTURED
+            card:
+              card_brand: VISA
+              last_4: "1111"
+              exp_month: 11
+              exp_year: 2022
+              fingerprint: sq-1-Hxim77tbdcbGejOejnoAklBVJed2YFLTmirfl8Q5XZzObTc8qY_U8RkwzoNL8dCEcQ
+              card_type: DEBIT
+              prepaid_type: NOT_PREPAID
+              bin: "411111"
+            entry_method: KEYED
+            cvv_status: CVV_ACCEPTED
+            avs_status: AVS_ACCEPTED
+            auth_result_code: 2Nkw7q
+            statement_description: SQ *EXAMPLE TEST GOSQ.C
+            card_payment_timeline:
+              authorized_at: 2021-10-13T19:34:33.680Z
+              captured_at: 2021-10-13T19:34:34.340Z
+          location_id: L88917AVBK2S5
+          order_id: d7eKah653Z579f3gVtjlxpSlmUcZY
+          processing_fee:
+            - effective_at: 2021-10-13T21:34:35.000Z
+              type: INITIAL
+              amount_money:
+                amount: 34
+                currency: USD
+          note: Test Note
+          total_money:
+            amount: 555
+            currency: USD
+          approved_money:
+            amount: 555
+            currency: USD
+          employee_id: TMoK_ogh6rH1o4dV
+          receipt_number: bP9m
+          receipt_url: https://squareup.com/receipt/preview/bP9mAsEMYPUGjjGNaNO5ZDVyLhSZY
+          delay_action: CANCEL
+          delayed_until: 2021-10-20T19:34:33.524Z
+          team_member_id: TMoK_ogh6rH1o4dV
+          application_details:
+            square_product: VIRTUAL_TERMINAL
+            application_id: sq0ids-Pw67AZAlLVB7hsRmwlJPuA
+          version_token: 56pRkL3slrzet2iQrTp9n0bdJVYTB9YEWdTNjQfZOPV6o
+      x-property-order:
+        - errors
+        - payment
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: GetPaymentResponse
     ItemVariationLocationOverrides:
       type: object
       properties:
@@ -12203,6 +12367,118 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
       x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
       x-object-name: TaxInclusionType
+    UpdatePaymentRequest:
+      required:
+        - idempotency_key
+      type: object
+      properties:
+        payment:
+          $ref: '#/components/schemas/Payment'
+        idempotency_key:
+          maxLength: 45
+          minLength: 1
+          type: string
+          description: |-
+            A unique string that identifies this `UpdatePayment` request. Keys can be any valid string
+            but must be unique for every `UpdatePayment` request.
+            
+            For more information, see [Idempotency](https://developer.squareup.com/docs/basics/api101/idempotency).
+      description: "Describes a request to update a payment using \n[UpdatePayment](api-endpoint:Payments-UpdatePayment)."
+      example:
+        idempotency_key: 956f8b13-e4ec-45d6-85e8-d1d95ef0c5de
+        payment:
+          amount_money:
+            amount: 1000
+            currency: USD
+          tip_money:
+            amount: 100
+            currency: USD
+          version_token: ODhwVQ35xwlzRuoZEwKXucfu7583sPTzK48c5zoGd0g6o
+      x-property-order:
+        - payment
+        - idempotency_key
+        - request_context_token
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: UpdatePaymentRequest
+    UpdatePaymentResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Any errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        payment:
+          $ref: '#/components/schemas/Payment'
+      description: "Defines the response returned by \n[UpdatePayment](api-endpoint:Payments-UpdatePayment)."
+      example:
+        payment:
+          id: 1QjqpBVyrI9S4H9sTGDWU9JeiWdZY
+          created_at: 2021-10-13T20:26:44.191Z
+          updated_at: 2021-10-13T20:26:44.364Z
+          amount_money:
+            amount: 1000
+            currency: USD
+          tip_money:
+            amount: 100
+            currency: USD
+          status: APPROVED
+          delay_duration: PT168H
+          source_type: CARD
+          card_details:
+            status: AUTHORIZED
+            card:
+              card_brand: VISA
+              last_4: "1111"
+              exp_month: 11
+              exp_year: 2022
+              fingerprint: sq-1-Hxim77tbdcbGejOejnoAklBVJed2YFLTmirfl8Q5XZzObTc8qY_U8RkwzoNL8dCEcQ
+              card_type: DEBIT
+              prepaid_type: NOT_PREPAID
+              bin: "411111"
+            entry_method: ON_FILE
+            cvv_status: CVV_ACCEPTED
+            avs_status: AVS_ACCEPTED
+            auth_result_code: 68aLBM
+            statement_description: SQ *EXAMPLE TEST GOSQ.C
+            card_payment_timeline:
+              authorized_at: 2021-10-13T20:26:44.364Z
+          location_id: L88917AVBK2S5
+          order_id: nUSN9TdxpiK3SrQg3wzmf6r8LP9YY
+          risk_evaluation:
+            created_at: 2021-10-13T20:26:45.271Z
+            risk_level: NORMAL
+          note: Example Note
+          customer_id: W92WH6P11H4Z77CTET0RNTGFW8
+          total_money:
+            amount: 1100
+            currency: USD
+          approved_money:
+            amount: 1000
+            currency: USD
+          capabilities:
+            - EDIT_AMOUNT_UP
+            - EDIT_AMOUNT_DOWN
+            - EDIT_TIP_AMOUNT_UP
+            - EDIT_TIP_AMOUNT_DOWN
+          receipt_number: 1Qjq
+          delay_action: CANCEL
+          delayed_until: 2021-10-20T20:26:44.191Z
+          application_details:
+            square_product: ECOMMERCE_API
+            application_id: sq0ids-TcgftTEtKxJTRF1lCFJ9TA
+          version_token: rDrXnqiS7fJgexccgdpzmwqTiXui1aIKCp9EchZ7trE6o
+      x-property-order:
+        - errors
+        - payment
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: UpdatePaymentResponse
     Error:
       required:
         - category

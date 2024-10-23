@@ -126,3 +126,84 @@ func (c *Client) CreatePayment(
 	}
 	return response, nil
 }
+
+// Retrieves details for a specific payment.
+func (c *Client) GetPayment(
+	ctx context.Context,
+	// A unique ID for the desired payment.
+	paymentId string,
+	opts ...option.RequestOption,
+) (*api.GetPaymentResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://connect.squareup.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(baseURL+"/v2/payments/%v", paymentId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	var response *api.GetPaymentResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			MaxAttempts:     options.MaxAttempts,
+			Headers:         headers,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// Updates a payment with the APPROVED status.
+// You can update the `amount_money` and `tip_money` using this endpoint.
+func (c *Client) UpdatePayment(
+	ctx context.Context,
+	// The ID of the payment to update.
+	paymentId string,
+	request *api.UpdatePaymentRequest,
+	opts ...option.RequestOption,
+) (*api.UpdatePaymentResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://connect.squareup.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(baseURL+"/v2/payments/%v", paymentId)
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	var response *api.UpdatePaymentResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodPut,
+			MaxAttempts:     options.MaxAttempts,
+			Headers:         headers,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Request:         request,
+			Response:        &response,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}

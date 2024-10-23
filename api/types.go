@@ -5839,6 +5839,50 @@ func (g *GetPaymentRefundResponse) String() string {
 	return fmt.Sprintf("%#v", g)
 }
 
+// Defines the response returned by [GetPayment](api-endpoint:Payments-GetPayment).
+type GetPaymentResponse struct {
+	// Information about errors encountered during the request.
+	Errors  []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+	Payment *Payment `json:"payment,omitempty" url:"payment,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (g *GetPaymentResponse) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GetPaymentResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler GetPaymentResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GetPaymentResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+
+	g._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GetPaymentResponse) String() string {
+	if len(g._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(g._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type GetPayoutResponse struct {
 	Payout *Payout `json:"payout,omitempty" url:"payout,omitempty"`
 	// Information about errors encountered during the request.
@@ -11303,6 +11347,51 @@ func (u *UpdateOrderResponse) UnmarshalJSON(data []byte) error {
 }
 
 func (u *UpdateOrderResponse) String() string {
+	if len(u._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
+}
+
+// Defines the response returned by
+// [UpdatePayment](api-endpoint:Payments-UpdatePayment).
+type UpdatePaymentResponse struct {
+	// Any errors that occurred during the request.
+	Errors  []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+	Payment *Payment `json:"payment,omitempty" url:"payment,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (u *UpdatePaymentResponse) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
+}
+
+func (u *UpdatePaymentResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler UpdatePaymentResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UpdatePaymentResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+
+	u._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UpdatePaymentResponse) String() string {
 	if len(u._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
 			return value
