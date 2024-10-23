@@ -272,6 +272,2283 @@ func (b *BusinessHoursPeriod) String() string {
 	return fmt.Sprintf("%#v", b)
 }
 
+// A category to which a `CatalogItem` instance belongs.
+type CatalogCategory struct {
+	// The category name. This is a searchable attribute for use in applicable query filters, and its value length is of Unicode code points.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The IDs of images associated with this `CatalogCategory` instance.
+	// Currently these images are not displayed by Square, but are free to be displayed in 3rd party applications.
+	ImageIds []string `json:"image_ids,omitempty" url:"image_ids,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogCategory) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogCategory) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogCategory
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogCategory(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogCategory) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Contains information defining a custom attribute. Custom attributes are
+// intended to store additional information about a catalog object or to associate a
+// catalog object with an entity in another system. Do not use custom attributes
+// to store any sensitive information (personally identifiable information, card details, etc.).
+// [Read more about custom attributes](https://developer.squareup.com/docs/catalog-api/add-custom-attributes)
+type CatalogCustomAttributeDefinition struct {
+	Type CatalogCustomAttributeDefinitionType `json:"type" url:"type"`
+	// The name of this definition for API and seller-facing UI purposes.
+	// The name must be unique within the (merchant, application) pair. Required.
+	// May not be empty and may not exceed 255 characters. Can be modified after creation.
+	Name string `json:"name" url:"name"`
+	// Seller-oriented description of the meaning of this Custom Attribute,
+	// any constraints that the seller should observe, etc. May be displayed as a tooltip in Square UIs.
+	Description       *string            `json:"description,omitempty" url:"description,omitempty"`
+	SourceApplication *SourceApplication `json:"source_application,omitempty" url:"source_application,omitempty"`
+	// The set of Catalog Object Types that this Custom Attribute may be applied to.
+	// Currently, only `ITEM` and `ITEM_VARIATION` are allowed. At least one type must be included.
+	// See [CatalogObjectType](#type-catalogobjecttype) for possible values
+	AllowedObjectTypes []CatalogObjectType                               `json:"allowed_object_types,omitempty" url:"allowed_object_types,omitempty"`
+	SellerVisibility   *CatalogCustomAttributeDefinitionSellerVisibility `json:"seller_visibility,omitempty" url:"seller_visibility,omitempty"`
+	AppVisibility      *CatalogCustomAttributeDefinitionAppVisibility    `json:"app_visibility,omitempty" url:"app_visibility,omitempty"`
+	StringConfig       *CatalogCustomAttributeDefinitionStringConfig     `json:"string_config,omitempty" url:"string_config,omitempty"`
+	NumberConfig       *CatalogCustomAttributeDefinitionNumberConfig     `json:"number_config,omitempty" url:"number_config,omitempty"`
+	SelectionConfig    *CatalogCustomAttributeDefinitionSelectionConfig  `json:"selection_config,omitempty" url:"selection_config,omitempty"`
+	// The number of custom attributes that reference this
+	// custom attribute definition. Set by the server in response to a ListCatalog
+	// request with `include_counts` set to `true`. If the actual count is greater
+	// than 100, `custom_attribute_usage_count` will be set to `100`.
+	CustomAttributeUsageCount *int `json:"custom_attribute_usage_count,omitempty" url:"custom_attribute_usage_count,omitempty"`
+	// The name of the desired custom attribute key that can be used to access
+	// the custom attribute value on catalog objects. Cannot be modified after the
+	// custom attribute definition has been created.
+	// Must be between 1 and 60 characters, and may only contain the characters `[a-zA-Z0-9_-]`.
+	Key *string `json:"key,omitempty" url:"key,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogCustomAttributeDefinition) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogCustomAttributeDefinition) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogCustomAttributeDefinition
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogCustomAttributeDefinition(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogCustomAttributeDefinition) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Defines the visibility of a custom attribute to applications other than their
+// creating application.
+type CatalogCustomAttributeDefinitionAppVisibility string
+
+const (
+	CatalogCustomAttributeDefinitionAppVisibilityAppVisibilityDoNotUse        CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_DO_NOT_USE"
+	CatalogCustomAttributeDefinitionAppVisibilityAppVisibilityHidden          CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_HIDDEN"
+	CatalogCustomAttributeDefinitionAppVisibilityAppVisibilityReadOnly        CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_READ_ONLY"
+	CatalogCustomAttributeDefinitionAppVisibilityAppVisibilityReadWriteValues CatalogCustomAttributeDefinitionAppVisibility = "APP_VISIBILITY_READ_WRITE_VALUES"
+)
+
+func NewCatalogCustomAttributeDefinitionAppVisibilityFromString(s string) (CatalogCustomAttributeDefinitionAppVisibility, error) {
+	switch s {
+	case "APP_VISIBILITY_DO_NOT_USE":
+		return CatalogCustomAttributeDefinitionAppVisibilityAppVisibilityDoNotUse, nil
+	case "APP_VISIBILITY_HIDDEN":
+		return CatalogCustomAttributeDefinitionAppVisibilityAppVisibilityHidden, nil
+	case "APP_VISIBILITY_READ_ONLY":
+		return CatalogCustomAttributeDefinitionAppVisibilityAppVisibilityReadOnly, nil
+	case "APP_VISIBILITY_READ_WRITE_VALUES":
+		return CatalogCustomAttributeDefinitionAppVisibilityAppVisibilityReadWriteValues, nil
+	}
+	var t CatalogCustomAttributeDefinitionAppVisibility
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogCustomAttributeDefinitionAppVisibility) Ptr() *CatalogCustomAttributeDefinitionAppVisibility {
+	return &c
+}
+
+type CatalogCustomAttributeDefinitionNumberConfig struct {
+	// An integer between 0 and 5 that represents the maximum number of
+	// positions allowed after the decimal in number custom attribute values
+	// For example:
+	//
+	// - if the precision is 0, the quantity can be 1, 2, 3, etc.
+	// - if the precision is 1, the quantity can be 0.1, 0.2, etc.
+	// - if the precision is 2, the quantity can be 0.01, 0.12, etc.
+	//
+	// Default: 5
+	Precision *int `json:"precision,omitempty" url:"precision,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogCustomAttributeDefinitionNumberConfig) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogCustomAttributeDefinitionNumberConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogCustomAttributeDefinitionNumberConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogCustomAttributeDefinitionNumberConfig(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogCustomAttributeDefinitionNumberConfig) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Configuration associated with `SELECTION`-type custom attribute definitions.
+type CatalogCustomAttributeDefinitionSelectionConfig struct {
+	// The maximum number of selections that can be set. The maximum value for this
+	// attribute is 100. The default value is 1. The value can be modified, but changing the value will not
+	// affect existing custom attribute values on objects. Clients need to
+	// handle custom attributes with more selected values than allowed by this limit.
+	MaxAllowedSelections *int `json:"max_allowed_selections,omitempty" url:"max_allowed_selections,omitempty"`
+	// The set of valid `CatalogCustomAttributeSelections`. Up to a maximum of 100
+	// selections can be defined. Can be modified.
+	AllowedSelections []*CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection `json:"allowed_selections,omitempty" url:"allowed_selections,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogCustomAttributeDefinitionSelectionConfig) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogCustomAttributeDefinitionSelectionConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogCustomAttributeDefinitionSelectionConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogCustomAttributeDefinitionSelectionConfig(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogCustomAttributeDefinitionSelectionConfig) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A named selection for this `SELECTION`-type custom attribute definition.
+type CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection struct {
+	// Unique ID set by Square.
+	Uid *string `json:"uid,omitempty" url:"uid,omitempty"`
+	// Selection name, unique within `allowed_selections`.
+	Name string `json:"name" url:"name"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Defines the visibility of a custom attribute to sellers in Square
+// client applications, Square APIs or in Square UIs (including Square Point
+// of Sale applications and Square Dashboard).
+type CatalogCustomAttributeDefinitionSellerVisibility string
+
+const (
+	CatalogCustomAttributeDefinitionSellerVisibilitySellerVisibilityDoNotUse        CatalogCustomAttributeDefinitionSellerVisibility = "SELLER_VISIBILITY_DO_NOT_USE"
+	CatalogCustomAttributeDefinitionSellerVisibilitySellerVisibilityHidden          CatalogCustomAttributeDefinitionSellerVisibility = "SELLER_VISIBILITY_HIDDEN"
+	CatalogCustomAttributeDefinitionSellerVisibilitySellerVisibilityReadWriteValues CatalogCustomAttributeDefinitionSellerVisibility = "SELLER_VISIBILITY_READ_WRITE_VALUES"
+)
+
+func NewCatalogCustomAttributeDefinitionSellerVisibilityFromString(s string) (CatalogCustomAttributeDefinitionSellerVisibility, error) {
+	switch s {
+	case "SELLER_VISIBILITY_DO_NOT_USE":
+		return CatalogCustomAttributeDefinitionSellerVisibilitySellerVisibilityDoNotUse, nil
+	case "SELLER_VISIBILITY_HIDDEN":
+		return CatalogCustomAttributeDefinitionSellerVisibilitySellerVisibilityHidden, nil
+	case "SELLER_VISIBILITY_READ_WRITE_VALUES":
+		return CatalogCustomAttributeDefinitionSellerVisibilitySellerVisibilityReadWriteValues, nil
+	}
+	var t CatalogCustomAttributeDefinitionSellerVisibility
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogCustomAttributeDefinitionSellerVisibility) Ptr() *CatalogCustomAttributeDefinitionSellerVisibility {
+	return &c
+}
+
+// Configuration associated with Custom Attribute Definitions of type `STRING`.
+type CatalogCustomAttributeDefinitionStringConfig struct {
+	// If true, each Custom Attribute instance associated with this Custom Attribute
+	// Definition must have a unique value within the seller's catalog. For
+	// example, this may be used for a value like a SKU that should not be
+	// duplicated within a seller's catalog. May not be modified after the
+	// definition has been created.
+	EnforceUniqueness *bool `json:"enforce_uniqueness,omitempty" url:"enforce_uniqueness,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogCustomAttributeDefinitionStringConfig) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogCustomAttributeDefinitionStringConfig) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogCustomAttributeDefinitionStringConfig
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogCustomAttributeDefinitionStringConfig(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogCustomAttributeDefinitionStringConfig) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Defines the possible types for a custom attribute.
+type CatalogCustomAttributeDefinitionType string
+
+const (
+	CatalogCustomAttributeDefinitionTypeAttributeTypeDoNotUse CatalogCustomAttributeDefinitionType = "ATTRIBUTE_TYPE_DO_NOT_USE"
+	CatalogCustomAttributeDefinitionTypeString                CatalogCustomAttributeDefinitionType = "STRING"
+	CatalogCustomAttributeDefinitionTypeInteger               CatalogCustomAttributeDefinitionType = "INTEGER"
+	CatalogCustomAttributeDefinitionTypeBoolean               CatalogCustomAttributeDefinitionType = "BOOLEAN"
+	CatalogCustomAttributeDefinitionTypeNumber                CatalogCustomAttributeDefinitionType = "NUMBER"
+	CatalogCustomAttributeDefinitionTypeSelection             CatalogCustomAttributeDefinitionType = "SELECTION"
+	CatalogCustomAttributeDefinitionTypeStringInt             CatalogCustomAttributeDefinitionType = "STRING_INT"
+	CatalogCustomAttributeDefinitionTypeTokenInt              CatalogCustomAttributeDefinitionType = "TOKEN_INT"
+)
+
+func NewCatalogCustomAttributeDefinitionTypeFromString(s string) (CatalogCustomAttributeDefinitionType, error) {
+	switch s {
+	case "ATTRIBUTE_TYPE_DO_NOT_USE":
+		return CatalogCustomAttributeDefinitionTypeAttributeTypeDoNotUse, nil
+	case "STRING":
+		return CatalogCustomAttributeDefinitionTypeString, nil
+	case "INTEGER":
+		return CatalogCustomAttributeDefinitionTypeInteger, nil
+	case "BOOLEAN":
+		return CatalogCustomAttributeDefinitionTypeBoolean, nil
+	case "NUMBER":
+		return CatalogCustomAttributeDefinitionTypeNumber, nil
+	case "SELECTION":
+		return CatalogCustomAttributeDefinitionTypeSelection, nil
+	case "STRING_INT":
+		return CatalogCustomAttributeDefinitionTypeStringInt, nil
+	case "TOKEN_INT":
+		return CatalogCustomAttributeDefinitionTypeTokenInt, nil
+	}
+	var t CatalogCustomAttributeDefinitionType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogCustomAttributeDefinitionType) Ptr() *CatalogCustomAttributeDefinitionType {
+	return &c
+}
+
+// An instance of a custom attribute. Custom attributes can be defined and
+// added to `ITEM` and `ITEM_VARIATION` type catalog objects.
+// [Read more about custom attributes](https://developer.squareup.com/docs/catalog-api/add-custom-attributes).
+type CatalogCustomAttributeValue struct {
+	// The name of the custom attribute.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The string value of the custom attribute. Populated if `type` = `STRING`.
+	StringValue *string `json:"string_value,omitempty" url:"string_value,omitempty"`
+	// The id of the [CatalogCustomAttributeDefinition](entity:CatalogCustomAttributeDefinition) this value belongs to.
+	CustomAttributeDefinitionId *string                               `json:"custom_attribute_definition_id,omitempty" url:"custom_attribute_definition_id,omitempty"`
+	Type                        *CatalogCustomAttributeDefinitionType `json:"type,omitempty" url:"type,omitempty"`
+	// Populated if `type` = `NUMBER`. Contains a string
+	// representation of a decimal number, using a `.` as the decimal separator.
+	NumberValue *string `json:"number_value,omitempty" url:"number_value,omitempty"`
+	// A `true` or `false` value. Populated if `type` = `BOOLEAN`.
+	BooleanValue *bool `json:"boolean_value,omitempty" url:"boolean_value,omitempty"`
+	// One or more choices from `allowed_selections`. Populated if `type` = `SELECTION`.
+	SelectionUidValues []string `json:"selection_uid_values,omitempty" url:"selection_uid_values,omitempty"`
+	// A copy of key from the associated `CatalogCustomAttributeDefinition`.
+	Key *string `json:"key,omitempty" url:"key,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogCustomAttributeValue) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogCustomAttributeValue) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogCustomAttributeValue
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogCustomAttributeValue(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogCustomAttributeValue) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A discount applicable to items.
+type CatalogDiscount struct {
+	// The discount name. This is a searchable attribute for use in applicable query filters, and its value length is of Unicode code points.
+	Name         *string              `json:"name,omitempty" url:"name,omitempty"`
+	DiscountType *CatalogDiscountType `json:"discount_type,omitempty" url:"discount_type,omitempty"`
+	// The percentage of the discount as a string representation of a decimal number, using a `.` as the decimal
+	// separator and without a `%` sign. A value of `7.5` corresponds to `7.5%`. Specify a percentage of `0` if `discount_type`
+	// is `VARIABLE_PERCENTAGE`.
+	//
+	// Do not use this field for amount-based or variable discounts.
+	Percentage  *string `json:"percentage,omitempty" url:"percentage,omitempty"`
+	AmountMoney *Money  `json:"amount_money,omitempty" url:"amount_money,omitempty"`
+	// Indicates whether a mobile staff member needs to enter their PIN to apply the
+	// discount to a payment in the Square Point of Sale app.
+	PinRequired *bool `json:"pin_required,omitempty" url:"pin_required,omitempty"`
+	// The color of the discount display label in the Square Point of Sale app. This must be a valid hex color code.
+	LabelColor         *string                        `json:"label_color,omitempty" url:"label_color,omitempty"`
+	ModifyTaxBasis     *CatalogDiscountModifyTaxBasis `json:"modify_tax_basis,omitempty" url:"modify_tax_basis,omitempty"`
+	MaximumAmountMoney *Money                         `json:"maximum_amount_money,omitempty" url:"maximum_amount_money,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogDiscount) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogDiscount) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogDiscount
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogDiscount(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogDiscount) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+type CatalogDiscountModifyTaxBasis string
+
+const (
+	CatalogDiscountModifyTaxBasisModifyTaxBasis      CatalogDiscountModifyTaxBasis = "MODIFY_TAX_BASIS"
+	CatalogDiscountModifyTaxBasisDoNotModifyTaxBasis CatalogDiscountModifyTaxBasis = "DO_NOT_MODIFY_TAX_BASIS"
+)
+
+func NewCatalogDiscountModifyTaxBasisFromString(s string) (CatalogDiscountModifyTaxBasis, error) {
+	switch s {
+	case "MODIFY_TAX_BASIS":
+		return CatalogDiscountModifyTaxBasisModifyTaxBasis, nil
+	case "DO_NOT_MODIFY_TAX_BASIS":
+		return CatalogDiscountModifyTaxBasisDoNotModifyTaxBasis, nil
+	}
+	var t CatalogDiscountModifyTaxBasis
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogDiscountModifyTaxBasis) Ptr() *CatalogDiscountModifyTaxBasis {
+	return &c
+}
+
+// How to apply a CatalogDiscount to a CatalogItem.
+type CatalogDiscountType string
+
+const (
+	CatalogDiscountTypeFixedPercentage    CatalogDiscountType = "FIXED_PERCENTAGE"
+	CatalogDiscountTypeFixedAmount        CatalogDiscountType = "FIXED_AMOUNT"
+	CatalogDiscountTypeVariablePercentage CatalogDiscountType = "VARIABLE_PERCENTAGE"
+	CatalogDiscountTypeVariableAmount     CatalogDiscountType = "VARIABLE_AMOUNT"
+)
+
+func NewCatalogDiscountTypeFromString(s string) (CatalogDiscountType, error) {
+	switch s {
+	case "FIXED_PERCENTAGE":
+		return CatalogDiscountTypeFixedPercentage, nil
+	case "FIXED_AMOUNT":
+		return CatalogDiscountTypeFixedAmount, nil
+	case "VARIABLE_PERCENTAGE":
+		return CatalogDiscountTypeVariablePercentage, nil
+	case "VARIABLE_AMOUNT":
+		return CatalogDiscountTypeVariableAmount, nil
+	}
+	var t CatalogDiscountType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogDiscountType) Ptr() *CatalogDiscountType {
+	return &c
+}
+
+// A mapping between a temporary client-supplied ID and a permanent server-generated ID.
+//
+// When calling [UpsertCatalogObject](api-endpoint:Catalog-UpsertCatalogObject) or
+// [BatchUpsertCatalogObjects](api-endpoint:Catalog-BatchUpsertCatalogObjects) to
+// create a [CatalogObject](entity:CatalogObject) instance, you can supply
+// a temporary ID for the to-be-created object, especially when the object is to be referenced
+// elsewhere in the same request body. This temporary ID can be any string unique within
+// the call, but must be prefixed by "#".
+//
+// After the request is submitted and the object created, a permanent server-generated ID is assigned
+// to the new object. The permanent ID is unique across the Square catalog.
+type CatalogIdMapping struct {
+	// The client-supplied temporary `#`-prefixed ID for a new `CatalogObject`.
+	ClientObjectId *string `json:"client_object_id,omitempty" url:"client_object_id,omitempty"`
+	// The permanent ID for the CatalogObject created by the server.
+	ObjectId *string `json:"object_id,omitempty" url:"object_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogIdMapping) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogIdMapping) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogIdMapping
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogIdMapping(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogIdMapping) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// An image file to use in Square catalogs. It can be associated with
+// `CatalogItem`, `CatalogItemVariation`, `CatalogCategory`, and `CatalogModifierList` objects.
+// Only the images on items and item variations are exposed in Dashboard.
+// Only the first image on an item is displayed in Square Point of Sale (SPOS).
+// Images on items and variations are displayed through Square Online Store.
+// Images on other object types are for use by 3rd party application developers.
+type CatalogImage struct {
+	// The internal name to identify this image in calls to the Square API.
+	// This is a searchable attribute for use in applicable query filters
+	// using the [SearchCatalogObjects](api-endpoint:Catalog-SearchCatalogObjects).
+	// It is not unique and should not be shown in a buyer facing context.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The URL of this image, generated by Square after an image is uploaded
+	// using the [CreateCatalogImage](api-endpoint:Catalog-CreateCatalogImage) endpoint.
+	// To modify the image, use the UpdateCatalogImage endpoint. Do not change the URL field.
+	Url *string `json:"url,omitempty" url:"url,omitempty"`
+	// A caption that describes what is shown in the image. Displayed in the
+	// Square Online Store. This is a searchable attribute for use in applicable query filters
+	// using the [SearchCatalogObjects](api-endpoint:Catalog-SearchCatalogObjects).
+	Caption *string `json:"caption,omitempty" url:"caption,omitempty"`
+	// The immutable order ID for this image object created by the Photo Studio service in Square Online Store.
+	PhotoStudioOrderId *string `json:"photo_studio_order_id,omitempty" url:"photo_studio_order_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogImage) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogImage) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogImage
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogImage(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogImage) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A [CatalogObject](entity:CatalogObject) instance of the `ITEM` type, also referred to as an item, in the catalog.
+type CatalogItem struct {
+	// The item's name. This is a searchable attribute for use in applicable query filters, its value must not be empty, and the length is of Unicode code points.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The item's description. This is a searchable attribute for use in applicable query filters, and its value length is of Unicode code points.
+	//
+	// Deprecated at 2022-07-20, this field is planned to retire in 6 months. You should migrate to use `description_html` to set the description
+	// of the [CatalogItem](entity:CatalogItem) instance. The `description` and `description_html` field values are kept in sync. If you try to
+	// set the both fields, the `description_html` text value overwrites the `description` value. Updates in one field are also reflected in the other,
+	// except for when you use an early version before Square API 2022-07-20 and `description_html` is set to blank, setting the `description` value to null
+	// does not nullify `description_html`.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The text of the item's display label in the Square Point of Sale app. Only up to the first five characters of the string are used.
+	// This attribute is searchable, and its value length is of Unicode code points.
+	Abbreviation *string `json:"abbreviation,omitempty" url:"abbreviation,omitempty"`
+	// The color of the item's display label in the Square Point of Sale app. This must be a valid hex color code.
+	LabelColor *string `json:"label_color,omitempty" url:"label_color,omitempty"`
+	// If `true`, the item can be added to shipping orders from the merchant's online store.
+	AvailableOnline *bool `json:"available_online,omitempty" url:"available_online,omitempty"`
+	// If `true`, the item can be added to pickup orders from the merchant's online store.
+	AvailableForPickup *bool `json:"available_for_pickup,omitempty" url:"available_for_pickup,omitempty"`
+	// If `true`, the item can be added to electronically fulfilled orders from the merchant's online store.
+	AvailableElectronically *bool `json:"available_electronically,omitempty" url:"available_electronically,omitempty"`
+	// The ID of the item's category, if any.
+	CategoryId *string `json:"category_id,omitempty" url:"category_id,omitempty"`
+	// A set of IDs indicating the taxes enabled for
+	// this item. When updating an item, any taxes listed here will be added to the item.
+	// Taxes may also be added to or deleted from an item using `UpdateItemTaxes`.
+	TaxIds []string `json:"tax_ids,omitempty" url:"tax_ids,omitempty"`
+	// A set of `CatalogItemModifierListInfo` objects
+	// representing the modifier lists that apply to this item, along with the overrides and min
+	// and max limits that are specific to this item. Modifier lists
+	// may also be added to or deleted from an item using `UpdateItemModifierLists`.
+	ModifierListInfo []*CatalogItemModifierListInfo `json:"modifier_list_info,omitempty" url:"modifier_list_info,omitempty"`
+	// **Retired**. The URL of an image representing this item. Retired
+	// in favor of `image_id` in [CatalogObject](entity:CatalogObject).
+	ImageUrl *string `json:"image_url,omitempty" url:"image_url,omitempty"`
+	// A list of [CatalogItemVariation](entity:CatalogItemVariation) objects for this item. An item must have
+	// at least one variation.
+	Variations  []*CatalogObject        `json:"variations,omitempty" url:"variations,omitempty"`
+	ProductType *CatalogItemProductType `json:"product_type,omitempty" url:"product_type,omitempty"`
+	// If `false`, the Square Point of Sale app will present the `CatalogItem`'s
+	// details screen immediately, allowing the merchant to choose `CatalogModifier`s
+	// before adding the item to the cart. This is the default behavior.
+	//
+	// If `true`, the Square Point of Sale app will immediately add the item to the cart with the pre-selected
+	// modifiers, and merchants can edit modifiers by drilling down onto the item's details.
+	//
+	// Third-party clients are encouraged to implement similar behaviors.
+	SkipModifierScreen *bool `json:"skip_modifier_screen,omitempty" url:"skip_modifier_screen,omitempty"`
+	// List of item options IDs for this item. Used to manage and group item
+	// variations in a specified order.
+	//
+	// Maximum: 6 item options.
+	ItemOptions []*CatalogItemOptionForItem `json:"item_options,omitempty" url:"item_options,omitempty"`
+	// hidden field
+	EcomUri *string `json:"ecom_uri,omitempty" url:"ecom_uri,omitempty"`
+	// hidden field
+	EcomImageUris []string `json:"ecom_image_uris,omitempty" url:"ecom_image_uris,omitempty"`
+	// hidden field
+	EcomAvailable *bool `json:"ecom_available,omitempty" url:"ecom_available,omitempty"`
+	// hidden field
+	EcomVisibility *string `json:"ecom_visibility,omitempty" url:"ecom_visibility,omitempty"`
+	// The IDs of images associated with this `CatalogItem` instance.
+	// These images will be shown to customers in Square Online Store.
+	// The first image will show up as the icon for this item in POS.
+	ImageIds []string `json:"image_ids,omitempty" url:"image_ids,omitempty"`
+	// A name to sort the item by. If this name is unspecified, namely, the `sort_name` field is absent, the regular `name` field is used for sorting.
+	//
+	// It is currently supported for sellers of the Japanese locale only.
+	SortName *string `json:"sort_name,omitempty" url:"sort_name,omitempty"`
+	// The item's description as expressed in valid HTML elements. The length of this field value, including those of HTML tags,
+	// is of Unicode points. With application query filters, the text values of the HTML elements and attributes are searchable. Invalid or
+	// unsupported HTML elements or attributes are ignored.
+	//
+	// Supported HTML elements include:
+	//
+	// - `a`: Link. Supports linking to website URLs, email address, and telephone numbers.
+	// - `b`, `strong`: Bold text
+	// - `br`: Line break
+	// - `code`: Computer code
+	// - `div`: Section
+	// - `h1-h6`: Headings
+	// - `i`, `em`: Italics
+	// - `li`: List element
+	// - `ol`: Numbered list
+	// - `p`: Paragraph
+	// - `ul`: Bullet list
+	// - `u`: Underline
+	//
+	// Supported HTML attributes include:
+	//
+	// - `align`: Alignment of the text content
+	// - `href`: Link destination
+	// - `rel`: Relationship between link's target and source
+	// - `target`: Place to open the linked document
+	DescriptionHtml *string `json:"description_html,omitempty" url:"description_html,omitempty"`
+	// A server-generated plaintext version of the `description_html` field, without formatting tags.
+	DescriptionPlaintext *string `json:"description_plaintext,omitempty" url:"description_plaintext,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogItem) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogItem) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Options to control the properties of a `CatalogModifierList` applied to a `CatalogItem` instance.
+type CatalogItemModifierListInfo struct {
+	// The ID of the `CatalogModifierList` controlled by this `CatalogModifierListInfo`.
+	ModifierListId string `json:"modifier_list_id" url:"modifier_list_id"`
+	// A set of `CatalogModifierOverride` objects that override whether a given `CatalogModifier` is enabled by default.
+	ModifierOverrides []*CatalogModifierOverride `json:"modifier_overrides,omitempty" url:"modifier_overrides,omitempty"`
+	// If 0 or larger, the smallest number of `CatalogModifier`s that must be selected from this `CatalogModifierList`.
+	MinSelectedModifiers *int `json:"min_selected_modifiers,omitempty" url:"min_selected_modifiers,omitempty"`
+	// If 0 or larger, the largest number of `CatalogModifier`s that can be selected from this `CatalogModifierList`.
+	MaxSelectedModifiers *int `json:"max_selected_modifiers,omitempty" url:"max_selected_modifiers,omitempty"`
+	// If `true`, enable this `CatalogModifierList`. The default value is `true`.
+	Enabled *bool `json:"enabled,omitempty" url:"enabled,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogItemModifierListInfo) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogItemModifierListInfo) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogItemModifierListInfo
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogItemModifierListInfo(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogItemModifierListInfo) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A group of variations for a `CatalogItem`.
+type CatalogItemOption struct {
+	// The item option's display name for the seller. Must be unique across
+	// all item options. This is a searchable attribute for use in applicable query filters.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The item option's display name for the customer. This is a searchable attribute for use in applicable query filters.
+	DisplayName *string `json:"display_name,omitempty" url:"display_name,omitempty"`
+	// The item option's human-readable description. Displayed in the Square
+	// Point of Sale app for the seller and in the Online Store or on receipts for
+	// the buyer. This is a searchable attribute for use in applicable query filters.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// If true, display colors for entries in `values` when present.
+	ShowColors *bool `json:"show_colors,omitempty" url:"show_colors,omitempty"`
+	// A list of CatalogObjects containing the
+	// `CatalogItemOptionValue`s for this item.
+	Values []*CatalogObject `json:"values,omitempty" url:"values,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogItemOption) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogItemOption) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogItemOption
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogItemOption(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogItemOption) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// An option that can be assigned to an item.
+// For example, a t-shirt item may offer a color option or a size option.
+type CatalogItemOptionForItem struct {
+	// The unique id of the item option, used to form the dimensions of the item option matrix in a specified order.
+	ItemOptionId *string `json:"item_option_id,omitempty" url:"item_option_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogItemOptionForItem) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogItemOptionForItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogItemOptionForItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogItemOptionForItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogItemOptionForItem) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// An enumerated value that can link a
+// `CatalogItemVariation` to an item option as one of
+// its item option values.
+type CatalogItemOptionValue struct {
+	// Unique ID of the associated item option.
+	ItemOptionId *string `json:"item_option_id,omitempty" url:"item_option_id,omitempty"`
+	// Name of this item option value. This is a searchable attribute for use in applicable query filters.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A human-readable description for the option value. This is a searchable attribute for use in applicable query filters.
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// The HTML-supported hex color for the item option (e.g., "#ff8d4e85").
+	// Only displayed if `show_colors` is enabled on the parent `ItemOption`. When
+	// left unset, `color` defaults to white ("#ffffff") when `show_colors` is
+	// enabled on the parent `ItemOption`.
+	Color *string `json:"color,omitempty" url:"color,omitempty"`
+	// Determines where this option value appears in a list of option values.
+	Ordinal *int `json:"ordinal,omitempty" url:"ordinal,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogItemOptionValue) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogItemOptionValue) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogItemOptionValue
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogItemOptionValue(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogItemOptionValue) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A `CatalogItemOptionValue` links an item variation to an item option as
+// an item option value. For example, a t-shirt item may offer a color option and
+// a size option. An item option value would represent each variation of t-shirt:
+// For example, "Color:Red, Size:Small" or "Color:Blue, Size:Medium".
+type CatalogItemOptionValueForItemVariation struct {
+	// The unique id of an item option.
+	ItemOptionId *string `json:"item_option_id,omitempty" url:"item_option_id,omitempty"`
+	// The unique id of the selected value for the item option.
+	ItemOptionValueId *string `json:"item_option_value_id,omitempty" url:"item_option_value_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogItemOptionValueForItemVariation) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogItemOptionValueForItemVariation) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogItemOptionValueForItemVariation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogItemOptionValueForItemVariation(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogItemOptionValueForItemVariation) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// The type of a CatalogItem. Connect V2 only allows the creation of `REGULAR` or `APPOINTMENTS_SERVICE` items.
+type CatalogItemProductType string
+
+const (
+	CatalogItemProductTypeRegular             CatalogItemProductType = "REGULAR"
+	CatalogItemProductTypeGiftCard            CatalogItemProductType = "GIFT_CARD"
+	CatalogItemProductTypeAppointmentsService CatalogItemProductType = "APPOINTMENTS_SERVICE"
+	CatalogItemProductTypeClassTicket         CatalogItemProductType = "CLASS_TICKET"
+)
+
+func NewCatalogItemProductTypeFromString(s string) (CatalogItemProductType, error) {
+	switch s {
+	case "REGULAR":
+		return CatalogItemProductTypeRegular, nil
+	case "GIFT_CARD":
+		return CatalogItemProductTypeGiftCard, nil
+	case "APPOINTMENTS_SERVICE":
+		return CatalogItemProductTypeAppointmentsService, nil
+	case "CLASS_TICKET":
+		return CatalogItemProductTypeClassTicket, nil
+	}
+	var t CatalogItemProductType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogItemProductType) Ptr() *CatalogItemProductType {
+	return &c
+}
+
+// An item variation, representing a product for sale, in the Catalog object model. Each [item](entity:CatalogItem) must have at least one
+// item variation and can have at most 250 item variations.
+//
+// An item variation can be sellable, stockable, or both if it has a unit of measure for its count for the sold number of the variation, the stocked
+// number of the variation, or both. For example, when a variation representing wine is stocked and sold by the bottle, the variation is both
+// stockable and sellable. But when a variation of the wine is sold by the glass, the sold units cannot be used as a measure of the stocked units. This by-the-glass
+// variation is sellable, but not stockable. To accurately keep track of the wine's inventory count at any time, the sellable count must be
+// converted to stockable count. Typically, the seller defines this unit conversion. For example, 1 bottle equals 5 glasses. The Square API exposes
+// the `stockable_conversion` property on the variation to specify the conversion. Thus, when two glasses of the wine are sold, the sellable count
+// decreases by 2, and the stockable count automatically decreases by 0.4 bottle according to the conversion.
+type CatalogItemVariation struct {
+	// The ID of the `CatalogItem` associated with this item variation.
+	ItemId *string `json:"item_id,omitempty" url:"item_id,omitempty"`
+	// The item variation's name. This is a searchable attribute for use in applicable query filters, and its value length is of Unicode code points.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// The item variation's SKU, if any. This is a searchable attribute for use in applicable query filters.
+	Sku *string `json:"sku,omitempty" url:"sku,omitempty"`
+	// The universal product code (UPC) of the item variation, if any. This is a searchable attribute for use in applicable query filters.
+	//
+	// The value of this attribute should be a number of 12-14 digits long. This restriction is enforced on the Square Seller Dashboard,
+	// Square Point of Sale or Retail Point of Sale apps, where this attribute shows in the GTIN field. If a non-compliant UPC value is assigned
+	// to this attribute using the API, the value is not editable on the Seller Dashboard, Square Point of Sale or Retail Point of Sale apps
+	// unless it is updated to fit the expected format.
+	Upc *string `json:"upc,omitempty" url:"upc,omitempty"`
+	// The order in which this item variation should be displayed. This value is read-only. On writes, the ordinal
+	// for each item variation within a parent `CatalogItem` is set according to the item variations's
+	// position. On reads, the value is not guaranteed to be sequential or unique.
+	Ordinal     *int                `json:"ordinal,omitempty" url:"ordinal,omitempty"`
+	PricingType *CatalogPricingType `json:"pricing_type,omitempty" url:"pricing_type,omitempty"`
+	PriceMoney  *Money              `json:"price_money,omitempty" url:"price_money,omitempty"`
+	// Per-location price and inventory overrides.
+	LocationOverrides []*ItemVariationLocationOverrides `json:"location_overrides,omitempty" url:"location_overrides,omitempty"`
+	// If `true`, inventory tracking is active for the variation.
+	TrackInventory     *bool               `json:"track_inventory,omitempty" url:"track_inventory,omitempty"`
+	InventoryAlertType *InventoryAlertType `json:"inventory_alert_type,omitempty" url:"inventory_alert_type,omitempty"`
+	// If the inventory quantity for the variation is less than or equal to this value and `inventory_alert_type`
+	// is `LOW_QUANTITY`, the variation displays an alert in the merchant dashboard.
+	//
+	// This value is always an integer.
+	InventoryAlertThreshold *int64 `json:"inventory_alert_threshold,omitempty" url:"inventory_alert_threshold,omitempty"`
+	// Arbitrary user metadata to associate with the item variation. This attribute value length is of Unicode code points.
+	UserData *string `json:"user_data,omitempty" url:"user_data,omitempty"`
+	// If the `CatalogItem` that owns this item variation is of type
+	// `APPOINTMENTS_SERVICE`, then this is the duration of the service in milliseconds. For
+	// example, a 30 minute appointment would have the value `1800000`, which is equal to
+	// 30 (minutes) _ 60 (seconds per minute) _ 1000 (milliseconds per second).
+	ServiceDuration *int64 `json:"service_duration,omitempty" url:"service_duration,omitempty"`
+	// If the `CatalogItem` that owns this item variation is of type
+	// `APPOINTMENTS_SERVICE`, a bool representing whether this service is available for booking.
+	AvailableForBooking *bool `json:"available_for_booking,omitempty" url:"available_for_booking,omitempty"`
+	// List of item option values associated with this item variation. Listed
+	// in the same order as the item options of the parent item.
+	ItemOptionValues []*CatalogItemOptionValueForItemVariation `json:"item_option_values,omitempty" url:"item_option_values,omitempty"`
+	// ID of the ‘CatalogMeasurementUnit’ that is used to measure the quantity
+	// sold of this item variation. If left unset, the item will be sold in
+	// whole quantities.
+	MeasurementUnitId *string `json:"measurement_unit_id,omitempty" url:"measurement_unit_id,omitempty"`
+	// Whether this variation can be sold. The inventory count of a sellable variation indicates
+	// the number of units available for sale. When a variation is both stockable and sellable,
+	// its sellable inventory count can be smaller than or equal to its stockable count.
+	Sellable *bool `json:"sellable,omitempty" url:"sellable,omitempty"`
+	// Whether stock is counted directly on this variation (TRUE) or only on its components (FALSE).
+	// When a variation is both stockable and sellable, the inventory count of a stockable variation keeps track of the number of units of this variation in stock
+	// and is not an indicator of the number of units of the variation that can be sold.
+	Stockable *bool `json:"stockable,omitempty" url:"stockable,omitempty"`
+	// The IDs of images associated with this `CatalogItemVariation` instance.
+	// These images will be shown to customers in Square Online Store.
+	ImageIds []string `json:"image_ids,omitempty" url:"image_ids,omitempty"`
+	// Tokens of employees that can perform the service represented by this variation. Only valid for
+	// variations of type `APPOINTMENTS_SERVICE`.
+	TeamMemberIds       []string                `json:"team_member_ids,omitempty" url:"team_member_ids,omitempty"`
+	StockableConversion *CatalogStockConversion `json:"stockable_conversion,omitempty" url:"stockable_conversion,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogItemVariation) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogItemVariation) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogItemVariation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogItemVariation(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogItemVariation) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Represents the unit used to measure a `CatalogItemVariation` and
+// specifies the precision for decimal quantities.
+type CatalogMeasurementUnit struct {
+	MeasurementUnit *MeasurementUnit `json:"measurement_unit,omitempty" url:"measurement_unit,omitempty"`
+	// An integer between 0 and 5 that represents the maximum number of
+	// positions allowed after the decimal in quantities measured with this unit.
+	// For example:
+	//
+	// - if the precision is 0, the quantity can be 1, 2, 3, etc.
+	// - if the precision is 1, the quantity can be 0.1, 0.2, etc.
+	// - if the precision is 2, the quantity can be 0.01, 0.12, etc.
+	//
+	// Default: 3
+	Precision *int `json:"precision,omitempty" url:"precision,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogMeasurementUnit) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogMeasurementUnit) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogMeasurementUnit
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogMeasurementUnit(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogMeasurementUnit) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A modifier applicable to items at the time of sale.
+type CatalogModifier struct {
+	// The modifier name. This is a searchable attribute for use in applicable query filters, and its value length is of Unicode code points.
+	Name       *string `json:"name,omitempty" url:"name,omitempty"`
+	PriceMoney *Money  `json:"price_money,omitempty" url:"price_money,omitempty"`
+	// Determines where this `CatalogModifier` appears in the `CatalogModifierList`.
+	Ordinal *int `json:"ordinal,omitempty" url:"ordinal,omitempty"`
+	// The ID of the `CatalogModifierList` associated with this modifier.
+	ModifierListId *string `json:"modifier_list_id,omitempty" url:"modifier_list_id,omitempty"`
+	// The IDs of images associated with this `CatalogModifier` instance.
+	// Currently these images are not displayed by Square, but are free to be displayed in 3rd party applications.
+	ImageIds []string `json:"image_ids,omitempty" url:"image_ids,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogModifier) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogModifier) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogModifier
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogModifier(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogModifier) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A list of modifiers applicable to items at the time of sale.
+//
+// For example, a "Condiments" modifier list applicable to a "Hot Dog" item
+// may contain "Ketchup", "Mustard", and "Relish" modifiers.
+// Use the `selection_type` field to specify whether or not multiple selections from
+// the modifier list are allowed.
+type CatalogModifierList struct {
+	// The name for the `CatalogModifierList` instance. This is a searchable attribute for use in applicable query filters, and its value length is of Unicode code points.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Determines where this modifier list appears in a list of `CatalogModifierList` values.
+	Ordinal       *int                              `json:"ordinal,omitempty" url:"ordinal,omitempty"`
+	SelectionType *CatalogModifierListSelectionType `json:"selection_type,omitempty" url:"selection_type,omitempty"`
+	// The options included in the `CatalogModifierList`.
+	// You must include at least one `CatalogModifier`.
+	// Each CatalogObject must have type `MODIFIER` and contain
+	// `CatalogModifier` data.
+	Modifiers []*CatalogObject `json:"modifiers,omitempty" url:"modifiers,omitempty"`
+	// The IDs of images associated with this `CatalogModifierList` instance.
+	// Currently these images are not displayed by Square, but are free to be displayed in 3rd party applications.
+	ImageIds []string `json:"image_ids,omitempty" url:"image_ids,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogModifierList) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogModifierList) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogModifierList
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogModifierList(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogModifierList) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Indicates whether a CatalogModifierList supports multiple selections.
+type CatalogModifierListSelectionType string
+
+const (
+	CatalogModifierListSelectionTypeSingle   CatalogModifierListSelectionType = "SINGLE"
+	CatalogModifierListSelectionTypeMultiple CatalogModifierListSelectionType = "MULTIPLE"
+)
+
+func NewCatalogModifierListSelectionTypeFromString(s string) (CatalogModifierListSelectionType, error) {
+	switch s {
+	case "SINGLE":
+		return CatalogModifierListSelectionTypeSingle, nil
+	case "MULTIPLE":
+		return CatalogModifierListSelectionTypeMultiple, nil
+	}
+	var t CatalogModifierListSelectionType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogModifierListSelectionType) Ptr() *CatalogModifierListSelectionType {
+	return &c
+}
+
+// Options to control how to override the default behavior of the specified modifier.
+type CatalogModifierOverride struct {
+	// The ID of the `CatalogModifier` whose default behavior is being overridden.
+	ModifierId string `json:"modifier_id" url:"modifier_id"`
+	// If `true`, this `CatalogModifier` should be selected by default for this `CatalogItem`.
+	OnByDefault *bool `json:"on_by_default,omitempty" url:"on_by_default,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogModifierOverride) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogModifierOverride) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogModifierOverride
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogModifierOverride(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogModifierOverride) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// The wrapper object for the catalog entries of a given object type.
+//
+// Depending on the `type` attribute value, a `CatalogObject` instance assumes a type-specific data to yield the corresponding type of catalog object.
+//
+// For example, if `type=ITEM`, the `CatalogObject` instance must have the ITEM-specific data set on the `item_data` attribute. The resulting `CatalogObject` instance is also a `CatalogItem` instance.
+//
+// In general, if `type=<OBJECT_TYPE>`, the `CatalogObject` instance must have the `<OBJECT_TYPE>`-specific data set on the `<object_type>_data` attribute. The resulting `CatalogObject` instance is also a `Catalog<ObjectType>` instance.
+//
+// For a more detailed discussion of the Catalog data model, please see the
+// [Design a Catalog](https://developer.squareup.com/docs/catalog-api/design-a-catalog) guide.
+type CatalogObject struct {
+	Type CatalogObjectType `json:"type" url:"type"`
+	// An identifier to reference this object in the catalog. When a new `CatalogObject`
+	// is inserted, the client should set the id to a temporary identifier starting with
+	// a "`#`" character. Other objects being inserted or updated within the same request
+	// may use this identifier to refer to the new object.
+	//
+	// When the server receives the new object, it will supply a unique identifier that
+	// replaces the temporary identifier for all future references.
+	Id string `json:"id" url:"id"`
+	// Last modification [timestamp](https://developer.squareup.com/docs/build-basics/working-with-dates) in RFC 3339 format, e.g., `"2016-08-15T23:59:33.123Z"`
+	// would indicate the UTC time (denoted by `Z`) of August 15, 2016 at 23:59:33 and 123 milliseconds.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// The version of the object. When updating an object, the version supplied
+	// must match the version in the database, otherwise the write will be rejected as conflicting.
+	Version *int64 `json:"version,omitempty" url:"version,omitempty"`
+	// If `true`, the object has been deleted from the database. Must be `false` for new objects
+	// being inserted. When deleted, the `updated_at` field will equal the deletion time.
+	IsDeleted *bool `json:"is_deleted,omitempty" url:"is_deleted,omitempty"`
+	// A map (key-value pairs) of application-defined custom attribute values. The value of a key-value pair
+	// is a [CatalogCustomAttributeValue](entity:CatalogCustomAttributeValue) object. The key is the `key` attribute
+	// value defined in the associated [CatalogCustomAttributeDefinition](entity:CatalogCustomAttributeDefinition)
+	// object defined by the application making the request.
+	//
+	// If the `CatalogCustomAttributeDefinition` object is
+	// defined by another application, the `CatalogCustomAttributeDefinition`'s key attribute value is prefixed by
+	// the defining application ID. For example, if the `CatalogCustomAttributeDefinition` has a `key` attribute of
+	// `"cocoa_brand"` and the defining application ID is `"abcd1234"`, the key in the map is `"abcd1234:cocoa_brand"`
+	// if the application making the request is different from the application defining the custom attribute definition.
+	// Otherwise, the key used in the map is simply `"cocoa_brand"`.
+	//
+	// Application-defined custom attributes are set at a global (location-independent) level.
+	// Custom attribute values are intended to store additional information about a catalog object
+	// or associations with an entity in another system. Do not use custom attributes
+	// to store any sensitive information (personally identifiable information, card details, etc.).
+	CustomAttributeValues map[string]*CatalogCustomAttributeValue `json:"custom_attribute_values,omitempty" url:"custom_attribute_values,omitempty"`
+	// The Connect v1 IDs for this object at each location where it is present, where they
+	// differ from the object's Connect V2 ID. The field will only be present for objects that
+	// have been created or modified by legacy APIs.
+	CatalogV1Ids []*CatalogV1Id `json:"catalog_v1_ids,omitempty" url:"catalog_v1_ids,omitempty"`
+	// If `true`, this object is present at all locations (including future locations), except where specified in
+	// the `absent_at_location_ids` field. If `false`, this object is not present at any locations (including future locations),
+	// except where specified in the `present_at_location_ids` field. If not specified, defaults to `true`.
+	PresentAtAllLocations *bool `json:"present_at_all_locations,omitempty" url:"present_at_all_locations,omitempty"`
+	// A list of locations where the object is present, even if `present_at_all_locations` is `false`.
+	// This can include locations that are deactivated.
+	PresentAtLocationIds []string `json:"present_at_location_ids,omitempty" url:"present_at_location_ids,omitempty"`
+	// A list of locations where the object is not present, even if `present_at_all_locations` is `true`.
+	// This can include locations that are deactivated.
+	AbsentAtLocationIds []string `json:"absent_at_location_ids,omitempty" url:"absent_at_location_ids,omitempty"`
+	// Identifies the `CatalogImage` attached to this `CatalogObject`.
+	ImageId                       *string                           `json:"image_id,omitempty" url:"image_id,omitempty"`
+	ItemData                      *CatalogItem                      `json:"item_data,omitempty" url:"item_data,omitempty"`
+	CategoryData                  *CatalogCategory                  `json:"category_data,omitempty" url:"category_data,omitempty"`
+	ItemVariationData             *CatalogItemVariation             `json:"item_variation_data,omitempty" url:"item_variation_data,omitempty"`
+	TaxData                       *CatalogTax                       `json:"tax_data,omitempty" url:"tax_data,omitempty"`
+	DiscountData                  *CatalogDiscount                  `json:"discount_data,omitempty" url:"discount_data,omitempty"`
+	ModifierListData              *CatalogModifierList              `json:"modifier_list_data,omitempty" url:"modifier_list_data,omitempty"`
+	ModifierData                  *CatalogModifier                  `json:"modifier_data,omitempty" url:"modifier_data,omitempty"`
+	TimePeriodData                *CatalogTimePeriod                `json:"time_period_data,omitempty" url:"time_period_data,omitempty"`
+	ProductSetData                *CatalogProductSet                `json:"product_set_data,omitempty" url:"product_set_data,omitempty"`
+	PricingRuleData               *CatalogPricingRule               `json:"pricing_rule_data,omitempty" url:"pricing_rule_data,omitempty"`
+	ImageData                     *CatalogImage                     `json:"image_data,omitempty" url:"image_data,omitempty"`
+	MeasurementUnitData           *CatalogMeasurementUnit           `json:"measurement_unit_data,omitempty" url:"measurement_unit_data,omitempty"`
+	SubscriptionPlanData          *CatalogSubscriptionPlan          `json:"subscription_plan_data,omitempty" url:"subscription_plan_data,omitempty"`
+	ItemOptionData                *CatalogItemOption                `json:"item_option_data,omitempty" url:"item_option_data,omitempty"`
+	ItemOptionValueData           *CatalogItemOptionValue           `json:"item_option_value_data,omitempty" url:"item_option_value_data,omitempty"`
+	CustomAttributeDefinitionData *CatalogCustomAttributeDefinition `json:"custom_attribute_definition_data,omitempty" url:"custom_attribute_definition_data,omitempty"`
+	QuickAmountsSettingsData      *CatalogQuickAmountsSettings      `json:"quick_amounts_settings_data,omitempty" url:"quick_amounts_settings_data,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogObject) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogObject(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogObject) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Possible types of CatalogObjects returned from the catalog, each
+// containing type-specific properties in the `*_data` field corresponding to the specfied object type.
+type CatalogObjectType string
+
+const (
+	CatalogObjectTypeCatalogObjectTypeDoNotUse CatalogObjectType = "CATALOG_OBJECT_TYPE_DO_NOT_USE"
+	CatalogObjectTypeItem                      CatalogObjectType = "ITEM"
+	CatalogObjectTypeImage                     CatalogObjectType = "IMAGE"
+	CatalogObjectTypeCategory                  CatalogObjectType = "CATEGORY"
+	CatalogObjectTypeItemVariation             CatalogObjectType = "ITEM_VARIATION"
+	CatalogObjectTypeTax                       CatalogObjectType = "TAX"
+	CatalogObjectTypeDiscount                  CatalogObjectType = "DISCOUNT"
+	CatalogObjectTypeModifierList              CatalogObjectType = "MODIFIER_LIST"
+	CatalogObjectTypeModifier                  CatalogObjectType = "MODIFIER"
+	CatalogObjectTypeDiningOption              CatalogObjectType = "DINING_OPTION"
+	CatalogObjectTypeTaxExemption              CatalogObjectType = "TAX_EXEMPTION"
+	CatalogObjectTypeServiceCharge             CatalogObjectType = "SERVICE_CHARGE"
+	CatalogObjectTypePricingRule               CatalogObjectType = "PRICING_RULE"
+	CatalogObjectTypeProductSet                CatalogObjectType = "PRODUCT_SET"
+	CatalogObjectTypeTimePeriod                CatalogObjectType = "TIME_PERIOD"
+	CatalogObjectTypeMeasurementUnit           CatalogObjectType = "MEASUREMENT_UNIT"
+	CatalogObjectTypeSubscriptionPlan          CatalogObjectType = "SUBSCRIPTION_PLAN"
+	CatalogObjectTypeItemOption                CatalogObjectType = "ITEM_OPTION"
+	CatalogObjectTypeItemOptionVal             CatalogObjectType = "ITEM_OPTION_VAL"
+	CatalogObjectTypeCustomAttributeDefinition CatalogObjectType = "CUSTOM_ATTRIBUTE_DEFINITION"
+	CatalogObjectTypeQuickAmountsSettings      CatalogObjectType = "QUICK_AMOUNTS_SETTINGS"
+	CatalogObjectTypeComponent                 CatalogObjectType = "COMPONENT"
+	CatalogObjectTypeComposition               CatalogObjectType = "COMPOSITION"
+	CatalogObjectTypeResource                  CatalogObjectType = "RESOURCE"
+	CatalogObjectTypeCheckoutLink              CatalogObjectType = "CHECKOUT_LINK"
+	CatalogObjectTypeAddress                   CatalogObjectType = "ADDRESS"
+	CatalogObjectTypeSubscriptionProduct       CatalogObjectType = "SUBSCRIPTION_PRODUCT"
+)
+
+func NewCatalogObjectTypeFromString(s string) (CatalogObjectType, error) {
+	switch s {
+	case "CATALOG_OBJECT_TYPE_DO_NOT_USE":
+		return CatalogObjectTypeCatalogObjectTypeDoNotUse, nil
+	case "ITEM":
+		return CatalogObjectTypeItem, nil
+	case "IMAGE":
+		return CatalogObjectTypeImage, nil
+	case "CATEGORY":
+		return CatalogObjectTypeCategory, nil
+	case "ITEM_VARIATION":
+		return CatalogObjectTypeItemVariation, nil
+	case "TAX":
+		return CatalogObjectTypeTax, nil
+	case "DISCOUNT":
+		return CatalogObjectTypeDiscount, nil
+	case "MODIFIER_LIST":
+		return CatalogObjectTypeModifierList, nil
+	case "MODIFIER":
+		return CatalogObjectTypeModifier, nil
+	case "DINING_OPTION":
+		return CatalogObjectTypeDiningOption, nil
+	case "TAX_EXEMPTION":
+		return CatalogObjectTypeTaxExemption, nil
+	case "SERVICE_CHARGE":
+		return CatalogObjectTypeServiceCharge, nil
+	case "PRICING_RULE":
+		return CatalogObjectTypePricingRule, nil
+	case "PRODUCT_SET":
+		return CatalogObjectTypeProductSet, nil
+	case "TIME_PERIOD":
+		return CatalogObjectTypeTimePeriod, nil
+	case "MEASUREMENT_UNIT":
+		return CatalogObjectTypeMeasurementUnit, nil
+	case "SUBSCRIPTION_PLAN":
+		return CatalogObjectTypeSubscriptionPlan, nil
+	case "ITEM_OPTION":
+		return CatalogObjectTypeItemOption, nil
+	case "ITEM_OPTION_VAL":
+		return CatalogObjectTypeItemOptionVal, nil
+	case "CUSTOM_ATTRIBUTE_DEFINITION":
+		return CatalogObjectTypeCustomAttributeDefinition, nil
+	case "QUICK_AMOUNTS_SETTINGS":
+		return CatalogObjectTypeQuickAmountsSettings, nil
+	case "COMPONENT":
+		return CatalogObjectTypeComponent, nil
+	case "COMPOSITION":
+		return CatalogObjectTypeComposition, nil
+	case "RESOURCE":
+		return CatalogObjectTypeResource, nil
+	case "CHECKOUT_LINK":
+		return CatalogObjectTypeCheckoutLink, nil
+	case "ADDRESS":
+		return CatalogObjectTypeAddress, nil
+	case "SUBSCRIPTION_PRODUCT":
+		return CatalogObjectTypeSubscriptionProduct, nil
+	}
+	var t CatalogObjectType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogObjectType) Ptr() *CatalogObjectType {
+	return &c
+}
+
+// Defines how discounts are automatically applied to a set of items that match the pricing rule
+// during the active time period.
+type CatalogPricingRule struct {
+	// User-defined name for the pricing rule. For example, "Buy one get one
+	// free" or "10% off".
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// A list of unique IDs for the catalog time periods when
+	// this pricing rule is in effect. If left unset, the pricing rule is always
+	// in effect.
+	TimePeriodIds []string `json:"time_period_ids,omitempty" url:"time_period_ids,omitempty"`
+	// Unique ID for the `CatalogDiscount` to take off
+	// the price of all matched items.
+	DiscountId *string `json:"discount_id,omitempty" url:"discount_id,omitempty"`
+	// Unique ID for the `CatalogProductSet` that will be matched by this rule. A match rule
+	// matches within the entire cart, and can match multiple times. This field will always be set.
+	MatchProductsId *string `json:"match_products_id,omitempty" url:"match_products_id,omitempty"`
+	// **Deprecated**: Please use the `exclude_products_id` field to apply
+	// an exclude set instead. Exclude sets allow better control over quantity
+	// ranges and offer more flexibility for which matched items receive a discount.
+	//
+	// `CatalogProductSet` to apply the pricing to.
+	// An apply rule matches within the subset of the cart that fits the match rules (the match set).
+	// An apply rule can only match once in the match set.
+	// If not supplied, the pricing will be applied to all products in the match set.
+	// Other products retain their base price, or a price generated by other rules.
+	ApplyProductsId *string `json:"apply_products_id,omitempty" url:"apply_products_id,omitempty"`
+	// `CatalogProductSet` to exclude from the pricing rule.
+	// An exclude rule matches within the subset of the cart that fits the match rules (the match set).
+	// An exclude rule can only match once in the match set.
+	// If not supplied, the pricing will be applied to all products in the match set.
+	// Other products retain their base price, or a price generated by other rules.
+	ExcludeProductsId *string `json:"exclude_products_id,omitempty" url:"exclude_products_id,omitempty"`
+	// Represents the date the Pricing Rule is valid from. Represented in RFC 3339 full-date format (YYYY-MM-DD).
+	ValidFromDate *string `json:"valid_from_date,omitempty" url:"valid_from_date,omitempty"`
+	// Represents the local time the pricing rule should be valid from. Represented in RFC 3339 partial-time format
+	// (HH:MM:SS). Partial seconds will be truncated.
+	ValidFromLocalTime *string `json:"valid_from_local_time,omitempty" url:"valid_from_local_time,omitempty"`
+	// Represents the date the Pricing Rule is valid until. Represented in RFC 3339 full-date format (YYYY-MM-DD).
+	ValidUntilDate *string `json:"valid_until_date,omitempty" url:"valid_until_date,omitempty"`
+	// Represents the local time the pricing rule should be valid until. Represented in RFC 3339 partial-time format
+	// (HH:MM:SS). Partial seconds will be truncated.
+	ValidUntilLocalTime       *string          `json:"valid_until_local_time,omitempty" url:"valid_until_local_time,omitempty"`
+	ExcludeStrategy           *ExcludeStrategy `json:"exclude_strategy,omitempty" url:"exclude_strategy,omitempty"`
+	MinimumOrderSubtotalMoney *Money           `json:"minimum_order_subtotal_money,omitempty" url:"minimum_order_subtotal_money,omitempty"`
+	// A list of IDs of customer groups, the members of which are eligible for discounts specified in this pricing rule.
+	// Notice that a group ID is generated by the Customers API.
+	// If this field is not set, the specified discount applies to matched products sold to anyone whether the buyer
+	// has a customer profile created or not. If this `customer_group_ids_any` field is set, the specified discount
+	// applies only to matched products sold to customers belonging to the specified customer groups.
+	CustomerGroupIdsAny []string `json:"customer_group_ids_any,omitempty" url:"customer_group_ids_any,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogPricingRule) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogPricingRule) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogPricingRule
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogPricingRule(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogPricingRule) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Indicates whether the price of a CatalogItemVariation should be entered manually at the time of sale.
+type CatalogPricingType string
+
+const (
+	CatalogPricingTypeFixedPricing    CatalogPricingType = "FIXED_PRICING"
+	CatalogPricingTypeVariablePricing CatalogPricingType = "VARIABLE_PRICING"
+)
+
+func NewCatalogPricingTypeFromString(s string) (CatalogPricingType, error) {
+	switch s {
+	case "FIXED_PRICING":
+		return CatalogPricingTypeFixedPricing, nil
+	case "VARIABLE_PRICING":
+		return CatalogPricingTypeVariablePricing, nil
+	}
+	var t CatalogPricingType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogPricingType) Ptr() *CatalogPricingType {
+	return &c
+}
+
+// Represents a collection of catalog objects for the purpose of applying a
+// `PricingRule`. Including a catalog object will include all of its subtypes.
+// For example, including a category in a product set will include all of its
+// items and associated item variations in the product set. Including an item in
+// a product set will also include its item variations.
+type CatalogProductSet struct {
+	// User-defined name for the product set. For example, "Clearance Items"
+	// or "Winter Sale Items".
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Unique IDs for any `CatalogObject` included in this product set. Any
+	// number of these catalog objects can be in an order for a pricing rule to apply.
+	//
+	// This can be used with `product_ids_all` in a parent `CatalogProductSet` to
+	// match groups of products for a bulk discount, such as a discount for an
+	// entree and side combo.
+	//
+	// Only one of `product_ids_all`, `product_ids_any`, or `all_products` can be set.
+	//
+	// Max: 500 catalog object IDs.
+	ProductIdsAny []string `json:"product_ids_any,omitempty" url:"product_ids_any,omitempty"`
+	// Unique IDs for any `CatalogObject` included in this product set.
+	// All objects in this set must be included in an order for a pricing rule to apply.
+	//
+	// Only one of `product_ids_all`, `product_ids_any`, or `all_products` can be set.
+	//
+	// Max: 500 catalog object IDs.
+	ProductIdsAll []string `json:"product_ids_all,omitempty" url:"product_ids_all,omitempty"`
+	// If set, there must be exactly this many items from `products_any` or `products_all`
+	// in the cart for the discount to apply.
+	//
+	// Cannot be combined with either `quantity_min` or `quantity_max`.
+	QuantityExact *int64 `json:"quantity_exact,omitempty" url:"quantity_exact,omitempty"`
+	// If set, there must be at least this many items from `products_any` or `products_all`
+	// in a cart for the discount to apply. See `quantity_exact`. Defaults to 0 if
+	// `quantity_exact`, `quantity_min` and `quantity_max` are all unspecified.
+	QuantityMin *int64 `json:"quantity_min,omitempty" url:"quantity_min,omitempty"`
+	// If set, the pricing rule will apply to a maximum of this many items from
+	// `products_any` or `products_all`.
+	QuantityMax *int64 `json:"quantity_max,omitempty" url:"quantity_max,omitempty"`
+	// If set to `true`, the product set will include every item in the catalog.
+	// Only one of `product_ids_all`, `product_ids_any`, or `all_products` can be set.
+	AllProducts *bool `json:"all_products,omitempty" url:"all_products,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogProductSet) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogProductSet) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogProductSet
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogProductSet(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogProductSet) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Represents a Quick Amount in the Catalog.
+type CatalogQuickAmount struct {
+	Type   CatalogQuickAmountType `json:"type" url:"type"`
+	Amount *Money                 `json:"amount,omitempty" url:"amount,omitempty"`
+	// Describes the ranking of the Quick Amount provided by machine learning model, in the range [0, 100].
+	// MANUAL type amount will always have score = 100.
+	Score *int64 `json:"score,omitempty" url:"score,omitempty"`
+	// The order in which this Quick Amount should be displayed.
+	Ordinal *int64 `json:"ordinal,omitempty" url:"ordinal,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogQuickAmount) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogQuickAmount) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogQuickAmount
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogQuickAmount(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogQuickAmount) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Determines the type of a specific Quick Amount.
+type CatalogQuickAmountType string
+
+const (
+	CatalogQuickAmountTypeQuickAmountTypeDoNotUse CatalogQuickAmountType = "QUICK_AMOUNT_TYPE_DO_NOT_USE"
+	CatalogQuickAmountTypeQuickAmountTypeManual   CatalogQuickAmountType = "QUICK_AMOUNT_TYPE_MANUAL"
+	CatalogQuickAmountTypeQuickAmountTypeAuto     CatalogQuickAmountType = "QUICK_AMOUNT_TYPE_AUTO"
+)
+
+func NewCatalogQuickAmountTypeFromString(s string) (CatalogQuickAmountType, error) {
+	switch s {
+	case "QUICK_AMOUNT_TYPE_DO_NOT_USE":
+		return CatalogQuickAmountTypeQuickAmountTypeDoNotUse, nil
+	case "QUICK_AMOUNT_TYPE_MANUAL":
+		return CatalogQuickAmountTypeQuickAmountTypeManual, nil
+	case "QUICK_AMOUNT_TYPE_AUTO":
+		return CatalogQuickAmountTypeQuickAmountTypeAuto, nil
+	}
+	var t CatalogQuickAmountType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogQuickAmountType) Ptr() *CatalogQuickAmountType {
+	return &c
+}
+
+// A parent Catalog Object model represents a set of Quick Amounts and the settings control the amounts.
+type CatalogQuickAmountsSettings struct {
+	Option CatalogQuickAmountsSettingsOption `json:"option" url:"option"`
+	// Represents location's eligibility for auto amounts
+	// The boolean should be consistent with whether there are AUTO amounts in the `amounts`.
+	EligibleForAutoAmounts *bool `json:"eligible_for_auto_amounts,omitempty" url:"eligible_for_auto_amounts,omitempty"`
+	// Represents a set of Quick Amounts at this location.
+	Amounts []*CatalogQuickAmount `json:"amounts,omitempty" url:"amounts,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogQuickAmountsSettings) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogQuickAmountsSettings) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogQuickAmountsSettings
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogQuickAmountsSettings(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogQuickAmountsSettings) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Determines a seller's option on Quick Amounts feature.
+type CatalogQuickAmountsSettingsOption string
+
+const (
+	CatalogQuickAmountsSettingsOptionQuickAmountsSettingsOptionDoNotUse CatalogQuickAmountsSettingsOption = "QUICK_AMOUNTS_SETTINGS_OPTION_DO_NOT_USE"
+	CatalogQuickAmountsSettingsOptionDisabled                           CatalogQuickAmountsSettingsOption = "DISABLED"
+	CatalogQuickAmountsSettingsOptionManual                             CatalogQuickAmountsSettingsOption = "MANUAL"
+	CatalogQuickAmountsSettingsOptionAuto                               CatalogQuickAmountsSettingsOption = "AUTO"
+)
+
+func NewCatalogQuickAmountsSettingsOptionFromString(s string) (CatalogQuickAmountsSettingsOption, error) {
+	switch s {
+	case "QUICK_AMOUNTS_SETTINGS_OPTION_DO_NOT_USE":
+		return CatalogQuickAmountsSettingsOptionQuickAmountsSettingsOptionDoNotUse, nil
+	case "DISABLED":
+		return CatalogQuickAmountsSettingsOptionDisabled, nil
+	case "MANUAL":
+		return CatalogQuickAmountsSettingsOptionManual, nil
+	case "AUTO":
+		return CatalogQuickAmountsSettingsOptionAuto, nil
+	}
+	var t CatalogQuickAmountsSettingsOption
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CatalogQuickAmountsSettingsOption) Ptr() *CatalogQuickAmountsSettingsOption {
+	return &c
+}
+
+// Represents the rule of conversion between a stockable [CatalogItemVariation](entity:CatalogItemVariation)
+// and a non-stockable sell-by or receive-by `CatalogItemVariation` that
+// share the same underlying stock.
+type CatalogStockConversion struct {
+	// References to the stockable [CatalogItemVariation](entity:CatalogItemVariation)
+	// for this stock conversion. Selling, receiving or recounting the non-stockable `CatalogItemVariation`
+	// defined with a stock conversion results in adjustments of this stockable `CatalogItemVariation`.
+	// This immutable field must reference a stockable `CatalogItemVariation`
+	// that shares the parent [CatalogItem](entity:CatalogItem) of the converted `CatalogItemVariation.`
+	StockableItemVariationId string `json:"stockable_item_variation_id" url:"stockable_item_variation_id"`
+	// The quantity of the stockable item variation (as identified by `stockable_item_variation_id`)
+	// equivalent to the non-stockable item variation quantity (as specified in `nonstockable_quantity`)
+	// as defined by this stock conversion. It accepts a decimal number in a string format that can take
+	// up to 10 digits before the decimal point and up to 5 digits after the decimal point.
+	StockableQuantity string `json:"stockable_quantity" url:"stockable_quantity"`
+	// The converted equivalent quantity of the non-stockable [CatalogItemVariation](entity:CatalogItemVariation)
+	// in its measurement unit. The `stockable_quantity` value and this `nonstockable_quantity` value together
+	// define the conversion ratio between stockable item variation and the non-stockable item variation.
+	// It accepts a decimal number in a string format that can take up to 10 digits before the decimal point
+	// and up to 5 digits after the decimal point.
+	NonstockableQuantity string `json:"nonstockable_quantity" url:"nonstockable_quantity"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogStockConversion) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogStockConversion) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogStockConversion
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogStockConversion(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogStockConversion) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Describes a subscription plan. For more information, see
+// [Set Up and Manage a Subscription Plan](https://developer.squareup.com/docs/subscriptions-api/setup-plan).
+type CatalogSubscriptionPlan struct {
+	// The name of the plan.
+	Name string `json:"name" url:"name"`
+	// A list of SubscriptionPhase containing the [SubscriptionPhase](entity:SubscriptionPhase) for this plan.
+	Phases []*SubscriptionPhase `json:"phases,omitempty" url:"phases,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogSubscriptionPlan) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogSubscriptionPlan) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogSubscriptionPlan
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogSubscriptionPlan(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogSubscriptionPlan) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A tax applicable to an item.
+type CatalogTax struct {
+	// The tax's name. This is a searchable attribute for use in applicable query filters, and its value length is of Unicode code points.
+	Name             *string              `json:"name,omitempty" url:"name,omitempty"`
+	CalculationPhase *TaxCalculationPhase `json:"calculation_phase,omitempty" url:"calculation_phase,omitempty"`
+	InclusionType    *TaxInclusionType    `json:"inclusion_type,omitempty" url:"inclusion_type,omitempty"`
+	// The percentage of the tax in decimal form, using a `'.'` as the decimal separator and without a `'%'` sign.
+	// A value of `7.5` corresponds to 7.5%. For a location-specific tax rate, contact the tax authority of the location or a tax consultant.
+	Percentage *string `json:"percentage,omitempty" url:"percentage,omitempty"`
+	// If `true`, the fee applies to custom amounts entered into the Square Point of Sale
+	// app that are not associated with a particular `CatalogItem`.
+	AppliesToCustomAmounts *bool `json:"applies_to_custom_amounts,omitempty" url:"applies_to_custom_amounts,omitempty"`
+	// A Boolean flag to indicate whether the tax is displayed as enabled (`true`) in the Square Point of Sale app or not (`false`).
+	Enabled *bool `json:"enabled,omitempty" url:"enabled,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogTax) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogTax) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogTax
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogTax(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogTax) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Represents a time period - either a single period or a repeating period.
+type CatalogTimePeriod struct {
+	// An iCalendar (RFC 5545) [event](https://tools.ietf.org/html/rfc5545#section-3.6.1), which
+	// specifies the name, timing, duration and recurrence of this time period.
+	//
+	// Example:
+	//
+	// ```
+	// DTSTART:20190707T180000
+	// DURATION:P2H
+	// RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR
+	// ```
+	//
+	// Only `SUMMARY`, `DTSTART`, `DURATION` and `RRULE` fields are supported.
+	// `DTSTART` must be in local (unzoned) time format. Note that while `BEGIN:VEVENT`
+	// and `END:VEVENT` is not required in the request. The response will always
+	// include them.
+	Event *string `json:"event,omitempty" url:"event,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogTimePeriod) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogTimePeriod) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogTimePeriod
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogTimePeriod(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogTimePeriod) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// A Square API V1 identifier of an item, including the object ID and its associated location ID.
+type CatalogV1Id struct {
+	// The ID for an object used in the Square API V1, if the object ID differs from the Square API V2 object ID.
+	CatalogV1Id *string `json:"catalog_v1_id,omitempty" url:"catalog_v1_id,omitempty"`
+	// The ID of the `Location` this Connect V1 ID is associated with.
+	LocationId *string `json:"location_id,omitempty" url:"location_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CatalogV1Id) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CatalogV1Id) UnmarshalJSON(data []byte) error {
+	type unmarshaler CatalogV1Id
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CatalogV1Id(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CatalogV1Id) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 // Latitude and longitude coordinates.
 type Coordinates struct {
 	// The latitude of the coordinate expressed in degrees.
@@ -1775,6 +4052,56 @@ func (d DayOfWeek) Ptr() *DayOfWeek {
 	return &d
 }
 
+type DeleteCatalogObjectResponse struct {
+	// Any errors that occurred during the request.
+	Errors []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+	// The IDs of all catalog objects deleted by this request.
+	// Multiple IDs may be returned when associated objects are also deleted, for example
+	// a catalog item variation will be deleted (and its ID included in this field)
+	// when its parent catalog item is deleted.
+	DeletedObjectIds []string `json:"deleted_object_ids,omitempty" url:"deleted_object_ids,omitempty"`
+	// The database [timestamp](https://developer.squareup.com/docs/build-basics/working-with-dates)
+	// of this deletion in RFC 3339 format, e.g., `2016-09-04T23:59:33.123Z`.
+	DeletedAt *string `json:"deleted_at,omitempty" url:"deleted_at,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *DeleteCatalogObjectResponse) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DeleteCatalogObjectResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler DeleteCatalogObjectResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DeleteCatalogObjectResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DeleteCatalogObjectResponse) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
 // Information about the destination against which the payout was made.
 type Destination struct {
 	Type *DestinationType `json:"type,omitempty" url:"type,omitempty"`
@@ -2462,6 +4789,33 @@ func (e ErrorCode) Ptr() *ErrorCode {
 	return &e
 }
 
+// Indicates which products matched by a CatalogPricingRule
+// will be excluded if the pricing rule uses an exclude set.
+type ExcludeStrategy string
+
+const (
+	ExcludeStrategyExcludeStrategyDoNotUse ExcludeStrategy = "EXCLUDE_STRATEGY_DO_NOT_USE"
+	ExcludeStrategyLeastExpensive          ExcludeStrategy = "LEAST_EXPENSIVE"
+	ExcludeStrategyMostExpensive           ExcludeStrategy = "MOST_EXPENSIVE"
+)
+
+func NewExcludeStrategyFromString(s string) (ExcludeStrategy, error) {
+	switch s {
+	case "EXCLUDE_STRATEGY_DO_NOT_USE":
+		return ExcludeStrategyExcludeStrategyDoNotUse, nil
+	case "LEAST_EXPENSIVE":
+		return ExcludeStrategyLeastExpensive, nil
+	case "MOST_EXPENSIVE":
+		return ExcludeStrategyMostExpensive, nil
+	}
+	var t ExcludeStrategy
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e ExcludeStrategy) Ptr() *ExcludeStrategy {
+	return &e
+}
+
 // Defines the response returned by [GetRefund](api-endpoint:Refunds-GetPaymentRefund).
 //
 // Note: If there are errors processing the request, the refund field might not be
@@ -2550,6 +4904,97 @@ func (g *GetPayoutResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", g)
+}
+
+// Indicates whether Square should alert the merchant when the inventory quantity of a CatalogItemVariation is low.
+type InventoryAlertType string
+
+const (
+	InventoryAlertTypeInventoryAlertTypeDoNotUse InventoryAlertType = "INVENTORY_ALERT_TYPE_DO_NOT_USE"
+	InventoryAlertTypeNone                       InventoryAlertType = "NONE"
+	InventoryAlertTypeLowQuantity                InventoryAlertType = "LOW_QUANTITY"
+)
+
+func NewInventoryAlertTypeFromString(s string) (InventoryAlertType, error) {
+	switch s {
+	case "INVENTORY_ALERT_TYPE_DO_NOT_USE":
+		return InventoryAlertTypeInventoryAlertTypeDoNotUse, nil
+	case "NONE":
+		return InventoryAlertTypeNone, nil
+	case "LOW_QUANTITY":
+		return InventoryAlertTypeLowQuantity, nil
+	}
+	var t InventoryAlertType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (i InventoryAlertType) Ptr() *InventoryAlertType {
+	return &i
+}
+
+// Price and inventory alerting overrides for a `CatalogItemVariation` at a specific `Location`.
+type ItemVariationLocationOverrides struct {
+	// The ID of the `Location`. This can include locations that are deactivated.
+	LocationId  *string             `json:"location_id,omitempty" url:"location_id,omitempty"`
+	PriceMoney  *Money              `json:"price_money,omitempty" url:"price_money,omitempty"`
+	PricingType *CatalogPricingType `json:"pricing_type,omitempty" url:"pricing_type,omitempty"`
+	// If `true`, inventory tracking is active for the `CatalogItemVariation` at this `Location`.
+	TrackInventory     *bool               `json:"track_inventory,omitempty" url:"track_inventory,omitempty"`
+	InventoryAlertType *InventoryAlertType `json:"inventory_alert_type,omitempty" url:"inventory_alert_type,omitempty"`
+	// If the inventory quantity for the variation is less than or equal to this value and `inventory_alert_type`
+	// is `LOW_QUANTITY`, the variation displays an alert in the merchant dashboard.
+	//
+	// This value is always an integer.
+	InventoryAlertThreshold *int64 `json:"inventory_alert_threshold,omitempty" url:"inventory_alert_threshold,omitempty"`
+	// Indicates whether the overridden item variation is sold out at the specified location.
+	//
+	// When inventory tracking is enabled on the item variation either globally or at the specified location,
+	// the item variation is automatically marked as sold out when its inventory count reaches zero. The seller
+	// can manually set the item variation as sold out even when the inventory count is greater than zero.
+	// Attempts by an application to set this attribute are ignored. Regardless how the sold-out status is set,
+	// applications should treat its inventory count as zero when this attribute value is `true`.
+	SoldOut *bool `json:"sold_out,omitempty" url:"sold_out,omitempty"`
+	// The seller-assigned timestamp, of the RFC 3339 format, to indicate when this sold-out variation
+	// becomes available again at the specified location. Attempts by an application to set this attribute are ignored.
+	// When the current time is later than this attribute value, the affected item variation is no longer sold out.
+	SoldOutValidUntil *string `json:"sold_out_valid_until,omitempty" url:"sold_out_valid_until,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *ItemVariationLocationOverrides) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *ItemVariationLocationOverrides) UnmarshalJSON(data []byte) error {
+	type unmarshaler ItemVariationLocationOverrides
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = ItemVariationLocationOverrides(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *ItemVariationLocationOverrides) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
 }
 
 // Defines the fields that are included in the response body of a request
@@ -6380,6 +8825,65 @@ func (p *ProcessingFee) String() string {
 	return fmt.Sprintf("%#v", p)
 }
 
+// Indicates the Square product used to generate a change.
+type Product string
+
+const (
+	ProductProductDoNotUse    Product = "PRODUCT_DO_NOT_USE"
+	ProductSquarePos          Product = "SQUARE_POS"
+	ProductExternalApi        Product = "EXTERNAL_API"
+	ProductBilling            Product = "BILLING"
+	ProductAppointments       Product = "APPOINTMENTS"
+	ProductInvoices           Product = "INVOICES"
+	ProductOnlineStore        Product = "ONLINE_STORE"
+	ProductPayroll            Product = "PAYROLL"
+	ProductDashboard          Product = "DASHBOARD"
+	ProductItemLibraryImport  Product = "ITEM_LIBRARY_IMPORT"
+	ProductRetail             Product = "RETAIL"
+	ProductRestaurant         Product = "RESTAURANT"
+	ProductCustomersDirectory Product = "CUSTOMERS_DIRECTORY"
+	ProductOther              Product = "OTHER"
+)
+
+func NewProductFromString(s string) (Product, error) {
+	switch s {
+	case "PRODUCT_DO_NOT_USE":
+		return ProductProductDoNotUse, nil
+	case "SQUARE_POS":
+		return ProductSquarePos, nil
+	case "EXTERNAL_API":
+		return ProductExternalApi, nil
+	case "BILLING":
+		return ProductBilling, nil
+	case "APPOINTMENTS":
+		return ProductAppointments, nil
+	case "INVOICES":
+		return ProductInvoices, nil
+	case "ONLINE_STORE":
+		return ProductOnlineStore, nil
+	case "PAYROLL":
+		return ProductPayroll, nil
+	case "DASHBOARD":
+		return ProductDashboard, nil
+	case "ITEM_LIBRARY_IMPORT":
+		return ProductItemLibraryImport, nil
+	case "RETAIL":
+		return ProductRetail, nil
+	case "RESTAURANT":
+		return ProductRestaurant, nil
+	case "CUSTOMERS_DIRECTORY":
+		return ProductCustomersDirectory, nil
+	case "OTHER":
+		return ProductOther, nil
+	}
+	var t Product
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (p Product) Ptr() *Product {
+	return &p
+}
+
 // Represents a refund processed for a Square transaction.
 type Refund struct {
 	// The refund's unique ID.
@@ -6514,6 +9018,51 @@ func NewRefundStatusFromString(s string) (RefundStatus, error) {
 
 func (r RefundStatus) Ptr() *RefundStatus {
 	return &r
+}
+
+type RetrieveCatalogObjectResponse struct {
+	// Any errors that occurred during the request.
+	Errors []*Error       `json:"errors,omitempty" url:"errors,omitempty"`
+	Object *CatalogObject `json:"object,omitempty" url:"object,omitempty"`
+	// A list of `CatalogObject`s referenced by the object in the `object` field.
+	RelatedObjects []*CatalogObject `json:"related_objects,omitempty" url:"related_objects,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *RetrieveCatalogObjectResponse) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *RetrieveCatalogObjectResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler RetrieveCatalogObjectResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RetrieveCatalogObjectResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RetrieveCatalogObjectResponse) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
 }
 
 // The response object returned by the [RetrieveMerchant](api-endpoint:Merchants-RetrieveMerchant) endpoint.
@@ -7089,6 +9638,186 @@ func (s SortOrder) Ptr() *SortOrder {
 	return &s
 }
 
+// Represents information about the application used to generate a change.
+type SourceApplication struct {
+	Product *Product `json:"product,omitempty" url:"product,omitempty"`
+	// **Read only** The Square-assigned ID of the application. This field is used only if the
+	// [product](entity:Product) type is `EXTERNAL_API`.
+	ApplicationId *string `json:"application_id,omitempty" url:"application_id,omitempty"`
+	// **Read only** The display name of the application
+	// (for example, `"Custom Application"` or `"Square POS 4.74 for Android"`).
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SourceApplication) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SourceApplication) UnmarshalJSON(data []byte) error {
+	type unmarshaler SourceApplication
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SourceApplication(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SourceApplication) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+// Determines the billing cadence of a [Subscription](entity:Subscription)
+type SubscriptionCadence string
+
+const (
+	SubscriptionCadenceSubscriptionCadenceDoNotUse SubscriptionCadence = "SUBSCRIPTION_CADENCE_DO_NOT_USE"
+	SubscriptionCadenceDaily                       SubscriptionCadence = "DAILY"
+	SubscriptionCadenceWeekly                      SubscriptionCadence = "WEEKLY"
+	SubscriptionCadenceEveryTwoWeeks               SubscriptionCadence = "EVERY_TWO_WEEKS"
+	SubscriptionCadenceThirtyDays                  SubscriptionCadence = "THIRTY_DAYS"
+	SubscriptionCadenceSixtyDays                   SubscriptionCadence = "SIXTY_DAYS"
+	SubscriptionCadenceNinetyDays                  SubscriptionCadence = "NINETY_DAYS"
+	SubscriptionCadenceMonthly                     SubscriptionCadence = "MONTHLY"
+	SubscriptionCadenceEveryTwoMonths              SubscriptionCadence = "EVERY_TWO_MONTHS"
+	SubscriptionCadenceQuarterly                   SubscriptionCadence = "QUARTERLY"
+	SubscriptionCadenceEveryFourMonths             SubscriptionCadence = "EVERY_FOUR_MONTHS"
+	SubscriptionCadenceEverySixMonths              SubscriptionCadence = "EVERY_SIX_MONTHS"
+	SubscriptionCadenceAnnual                      SubscriptionCadence = "ANNUAL"
+	SubscriptionCadenceEveryTwoYears               SubscriptionCadence = "EVERY_TWO_YEARS"
+)
+
+func NewSubscriptionCadenceFromString(s string) (SubscriptionCadence, error) {
+	switch s {
+	case "SUBSCRIPTION_CADENCE_DO_NOT_USE":
+		return SubscriptionCadenceSubscriptionCadenceDoNotUse, nil
+	case "DAILY":
+		return SubscriptionCadenceDaily, nil
+	case "WEEKLY":
+		return SubscriptionCadenceWeekly, nil
+	case "EVERY_TWO_WEEKS":
+		return SubscriptionCadenceEveryTwoWeeks, nil
+	case "THIRTY_DAYS":
+		return SubscriptionCadenceThirtyDays, nil
+	case "SIXTY_DAYS":
+		return SubscriptionCadenceSixtyDays, nil
+	case "NINETY_DAYS":
+		return SubscriptionCadenceNinetyDays, nil
+	case "MONTHLY":
+		return SubscriptionCadenceMonthly, nil
+	case "EVERY_TWO_MONTHS":
+		return SubscriptionCadenceEveryTwoMonths, nil
+	case "QUARTERLY":
+		return SubscriptionCadenceQuarterly, nil
+	case "EVERY_FOUR_MONTHS":
+		return SubscriptionCadenceEveryFourMonths, nil
+	case "EVERY_SIX_MONTHS":
+		return SubscriptionCadenceEverySixMonths, nil
+	case "ANNUAL":
+		return SubscriptionCadenceAnnual, nil
+	case "EVERY_TWO_YEARS":
+		return SubscriptionCadenceEveryTwoYears, nil
+	}
+	var t SubscriptionCadence
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SubscriptionCadence) Ptr() *SubscriptionCadence {
+	return &s
+}
+
+// Describes a phase in a subscription plan. For more information, see
+// [Set Up and Manage a Subscription Plan](https://developer.squareup.com/docs/subscriptions-api/setup-plan).
+type SubscriptionPhase struct {
+	// The Square-assigned ID of the subscription phase. This field cannot be changed after a `SubscriptionPhase` is created.
+	Uid     *string             `json:"uid,omitempty" url:"uid,omitempty"`
+	Cadence SubscriptionCadence `json:"cadence" url:"cadence"`
+	// The number of `cadence`s the phase lasts. If not set, the phase never ends. Only the last phase can be indefinite. This field cannot be changed after a `SubscriptionPhase` is created.
+	Periods             *int   `json:"periods,omitempty" url:"periods,omitempty"`
+	RecurringPriceMoney *Money `json:"recurring_price_money,omitempty" url:"recurring_price_money,omitempty"`
+	// The position this phase appears in the sequence of phases defined for the plan, indexed from 0. This field cannot be changed after a `SubscriptionPhase` is created.
+	Ordinal *int64 `json:"ordinal,omitempty" url:"ordinal,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SubscriptionPhase) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SubscriptionPhase) UnmarshalJSON(data []byte) error {
+	type unmarshaler SubscriptionPhase
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SubscriptionPhase(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SubscriptionPhase) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+// When to calculate the taxes due on a cart.
+type TaxCalculationPhase string
+
+const (
+	TaxCalculationPhaseTaxSubtotalPhase TaxCalculationPhase = "TAX_SUBTOTAL_PHASE"
+	TaxCalculationPhaseTaxTotalPhase    TaxCalculationPhase = "TAX_TOTAL_PHASE"
+)
+
+func NewTaxCalculationPhaseFromString(s string) (TaxCalculationPhase, error) {
+	switch s {
+	case "TAX_SUBTOTAL_PHASE":
+		return TaxCalculationPhaseTaxSubtotalPhase, nil
+	case "TAX_TOTAL_PHASE":
+		return TaxCalculationPhaseTaxTotalPhase, nil
+	}
+	var t TaxCalculationPhase
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TaxCalculationPhase) Ptr() *TaxCalculationPhase {
+	return &t
+}
+
 // Identifiers for the location used by various governments for tax purposes.
 type TaxIds struct {
 	// The EU VAT number for this location. For example, `IE3426675K`.
@@ -7142,6 +9871,29 @@ func (t *TaxIds) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+// Whether to the tax amount should be additional to or included in the CatalogItem price.
+type TaxInclusionType string
+
+const (
+	TaxInclusionTypeAdditive  TaxInclusionType = "ADDITIVE"
+	TaxInclusionTypeInclusive TaxInclusionType = "INCLUSIVE"
+)
+
+func NewTaxInclusionTypeFromString(s string) (TaxInclusionType, error) {
+	switch s {
+	case "ADDITIVE":
+		return TaxInclusionTypeAdditive, nil
+	case "INCLUSIVE":
+		return TaxInclusionTypeInclusive, nil
+	}
+	var t TaxInclusionType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TaxInclusionType) Ptr() *TaxInclusionType {
+	return &t
 }
 
 // Represents a generic time range. The start and end values are

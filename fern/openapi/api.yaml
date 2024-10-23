@@ -773,6 +773,217 @@ paths:
       x-endpoint-errors:
         - error-code: BAD_REQUEST
       x-is-sparse-update: true
+  /v2/catalog/object/{object_id}:
+    get:
+      tags:
+        - Catalog
+      summary: RetrieveCatalogObject
+      description: |-
+        Returns a single [CatalogItem](entity:CatalogItem) as a
+        [CatalogObject](entity:CatalogObject) based on the provided ID. The returned
+        object includes all of the relevant [CatalogItem](entity:CatalogItem)
+        information including: [CatalogItemVariation](entity:CatalogItemVariation)
+        children, references to its
+        [CatalogModifierList](entity:CatalogModifierList) objects, and the ids of
+        any [CatalogTax](entity:CatalogTax) objects that apply to it.
+      operationId: RetrieveCatalogObject
+      parameters:
+        - name: object_id
+          in: path
+          description: The object ID of any type of catalog objects to be retrieved.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: include_related_objects
+          in: query
+          description: |-
+            If `true`, the response will include additional objects that are related to the
+            requested objects. Related objects are defined as any objects referenced by ID by the results in the `objects` field
+            of the response. These objects are put in the `related_objects` field. Setting this to `true` is
+            helpful when the objects are needed for immediate display to a user.
+            This process only goes one level deep. Objects referenced by the related objects will not be included. For example,
+
+            if the `objects` field of the response contains a CatalogItem, its associated
+            CatalogCategory objects, CatalogTax objects, CatalogImage objects and
+            CatalogModifierLists will be returned in the `related_objects` field of the
+            response. If the `objects` field of the response contains a CatalogItemVariation,
+            its parent CatalogItem will be returned in the `related_objects` field of
+            the response.
+
+            Default value: `false`
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: boolean
+            default: false
+        - name: catalog_version
+          in: query
+          description: |-
+            Requests objects as of a specific version of the catalog. This allows you to retrieve historical
+            versions of objects. The value to retrieve a specific version of an object can be found
+            in the version field of [CatalogObject](entity:CatalogObject)s. If not included, results will
+            be from the current version of the catalog.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int64
+          x-release-status: BETA
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrieveCatalogObjectResponse'
+      security:
+        - oauth2:
+            - ITEMS_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/service.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-example-scenarios:
+        scenarios:
+          - name: Retrieve catalog object
+            pathParameters:
+              object_id: W62UWFY35CWMYGVWK6TWJDNI
+            response:
+              object:
+                type: ITEM
+                id: W62UWFY35CWMYGVWK6TWJDNI
+                updated_at: 2016-11-16T22:25:24.878Z
+                version: 1479335124878
+                is_deleted: false
+                present_at_all_locations: true
+                item_data:
+                  name: Tea
+                  description: Hot Leaf Juice
+                  category_id: BJNQCF2FJ6S6UIDT65ABHLRX
+                  tax_ids:
+                    - HURXQOOAIC4IZSI2BEXQRYFY
+                  variations:
+                    - type: ITEM_VARIATION
+                      id: 2TZFAOHWGG7PAK2QEXWYPZSP
+                      updated_at: 2016-11-16T22:25:24.878Z
+                      version: 1479335124878
+                      is_deleted: false
+                      present_at_all_locations: true
+                      item_variation_data:
+                        item_id: W62UWFY35CWMYGVWK6TWJDNI
+                        name: Mug
+                        ordinal: 0
+                        pricing_type: FIXED_PRICING
+                        price_money:
+                          amount: 150
+                          currency: USD
+          - name: Retrieve catalog object and include related objects
+            pathParameters:
+              object_id: W62UWFY35CWMYGVWK6TWJDNI
+            queryParameters:
+              include_related_objects: true
+            response:
+              object:
+                type: ITEM
+                id: W62UWFY35CWMYGVWK6TWJDNI
+                updated_at: 2016-11-16T22:25:24.878Z
+                version: 1479335124878
+                is_deleted: false
+                present_at_all_locations: true
+                item_data:
+                  name: Tea
+                  description: Hot Leaf Juice
+                  category_id: BJNQCF2FJ6S6UIDT65ABHLRX
+                  tax_ids:
+                    - HURXQOOAIC4IZSI2BEXQRYFY
+                  variations:
+                    - type: ITEM_VARIATION
+                      id: 2TZFAOHWGG7PAK2QEXWYPZSP
+                      updated_at: 2016-11-16T22:25:24.878Z
+                      version: 1479335124878
+                      is_deleted: false
+                      present_at_all_locations: true
+                      item_variation_data:
+                        item_id: W62UWFY35CWMYGVWK6TWJDNI
+                        name: Mug
+                        ordinal: 0
+                        pricing_type: FIXED_PRICING
+                        price_money:
+                          amount: 150
+                          currency: USD
+              related_objects:
+                - type: CATEGORY
+                  id: BJNQCF2FJ6S6UIDT65ABHLRX
+                  updated_at: 2016-11-16T22:25:24.878Z
+                  version: 1479335124878
+                  is_deleted: false
+                  present_at_all_locations: true
+                  category_data:
+                    name: Beverages
+                - type: TAX
+                  id: HURXQOOAIC4IZSI2BEXQRYFY
+                  updated_at: 2016-11-16T22:25:24.878Z
+                  version: 1479335124878
+                  is_deleted: false
+                  present_at_all_locations: true
+                  tax_data:
+                    name: Sales Tax
+                    calculation_phase: TAX_SUBTOTAL_PHASE
+                    inclusion_type: ADDITIVE
+                    percentage: "5.0"
+                    enabled: true
+    delete:
+      tags:
+        - Catalog
+      summary: DeleteCatalogObject
+      description: |-
+        Deletes a single [CatalogObject](entity:CatalogObject) based on the
+        provided ID and returns the set of successfully deleted IDs in the response.
+        Deletion is a cascading event such that all children of the targeted object
+        are also deleted. For example, deleting a [CatalogItem](entity:CatalogItem)
+        will also delete all of its
+        [CatalogItemVariation](entity:CatalogItemVariation) children.
+      operationId: DeleteCatalogObject
+      parameters:
+        - name: object_id
+          in: path
+          description: |-
+            The ID of the catalog object to be deleted. When an object is deleted, other
+            objects in the graph that depend on that object will be deleted as well (for example, deleting a
+            catalog item will delete its catalog item variations).
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteCatalogObjectResponse'
+      security:
+        - oauth2:
+            - ITEMS_WRITE
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/service.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-example-scenarios:
+        scenarios:
+          - name: Delete a catalog object
+            pathParameters:
+              object_id: 7SB3ZQYJ5GDMVFL7JK46JCHT
+            response:
+              deleted_object_ids:
+                - 7SB3ZQYJ5GDMVFL7JK46JCHT
+                - KQLFFHA6K6J3YQAQAWDQAL57
+              deleted_at: 2016-11-16T22:25:24.878Z
 
 components:
   schemas:
@@ -947,6 +1158,1723 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/common/day_of_week.proto
       x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
       x-object-name: DayOfWeek
+    CatalogCategory:
+      type: object
+      properties:
+        name:
+          maxLength: 255
+          type: string
+          description: The category name. This is a searchable attribute for use in
+            applicable query filters, and its value length is of Unicode code points.
+        image_ids:
+          type: array
+          description: |-
+            The IDs of images associated with this `CatalogCategory` instance.
+            Currently these images are not displayed by Square, but are free to be displayed in 3rd party applications.
+          items:
+            type: string
+          x-release-status: BETA
+      description: A category to which a `CatalogItem` instance belongs.
+      example:
+        object:
+          type: CATEGORY
+          id: '#Beverages'
+          present_at_all_locations: true
+          category_data:
+            name: Beverages
+      x-property-order:
+        - name
+        - ordinal
+        - abbreviation
+        - label_color
+        - image_ids
+        - location_overrides
+        - category_type
+        - parent_category
+        - is_top_level
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCategory
+    CatalogCustomAttributeValue:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the custom attribute.
+        string_value:
+          type: string
+          description: The string value of the custom attribute.  Populated if `type`
+            = `STRING`.
+        custom_attribute_definition_id:
+          type: string
+          description: The id of the [CatalogCustomAttributeDefinition](entity:CatalogCustomAttributeDefinition)
+            this value belongs to.
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/CatalogCustomAttributeDefinitionType'
+        number_value:
+          type: string
+          description: |-
+            Populated if `type` = `NUMBER`. Contains a string
+            representation of a decimal number, using a `.` as the decimal separator.
+        boolean_value:
+          type: boolean
+          description: A `true` or `false` value. Populated if `type` = `BOOLEAN`.
+        selection_uid_values:
+          type: array
+          description: One or more choices from `allowed_selections`. Populated if
+            `type` = `SELECTION`.
+          items:
+            type: string
+        key:
+          type: string
+          description: A copy of key from the associated `CatalogCustomAttributeDefinition`.
+          readOnly: true
+      description: |-
+        An instance of a custom attribute. Custom attributes can be defined and
+        added to `ITEM` and `ITEM_VARIATION` type catalog objects.
+        [Read more about custom attributes](https://developer.squareup.com/docs/catalog-api/add-custom-attributes).
+      x-property-order:
+        - name
+        - string_value
+        - int_value
+        - custom_attribute_definition_id
+        - type
+        - number_value
+        - boolean_value
+        - selection_uid_values
+        - key
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeValue
+    CatalogCustomAttributeDefinition:
+      required:
+        - allowed_object_types
+        - name
+        - type
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CatalogCustomAttributeDefinitionType'
+        name:
+          maxLength: 255
+          minLength: 1
+          type: string
+          description: |2-
+             The name of this definition for API and seller-facing UI purposes.
+            The name must be unique within the (merchant, application) pair. Required.
+            May not be empty and may not exceed 255 characters. Can be modified after creation.
+        description:
+          maxLength: 255
+          type: string
+          description: |-
+            Seller-oriented description of the meaning of this Custom Attribute,
+            any constraints that the seller should observe, etc. May be displayed as a tooltip in Square UIs.
+        source_application:
+          $ref: '#/components/schemas/SourceApplication'
+        allowed_object_types:
+          type: array
+          description: |-
+            The set of Catalog Object Types that this Custom Attribute may be applied to.
+            Currently, only `ITEM` and `ITEM_VARIATION` are allowed. At least one type must be included.
+            See [CatalogObjectType](#type-catalogobjecttype) for possible values
+          items:
+            $ref: '#/components/schemas/CatalogObjectType'
+        seller_visibility:
+          $ref: '#/components/schemas/CatalogCustomAttributeDefinitionSellerVisibility'
+        app_visibility:
+          $ref: '#/components/schemas/CatalogCustomAttributeDefinitionAppVisibility'
+        string_config:
+          $ref: '#/components/schemas/CatalogCustomAttributeDefinitionStringConfig'
+        number_config:
+          $ref: '#/components/schemas/CatalogCustomAttributeDefinitionNumberConfig'
+        selection_config:
+          $ref: '#/components/schemas/CatalogCustomAttributeDefinitionSelectionConfig'
+        custom_attribute_usage_count:
+          type: integer
+          description: |-
+            The number of custom attributes that reference this
+            custom attribute definition. Set by the server in response to a ListCatalog
+            request with `include_counts` set to `true`.  If the actual count is greater
+            than 100, `custom_attribute_usage_count` will be set to `100`.
+          readOnly: true
+        key:
+          maxLength: 60
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_-]*$
+          type: string
+          description: |-
+            The name of the desired custom attribute key that can be used to access
+            the custom attribute value on catalog objects. Cannot be modified after the
+            custom attribute definition has been created.
+            Must be between 1 and 60 characters, and may only contain the characters `[a-zA-Z0-9_-]`.
+      description: |-
+        Contains information defining a custom attribute. Custom attributes are
+        intended to store additional information about a catalog object or to associate a
+        catalog object with an entity in another system. Do not use custom attributes
+        to store any sensitive information (personally identifiable information, card details, etc.).
+        [Read more about custom attributes](https://developer.squareup.com/docs/catalog-api/add-custom-attributes)
+      x-property-order:
+        - type
+        - name
+        - description
+        - source_application
+        - allowed_object_types
+        - seller_visibility
+        - app_visibility
+        - string_config
+        - number_config
+        - selection_config
+        - custom_attribute_usage_count
+        - key
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeDefinition
+    CatalogCustomAttributeDefinitionNumberConfig:
+      type: object
+      properties:
+        precision:
+          maximum: 5
+          minimum: 0
+          type: integer
+          description: |-
+            An integer between 0 and 5 that represents the maximum number of
+            positions allowed after the decimal in number custom attribute values
+            For example:
+            
+            - if the precision is 0, the quantity can be 1, 2, 3, etc.
+            - if the precision is 1, the quantity can be 0.1, 0.2, etc.
+            - if the precision is 2, the quantity can be 0.01, 0.12, etc.
+            
+            Default: 5
+      x-property-order:
+        - precision
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeDefinitionNumberConfig
+    CatalogCustomAttributeDefinitionSelectionConfig:
+      type: object
+      properties:
+        max_allowed_selections:
+          maximum: 100
+          type: integer
+          description: |-
+            The maximum number of selections that can be set. The maximum value for this
+            attribute is 100. The default value is 1. The value can be modified, but changing the value will not
+            affect existing custom attribute values on objects. Clients need to
+            handle custom attributes with more selected values than allowed by this limit.
+        allowed_selections:
+          maxItems: 100
+          type: array
+          description: |-
+            The set of valid `CatalogCustomAttributeSelections`. Up to a maximum of 100
+            selections can be defined. Can be modified.
+          items:
+            $ref: '#/components/schemas/CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection'
+      description: Configuration associated with `SELECTION`-type custom attribute
+        definitions.
+      x-property-order:
+        - max_allowed_selections
+        - allowed_selections
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeDefinitionSelectionConfig
+    CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection:
+      required:
+        - name
+      type: object
+      properties:
+        uid:
+          type: string
+          description: Unique ID set by Square.
+        name:
+          maxLength: 255
+          minLength: 1
+          type: string
+          description: Selection name, unique within `allowed_selections`.
+      description: A named selection for this `SELECTION`-type custom attribute definition.
+      x-property-order:
+        - uid
+        - name
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelection
+    CatalogCustomAttributeDefinitionAppVisibility:
+      type: string
+      description: |-
+        Defines the visibility of a custom attribute to applications other than their
+        creating application.
+      enum:
+        - APP_VISIBILITY_DO_NOT_USE
+        - APP_VISIBILITY_HIDDEN
+        - APP_VISIBILITY_READ_ONLY
+        - APP_VISIBILITY_READ_WRITE_VALUES
+      x-enum-elements:
+        - name: APP_VISIBILITY_HIDDEN
+          description: Other applications cannot read this custom attribute.
+          x-release-status: BETA
+        - name: APP_VISIBILITY_READ_ONLY
+          description: |-
+            Other applications can read this custom attribute definition and
+            values.
+          x-release-status: BETA
+        - name: APP_VISIBILITY_READ_WRITE_VALUES
+          description: |-
+            Other applications can read and write custom attribute values on objects.
+            They can read but cannot edit the custom attribute definition.
+          x-release-status: BETA
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeDefinitionAppVisibility
+    CatalogCustomAttributeDefinitionStringConfig:
+      type: object
+      properties:
+        enforce_uniqueness:
+          type: boolean
+          description: |-
+            If true, each Custom Attribute instance associated with this Custom Attribute
+            Definition must have a unique value within the seller's catalog. For
+            example, this may be used for a value like a SKU that should not be
+            duplicated within a seller's catalog. May not be modified after the
+            definition has been created.
+      description: Configuration associated with Custom Attribute Definitions of type
+        `STRING`.
+      x-property-order:
+        - enforce_uniqueness
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeDefinitionStringConfig
+    CatalogDiscount:
+      type: object
+      properties:
+        name:
+          maxLength: 255
+          type: string
+          description: The discount name. This is a searchable attribute for use in
+            applicable query filters, and its value length is of Unicode code points.
+        discount_type:
+          $ref: '#/components/schemas/CatalogDiscountType'
+        percentage:
+          type: string
+          description: |-
+            The percentage of the discount as a string representation of a decimal number, using a `.` as the decimal
+            separator and without a `%` sign. A value of `7.5` corresponds to `7.5%`. Specify a percentage of `0` if `discount_type`
+            is `VARIABLE_PERCENTAGE`.
+            
+            Do not use this field for amount-based or variable discounts.
+        amount_money:
+          $ref: '#/components/schemas/Money'
+        pin_required:
+          type: boolean
+          description: |-
+            Indicates whether a mobile staff member needs to enter their PIN to apply the
+            discount to a payment in the Square Point of Sale app.
+        label_color:
+          type: string
+          description: The color of the discount display label in the Square Point
+            of Sale app. This must be a valid hex color code.
+        modify_tax_basis:
+          $ref: '#/components/schemas/CatalogDiscountModifyTaxBasis'
+        maximum_amount_money:
+          $ref: '#/components/schemas/Money'
+      description: A discount applicable to items.
+      example:
+        object:
+          type: DISCOUNT
+          id: '#Maythe4th'
+          present_at_all_locations: true
+          discount_data:
+            name: Welcome to the Dark(Roast) Side!
+            discount_type: FIXED_PERCENTAGE
+            percentage: "5.4"
+            pin_required: false
+            label_color: red
+      x-property-order:
+        - name
+        - discount_type
+        - percentage
+        - amount_money
+        - pin_required
+        - label_color
+        - application_method
+        - comp_ordinal
+        - modify_tax_basis
+        - maximum_amount_money
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogDiscount
+    CatalogDiscountType:
+      type: string
+      description: How to apply a CatalogDiscount to a CatalogItem.
+      enum:
+        - FIXED_PERCENTAGE
+        - FIXED_AMOUNT
+        - VARIABLE_PERCENTAGE
+        - VARIABLE_AMOUNT
+      x-enum-elements:
+        - name: FIXED_PERCENTAGE
+          description: Apply the discount as a fixed percentage (e.g., 5%) off the item
+            price.
+          x-release-status: PUBLIC
+        - name: FIXED_AMOUNT
+          description: Apply the discount as a fixed amount (e.g., $1.00) off the item
+            price.
+          x-release-status: PUBLIC
+        - name: VARIABLE_PERCENTAGE
+          description: Apply the discount as a variable percentage off the item price.
+            The percentage will be specified at the time of sale.
+          x-release-status: PUBLIC
+        - name: VARIABLE_AMOUNT
+          description: Apply the discount as a variable amount off the item price. The
+            amount will be specified at the time of sale.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogDiscountType
+    CatalogDiscountModifyTaxBasis:
+      type: string
+      enum:
+        - MODIFY_TAX_BASIS
+        - DO_NOT_MODIFY_TAX_BASIS
+      x-enum-elements:
+        - name: MODIFY_TAX_BASIS
+          description: Application of the discount will modify the tax basis.
+          x-release-status: PUBLIC
+        - name: DO_NOT_MODIFY_TAX_BASIS
+          description: Application of the discount will not modify the tax basis.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogDiscountModifyTaxBasis
+    CatalogIdMapping:
+      type: object
+      properties:
+        client_object_id:
+          type: string
+          description: The client-supplied temporary `#`-prefixed ID for a new `CatalogObject`.
+        object_id:
+          type: string
+          description: The permanent ID for the CatalogObject created by the server.
+      description: |-
+        A mapping between a temporary client-supplied ID and a permanent server-generated ID.
+        
+        When calling [UpsertCatalogObject](api-endpoint:Catalog-UpsertCatalogObject) or
+        [BatchUpsertCatalogObjects](api-endpoint:Catalog-BatchUpsertCatalogObjects) to
+        create a [CatalogObject](entity:CatalogObject) instance, you can supply
+        a temporary ID for the to-be-created object, especially when the object is to be referenced
+        elsewhere in the same request body. This temporary ID can be any string unique within
+        the call, but must be prefixed by "#".
+        
+        After the request is submitted and the object created, a permanent server-generated ID is assigned
+        to the new object. The permanent ID is unique across the Square catalog.
+      x-property-order:
+        - client_object_id
+        - object_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogIdMapping
+    CatalogImage:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |-
+            The internal name to identify this image in calls to the Square API.
+            This is a searchable attribute for use in applicable query filters
+            using the [SearchCatalogObjects](api-endpoint:Catalog-SearchCatalogObjects).
+            It is not unique and should not be shown in a buyer facing context.
+        url:
+          type: string
+          description: |-
+            The URL of this image, generated by Square after an image is uploaded
+            using the [CreateCatalogImage](api-endpoint:Catalog-CreateCatalogImage) endpoint.
+            To modify the image, use the UpdateCatalogImage endpoint. Do not change the URL field.
+        caption:
+          type: string
+          description: |-
+            A caption that describes what is shown in the image. Displayed in the
+            Square Online Store. This is a searchable attribute for use in applicable query filters
+            using the [SearchCatalogObjects](api-endpoint:Catalog-SearchCatalogObjects).
+        photo_studio_order_id:
+          type: string
+          description: The immutable order ID for this image object created by the
+            Photo Studio service in Square Online Store.
+          x-release-status: BETA
+      description: |-
+        An image file to use in Square catalogs. It can be associated with
+        `CatalogItem`, `CatalogItemVariation`, `CatalogCategory`, and `CatalogModifierList` objects.
+        Only the images on items and item variations are exposed in Dashboard.
+        Only the first image on an item is displayed in Square Point of Sale (SPOS).
+        Images on items and variations are displayed through Square Online Store.
+        Images on other object types are for use by 3rd party application developers.
+      x-property-order:
+        - name
+        - url
+        - caption
+        - photo_studio_order_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogImage
+    CatalogCustomAttributeDefinitionType:
+      type: string
+      description: Defines the possible types for a custom attribute.
+      enum:
+        - ATTRIBUTE_TYPE_DO_NOT_USE
+        - STRING
+        - INTEGER
+        - BOOLEAN
+        - NUMBER
+        - SELECTION
+        - STRING_INT
+        - TOKEN_INT
+      x-enum-elements:
+        - name: STRING
+          description: A free-form string containing up to 255 characters.
+          x-release-status: BETA
+        - name: BOOLEAN
+          description: A `true` or `false` value.
+          x-release-status: BETA
+        - name: NUMBER
+          description: A decimal string representation of a number. Can support up to
+            5 digits after the decimal point.
+          x-release-status: BETA
+        - name: SELECTION
+          description: One or more choices from `allowed_selections`.
+          x-release-status: BETA
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeDefinitionType
+    CatalogItem:
+      type: object
+      properties:
+        name:
+          maxLength: 512
+          type: string
+          description: The item's name. This is a searchable attribute for use in
+            applicable query filters, its value must not be empty, and the length
+            is of Unicode code points.
+        description:
+          maxLength: 4096
+          type: string
+          description: "The item's description. This is a searchable attribute for\
+                \ use in applicable query filters, and its value length is of Unicode\
+                \ code points.\n\nDeprecated at 2022-07-20, this field is planned to retire\
+                \ in 6 months. You should migrate to use `description_html` to set the\
+                \ description \nof the [CatalogItem](entity:CatalogItem) instance.  The\
+                \ `description` and `description_html` field values are kept in sync.\
+                \ If you try to \nset the both fields, the `description_html` text value\
+                \ overwrites the `description` value. Updates in one field are also reflected\
+                \ in the other, \nexcept for when you use an early version before Square\
+                \ API 2022-07-20 and `description_html` is set to blank, setting the `description`\
+                \ value to null \ndoes not nullify `description_html`."
+          x-release-status: DEPRECATED
+        abbreviation:
+          maxLength: 24
+          type: string
+          description: |-
+            The text of the item's display label in the Square Point of Sale app. Only up to the first five characters of the string are used.
+            This attribute is searchable, and its value length is of Unicode code points.
+        label_color:
+          type: string
+          description: The color of the item's display label in the Square Point of
+            Sale app. This must be a valid hex color code.
+        available_online:
+          type: boolean
+          description: If `true`, the item can be added to shipping orders from the
+            merchant's online store.
+        available_for_pickup:
+          type: boolean
+          description: If `true`, the item can be added to pickup orders from the
+            merchant's online store.
+        available_electronically:
+          type: boolean
+          description: If `true`, the item can be added to electronically fulfilled
+            orders from the merchant's online store.
+        category_id:
+          type: string
+          description: The ID of the item's category, if any.
+        tax_ids:
+          type: array
+          description: |-
+            A set of IDs indicating the taxes enabled for
+            this item. When updating an item, any taxes listed here will be added to the item.
+            Taxes may also be added to or deleted from an item using `UpdateItemTaxes`.
+          items:
+            type: string
+        modifier_list_info:
+          type: array
+          description: |-
+            A set of `CatalogItemModifierListInfo` objects
+            representing the modifier lists that apply to this item, along with the overrides and min
+            and max limits that are specific to this item. Modifier lists
+            may also be added to or deleted from an item using `UpdateItemModifierLists`.
+          items:
+            $ref: '#/components/schemas/CatalogItemModifierListInfo'
+        image_url:
+          type: string
+          description: |-
+            __Retired__. The URL of an image representing this item. Retired
+            in favor of `image_id` in [CatalogObject](entity:CatalogObject).
+          x-release-status: RETIRED
+        variations:
+          type: array
+          description: |-
+            A list of [CatalogItemVariation](entity:CatalogItemVariation) objects for this item. An item must have
+            at least one variation.
+          items:
+            $ref: '#/components/schemas/CatalogObject'
+        product_type:
+          $ref: '#/components/schemas/CatalogItemProductType'
+        skip_modifier_screen:
+          type: boolean
+          description: |-
+            If `false`, the Square Point of Sale app will present the `CatalogItem`'s
+            details screen immediately, allowing the merchant to choose `CatalogModifier`s
+            before adding the item to the cart.  This is the default behavior.
+            
+            If `true`, the Square Point of Sale app will immediately add the item to the cart with the pre-selected
+            modifiers, and merchants can edit modifiers by drilling down onto the item's details.
+            
+            Third-party clients are encouraged to implement similar behaviors.
+        item_options:
+          maxItems: 6
+          type: array
+          description: |-
+            List of item options IDs for this item. Used to manage and group item
+            variations in a specified order.
+            
+            Maximum: 6 item options.
+          items:
+            $ref: '#/components/schemas/CatalogItemOptionForItem'
+          x-release-status: BETA
+        ecom_uri:
+          type: string
+          description: hidden field
+        ecom_image_uris:
+          type: array
+          description: hidden field
+          items:
+            type: string
+        ecom_available:
+          type: boolean
+          description: hidden field
+        ecom_visibility:
+          type: string
+          description: hidden field
+        image_ids:
+          type: array
+          description: |-
+            The IDs of images associated with this `CatalogItem` instance.
+            These images will be shown to customers in Square Online Store.
+            The first image will show up as the icon for this item in POS.
+          items:
+            type: string
+          x-release-status: BETA
+        sort_name:
+          type: string
+          description: |-
+            A name to sort the item by. If this name is unspecified, namely, the `sort_name` field is absent, the regular `name` field is used for sorting.
+            
+            It is currently supported for sellers of the Japanese locale only.
+          x-release-status: BETA
+        description_html:
+          maxLength: 65536
+          type: string
+          description: "The item's description as expressed in valid HTML elements.\
+                \ The length of this field value, including those of HTML tags, \nis of\
+                \ Unicode points. With application query filters, the text values of the\
+                \ HTML elements and attributes are searchable. Invalid or \nunsupported\
+                \ HTML elements or attributes are ignored.\n\nSupported HTML elements\
+                \ include:\n- `a`: Link. Supports linking to website URLs, email address,\
+                \ and telephone numbers.\n- `b`, `strong`:  Bold text      \n- `br`: Line\
+                \ break\n- `code`: Computer code\n- `div`: Section\n- `h1-h6`: Headings\n\
+                - `i`, `em`: Italics \n- `li`: List element\n- `ol`: Numbered list\n-\
+                \ `p`: Paragraph\n- `ul`: Bullet list\n- `u`: Underline\n\n\nSupported\
+                \ HTML attributes include:\n- `align`: Alignment of the text content \n\
+                - `href`: Link destination \n- `rel`: Relationship between link's target\
+                \ and source \n- `target`: Place to open the linked document"
+        description_plaintext:
+          maxLength: 65536
+          type: string
+          description: A server-generated plaintext version of the `description_html`
+            field, without formatting tags.
+          readOnly: true
+      description: A [CatalogObject](entity:CatalogObject) instance of the `ITEM`
+        type, also referred to as an item, in the catalog.
+      example:
+        object:
+          type: ITEM
+          id: '#Cocoa'
+          present_at_all_locations: true
+          item_data:
+            name: Cocoa
+            description: Hot chocolate
+            abbreviation: Ch
+            visibility: PRIVATE
+      x-property-order:
+        - name
+        - description
+        - abbreviation
+        - label_color
+        - is_taxable
+        - visibility
+        - available_online
+        - available_for_pickup
+        - available_electronically
+        - category_id
+        - buyer_facing_name
+        - ordinal
+        - tax_ids
+        - modifier_list_info
+        - image_url
+        - variations
+        - product_type
+        - skip_modifier_screen
+        - item_options
+        - ecom_uri
+        - ecom_image_uris
+        - ecom_available
+        - online_store_data
+        - ecom_buy_button_text
+        - ecom_visibility
+        - image_ids
+        - legacy_tax_ids
+        - sort_name
+        - event
+        - additional_categories
+        - category
+        - pickup_fulfillment_preferences_id
+        - delivery_fulfillment_preferences_id
+        - description_html
+        - description_plaintext
+        - kitchen_name
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogItem
+    CatalogItemModifierListInfo:
+      required:
+        - modifier_list_id
+      type: object
+      properties:
+        modifier_list_id:
+          minLength: 1
+          type: string
+          description: The ID of the `CatalogModifierList` controlled by this `CatalogModifierListInfo`.
+        modifier_overrides:
+          type: array
+          description: A set of `CatalogModifierOverride` objects that override whether
+            a given `CatalogModifier` is enabled by default.
+          items:
+            $ref: '#/components/schemas/CatalogModifierOverride'
+        min_selected_modifiers:
+          type: integer
+          description: If 0 or larger, the smallest number of `CatalogModifier`s that
+            must be selected from this `CatalogModifierList`.
+        max_selected_modifiers:
+          type: integer
+          description: If 0 or larger, the largest number of `CatalogModifier`s that
+            can be selected from this `CatalogModifierList`.
+        enabled:
+          type: boolean
+          description: If `true`, enable this `CatalogModifierList`. The default value
+            is `true`.
+      description: Options to control the properties of a `CatalogModifierList` applied
+        to a `CatalogItem` instance.
+      x-property-order:
+        - modifier_list_id
+        - visibility
+        - modifier_overrides
+        - min_selected_modifiers
+        - max_selected_modifiers
+        - enabled
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogItemModifierListInfo
+    CatalogItemOption:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |-
+            The item option's display name for the seller. Must be unique across
+            all item options. This is a searchable attribute for use in applicable query filters.
+        display_name:
+          type: string
+          description: The item option's display name for the customer. This is a
+            searchable attribute for use in applicable query filters.
+        description:
+          type: string
+          description: |-
+            The item option's human-readable description. Displayed in the Square
+            Point of Sale app for the seller and in the Online Store or on receipts for
+            the buyer. This is a searchable attribute for use in applicable query filters.
+        show_colors:
+          type: boolean
+          description: If true, display colors for entries in `values` when present.
+        values:
+          type: array
+          description: |-
+            A list of CatalogObjects containing the
+            `CatalogItemOptionValue`s for this item.
+          items:
+            $ref: '#/components/schemas/CatalogObject'
+      description: A group of variations for a `CatalogItem`.
+      x-property-order:
+        - name
+        - display_name
+        - description
+        - show_colors
+        - values
+        - item_count
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogItemOption
+    CatalogItemOptionForItem:
+      type: object
+      properties:
+        item_option_id:
+          type: string
+          description: The unique id of the item option, used to form the dimensions
+            of the item option matrix in a specified order.
+      description: |2-
+         An option that can be assigned to an item.
+        For example, a t-shirt item may offer a color option or a size option.
+      x-property-order:
+        - item_option_id
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogItemOptionForItem
+    CatalogItemOptionValue:
+      type: object
+      properties:
+        item_option_id:
+          type: string
+          description: Unique ID of the associated item option.
+        name:
+          type: string
+          description: Name of this item option value. This is a searchable attribute
+            for use in applicable query filters.
+        description:
+          type: string
+          description: A human-readable description for the option value. This is
+            a searchable attribute for use in applicable query filters.
+        color:
+          type: string
+          description: |-
+            The HTML-supported hex color for the item option (e.g., "#ff8d4e85").
+            Only displayed if `show_colors` is enabled on the parent `ItemOption`. When
+            left unset, `color` defaults to white ("#ffffff") when `show_colors` is
+            enabled on the parent `ItemOption`.
+        ordinal:
+          type: integer
+          description: Determines where this option value appears in a list of option
+            values.
+      description: |-
+        An enumerated value that can link a
+        `CatalogItemVariation` to an item option as one of
+        its item option values.
+      x-property-order:
+        - item_option_id
+        - name
+        - description
+        - color
+        - ordinal
+        - item_variation_count
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogItemOptionValue
+    CatalogItemOptionValueForItemVariation:
+      type: object
+      properties:
+        item_option_id:
+          type: string
+          description: The unique id of an item option.
+        item_option_value_id:
+          type: string
+          description: The unique id of the selected value for the item option.
+      description: |-
+        A `CatalogItemOptionValue` links an item variation to an item option as
+        an item option value. For example, a t-shirt item may offer a color option and
+        a size option. An item option value would represent each variation of t-shirt:
+        For example, "Color:Red, Size:Small" or "Color:Blue, Size:Medium".
+      x-property-order:
+        - item_option_id
+        - item_option_value_id
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogItemOptionValueForItemVariation
+    CatalogItemVariation:
+      type: object
+      properties:
+        item_id:
+          type: string
+          description: The ID of the `CatalogItem` associated with this item variation.
+        name:
+          maxLength: 255
+          type: string
+          description: The item variation's name. This is a searchable attribute for
+            use in applicable query filters, and its value length is of Unicode code
+            points.
+        sku:
+          type: string
+          description: The item variation's SKU, if any. This is a searchable attribute
+            for use in applicable query filters.
+        upc:
+          type: string
+          description: |-
+            The universal product code (UPC) of the item variation, if any. This is a searchable attribute for use in applicable query filters.
+            
+            The value of this attribute should be a number of 12-14 digits long.  This restriction is enforced on the Square Seller Dashboard,
+            Square Point of Sale or Retail Point of Sale apps, where this attribute shows in the GTIN field. If a non-compliant UPC value is assigned
+            to this attribute using the API, the value is not editable on the Seller Dashboard, Square Point of Sale or Retail Point of Sale apps
+            unless it is updated to fit the expected format.
+        ordinal:
+          type: integer
+          description: |-
+            The order in which this item variation should be displayed. This value is read-only. On writes, the ordinal
+            for each item variation within a parent `CatalogItem` is set according to the item variations's
+            position. On reads, the value is not guaranteed to be sequential or unique.
+          readOnly: true
+        pricing_type:
+          $ref: '#/components/schemas/CatalogPricingType'
+        price_money:
+          $ref: '#/components/schemas/Money'
+        location_overrides:
+          type: array
+          description: Per-location price and inventory overrides.
+          items:
+            $ref: '#/components/schemas/ItemVariationLocationOverrides'
+        track_inventory:
+          type: boolean
+          description: If `true`, inventory tracking is active for the variation.
+        inventory_alert_type:
+          $ref: '#/components/schemas/InventoryAlertType'
+        inventory_alert_threshold:
+          type: integer
+          description: |-
+            If the inventory quantity for the variation is less than or equal to this value and `inventory_alert_type`
+            is `LOW_QUANTITY`, the variation displays an alert in the merchant dashboard.
+            
+            This value is always an integer.
+          format: int64
+        user_data:
+          maxLength: 255
+          type: string
+          description: Arbitrary user metadata to associate with the item variation.
+            This attribute value length is of Unicode code points.
+        service_duration:
+          type: integer
+          description: |-
+            If the `CatalogItem` that owns this item variation is of type
+            `APPOINTMENTS_SERVICE`, then this is the duration of the service in milliseconds. For
+            example, a 30 minute appointment would have the value `1800000`, which is equal to
+            30 (minutes) * 60 (seconds per minute) * 1000 (milliseconds per second).
+          format: int64
+        available_for_booking:
+          type: boolean
+          description: |-
+            If the `CatalogItem` that owns this item variation is of type
+            `APPOINTMENTS_SERVICE`, a bool representing whether this service is available for booking.
+          x-release-status: BETA
+        item_option_values:
+          type: array
+          description: |-
+            List of item option values associated with this item variation. Listed
+            in the same order as the item options of the parent item.
+          items:
+            $ref: '#/components/schemas/CatalogItemOptionValueForItemVariation'
+          x-release-status: BETA
+        measurement_unit_id:
+          type: string
+          description: |-
+            ID of the ‘CatalogMeasurementUnit’ that is used to measure the quantity
+            sold of this item variation. If left unset, the item will be sold in
+            whole quantities.
+        sellable:
+          type: boolean
+          description: "Whether this variation can be sold. The inventory count of\
+                \ a sellable variation indicates \nthe number of units available for sale.\
+                \ When a variation is both stockable and sellable, \nits sellable inventory\
+                \ count can be smaller than or equal to its stockable count."
+          x-release-status: BETA
+        stockable:
+          type: boolean
+          description: |-
+            Whether stock is counted directly on this variation (TRUE) or only on its components (FALSE).
+            When a variation is both stockable and sellable, the inventory count of a stockable variation keeps track of the number of units of this variation in stock
+            and is not an indicator of the number of units of the variation that can be sold.
+          x-release-status: BETA
+        image_ids:
+          type: array
+          description: |-
+            The IDs of images associated with this `CatalogItemVariation` instance.
+            These images will be shown to customers in Square Online Store.
+          items:
+            type: string
+          x-release-status: BETA
+        team_member_ids:
+          type: array
+          description: |-
+            Tokens of employees that can perform the service represented by this variation. Only valid for
+            variations of type `APPOINTMENTS_SERVICE`.
+          items:
+            type: string
+          x-release-status: BETA
+        stockable_conversion:
+          $ref: '#/components/schemas/CatalogStockConversion'
+      description: "An item variation, representing a product for sale, in the Catalog\
+            \ object model. Each [item](entity:CatalogItem) must have at least one \n\
+            item variation and can have at most 250 item variations. \n\nAn item variation\
+            \ can be sellable, stockable, or both if it has a unit of measure for its\
+            \ count for the sold number of the variation, the stocked \nnumber of the\
+            \ variation, or both. For example, when a variation representing wine is stocked\
+            \ and sold by the bottle, the variation is both \nstockable and sellable.\
+            \ But when a variation of the wine is sold by the glass, the sold units cannot\
+            \ be used as a measure of the stocked units. This by-the-glass \nvariation\
+            \ is sellable, but not stockable. To accurately keep track of the wine's inventory\
+            \ count at any time, the sellable count must be \nconverted to stockable count.\
+            \ Typically, the seller defines this unit conversion. For example, 1 bottle\
+            \ equals 5 glasses. The Square API exposes \nthe `stockable_conversion` property\
+            \ on the variation to specify the conversion. Thus, when two glasses of the\
+            \ wine are sold, the sellable count \ndecreases by 2, and the stockable count\
+            \ automatically decreases by 0.4 bottle according to the conversion."
+      x-property-order:
+        - item_id
+        - name
+        - sku
+        - upc
+        - ordinal
+        - pricing_type
+        - price_money
+        - location_overrides
+        - track_inventory
+        - inventory_alert_type
+        - inventory_alert_threshold
+        - buyer_facing_name
+        - user_data
+        - service_duration
+        - price_description
+        - available_for_booking
+        - no_show_fee
+        - transition_time
+        - item_option_values
+        - measurement_unit_id
+        - intermissions
+        - sellable
+        - stockable
+        - image_ids
+        - team_member_ids
+        - composition_id
+        - stockable_conversion
+        - subscription_product_ids
+        - kitchen_name
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogItemVariation
+    CatalogMeasurementUnit:
+      type: object
+      properties:
+        measurement_unit:
+          $ref: '#/components/schemas/MeasurementUnit'
+        precision:
+          type: integer
+          description: |-
+            An integer between 0 and 5 that represents the maximum number of
+            positions allowed after the decimal in quantities measured with this unit.
+            For example:
+            
+            - if the precision is 0, the quantity can be 1, 2, 3, etc.
+            - if the precision is 1, the quantity can be 0.1, 0.2, etc.
+            - if the precision is 2, the quantity can be 0.01, 0.12, etc.
+            
+            Default: 3
+      description: |-
+        Represents the unit used to measure a `CatalogItemVariation` and
+        specifies the precision for decimal quantities.
+      x-property-order:
+        - measurement_unit
+        - precision
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogMeasurementUnit
+    CatalogModifier:
+      type: object
+      properties:
+        name:
+          maxLength: 255
+          type: string
+          description: The modifier name.  This is a searchable attribute for use
+            in applicable query filters, and its value length is of Unicode code points.
+        price_money:
+          $ref: '#/components/schemas/Money'
+        ordinal:
+          type: integer
+          description: Determines where this `CatalogModifier` appears in the `CatalogModifierList`.
+        modifier_list_id:
+          type: string
+          description: The ID of the `CatalogModifierList` associated with this modifier.
+        image_ids:
+          type: array
+          description: |-
+            The IDs of images associated with this `CatalogModifier` instance.
+            Currently these images are not displayed by Square, but are free to be displayed in 3rd party applications.
+          items:
+            type: string
+          x-release-status: BETA
+      description: A modifier applicable to items at the time of sale.
+      example:
+        object:
+          type: MODIFIER
+          present_at_all_locations: true
+          modifier_data:
+            name: Almond Milk
+            price_money:
+              amount: 250
+              currency: USD
+      x-property-order:
+        - name
+        - price_money
+        - on_by_default
+        - ordinal
+        - modifier_list_id
+        - image_ids
+        - location_overrides
+        - kitchen_name
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogModifier
+    CatalogModifierList:
+      type: object
+      properties:
+        name:
+          maxLength: 255
+          type: string
+          description: The name for the `CatalogModifierList` instance. This is a
+            searchable attribute for use in applicable query filters, and its value
+            length is of Unicode code points.
+        ordinal:
+          type: integer
+          description: Determines where this modifier list appears in a list of `CatalogModifierList`
+            values.
+        selection_type:
+          $ref: '#/components/schemas/CatalogModifierListSelectionType'
+        modifiers:
+          type: array
+          description: |-
+            The options included in the `CatalogModifierList`.
+            You must include at least one `CatalogModifier`.
+            Each CatalogObject must have type `MODIFIER` and contain
+            `CatalogModifier` data.
+          items:
+            $ref: '#/components/schemas/CatalogObject'
+        image_ids:
+          type: array
+          description: |-
+            The IDs of images associated with this `CatalogModifierList` instance.
+            Currently these images are not displayed by Square, but are free to be displayed in 3rd party applications.
+          items:
+            type: string
+          x-release-status: BETA
+      description: |-
+        A list of modifiers applicable to items at the time of sale.
+        
+        For example, a "Condiments" modifier list applicable to a "Hot Dog" item
+        may contain "Ketchup", "Mustard", and "Relish" modifiers.
+        Use the `selection_type` field to specify whether or not multiple selections from
+        the modifier list are allowed.
+      example:
+        type: MODIFIER_LIST
+        id: '#MilkType'
+        present_at_all_locations: true
+        modifier_list_data:
+          name: Milk Type
+          selection_type: SINGLE
+          modifiers:
+            - type: MODIFIER
+              present_at_all_locations: true
+              modifier_data:
+                name: Whole Milk
+                price_money:
+                  amount: 0
+                  currency: USD
+            - type: MODIFIER
+              present_at_all_locations: true
+              modifier_data:
+                name: Almond Milk
+                price_money:
+                  amount: 250
+                  currency: USD
+            - type: MODIFIER
+              present_at_all_locations: true
+              modifier_data:
+                name: Soy Milk
+                price_money:
+                  amount: 250
+                  currency: USD
+      x-property-order:
+        - name
+        - ordinal
+        - selection_type
+        - modifiers
+        - image_ids
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogModifierList
+    CatalogModifierOverride:
+      required:
+        - modifier_id
+      type: object
+      properties:
+        modifier_id:
+          minLength: 1
+          type: string
+          description: The ID of the `CatalogModifier` whose default behavior is being
+            overridden.
+        on_by_default:
+          type: boolean
+          description: If `true`, this `CatalogModifier` should be selected by default
+            for this `CatalogItem`.
+      description: Options to control how to override the default behavior of the
+        specified modifier.
+      x-property-order:
+        - modifier_id
+        - on_by_default
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogModifierOverride
+    CatalogTimePeriod:
+      type: object
+      properties:
+        event:
+          type: string
+          description: |-
+            An iCalendar (RFC 5545) [event](https://tools.ietf.org/html/rfc5545#section-3.6.1), which
+            specifies the name, timing, duration and recurrence of this time period.
+            
+            Example:
+            
+            ```
+            DTSTART:20190707T180000
+            DURATION:P2H
+            RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR
+            ```
+            
+            Only `SUMMARY`, `DTSTART`, `DURATION` and `RRULE` fields are supported.
+            `DTSTART` must be in local (unzoned) time format. Note that while `BEGIN:VEVENT`
+            and `END:VEVENT` is not required in the request. The response will always
+            include them.
+      description: Represents a time period - either a single period or a repeating
+        period.
+      x-property-order:
+        - event
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogTimePeriod
+    CatalogPricingType:
+      type: string
+      description: Indicates whether the price of a CatalogItemVariation should be
+        entered manually at the time of sale.
+      enum:
+        - FIXED_PRICING
+        - VARIABLE_PRICING
+      x-enum-elements:
+        - name: FIXED_PRICING
+          description: The catalog item variation's price is fixed.
+          x-release-status: PUBLIC
+        - name: VARIABLE_PRICING
+          description: The catalog item variation's price is entered at the time of
+            sale.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogPricingType
+    CatalogQuickAmountType:
+      type: string
+      description: Determines the type of a specific Quick Amount.
+      enum:
+        - QUICK_AMOUNT_TYPE_DO_NOT_USE
+        - QUICK_AMOUNT_TYPE_MANUAL
+        - QUICK_AMOUNT_TYPE_AUTO
+      x-enum-elements:
+        - name: QUICK_AMOUNT_TYPE_MANUAL
+          description: Quick Amount is created manually by the seller.
+          x-release-status: BETA
+        - name: QUICK_AMOUNT_TYPE_AUTO
+          description: Quick Amount is generated automatically by machine learning algorithms.
+          x-release-status: BETA
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogQuickAmountType
+    CatalogQuickAmountsSettingsOption:
+      type: string
+      description: Determines a seller's option on Quick Amounts feature.
+      enum:
+        - QUICK_AMOUNTS_SETTINGS_OPTION_DO_NOT_USE
+        - DISABLED
+        - MANUAL
+        - AUTO
+      x-enum-elements:
+        - name: DISABLED
+          description: Option for seller to disable Quick Amounts.
+          x-release-status: BETA
+        - name: MANUAL
+          description: Option for seller to choose manually created Quick Amounts.
+          x-release-status: BETA
+        - name: AUTO
+          description: Option for seller to choose automatically created Quick Amounts.
+          x-release-status: BETA
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogQuickAmountsSettingsOption
+    CatalogModifierListSelectionType:
+      type: string
+      description: Indicates whether a CatalogModifierList supports multiple selections.
+      enum:
+        - SINGLE
+        - MULTIPLE
+      x-enum-elements:
+        - name: SINGLE
+          description: |-
+            Indicates that a CatalogModifierList allows only a
+            single CatalogModifier to be selected.
+          x-release-status: PUBLIC
+        - name: MULTIPLE
+          description: |-
+            Indicates that a CatalogModifierList allows multiple
+            CatalogModifier to be selected.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogModifierListSelectionType
+    CatalogStockConversion:
+      required:
+        - nonstockable_quantity
+        - stockable_item_variation_id
+        - stockable_quantity
+      type: object
+      properties:
+        stockable_item_variation_id:
+          minLength: 1
+          type: string
+          description: |-
+            References to the stockable [CatalogItemVariation](entity:CatalogItemVariation)
+            for this stock conversion. Selling, receiving or recounting the non-stockable `CatalogItemVariation`
+            defined with a stock conversion results in adjustments of this stockable `CatalogItemVariation`.
+            This immutable field must reference a stockable `CatalogItemVariation`
+            that shares the parent [CatalogItem](entity:CatalogItem) of the converted `CatalogItemVariation.`
+        stockable_quantity:
+          maxLength: 16
+          minLength: 1
+          type: string
+          description: |-
+            The quantity of the stockable item variation (as identified by `stockable_item_variation_id`)
+            equivalent to the non-stockable item variation quantity (as specified in `nonstockable_quantity`)
+            as defined by this stock conversion.  It accepts a decimal number in a string format that can take
+            up to 10 digits before the decimal point and up to 5 digits after the decimal point.
+        nonstockable_quantity:
+          maxLength: 16
+          minLength: 1
+          type: string
+          description: |-
+            The converted equivalent quantity of the non-stockable [CatalogItemVariation](entity:CatalogItemVariation)
+            in its measurement unit. The `stockable_quantity` value and this `nonstockable_quantity` value together
+            define the conversion ratio between stockable item variation and the non-stockable item variation.
+            It accepts a decimal number in a string format that can take up to 10 digits before the decimal point
+            and up to 5 digits after the decimal point.
+      description: |-
+        Represents the rule of conversion between a stockable [CatalogItemVariation](entity:CatalogItemVariation)
+        and a non-stockable sell-by or receive-by `CatalogItemVariation` that
+        share the same underlying stock.
+      x-property-order:
+        - stockable_item_variation_id
+        - stockable_quantity
+        - nonstockable_quantity
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogStockConversion
+    CatalogItemProductType:
+      type: string
+      description: The type of a CatalogItem. Connect V2 only allows the creation
+        of `REGULAR` or `APPOINTMENTS_SERVICE` items.
+      enum:
+        - REGULAR
+        - GIFT_CARD
+        - APPOINTMENTS_SERVICE
+        - CLASS_TICKET
+      x-enum-elements:
+        - name: REGULAR
+          description: An ordinary item.
+          x-release-status: PUBLIC
+        - name: GIFT_CARD
+          description: A Square gift card.
+          x-release-status: DEPRECATED
+        - name: APPOINTMENTS_SERVICE
+          description: A service that can be booked using the Square Appointments app.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogItemProductType
+    CatalogV1Id:
+      type: object
+      properties:
+        catalog_v1_id:
+          type: string
+          description: The ID for an object used in the Square API V1, if the object
+            ID differs from the Square API V2 object ID.
+        location_id:
+          type: string
+          description: The ID of the `Location` this Connect V1 ID is associated with.
+      description: A Square API V1 identifier of an item, including the object ID
+        and its associated location ID.
+      x-property-order:
+        - catalog_v1_id
+        - location_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogV1Id
+    CatalogCustomAttributeDefinitionSellerVisibility:
+      type: string
+      description: |-
+        Defines the visibility of a custom attribute to sellers in Square
+        client applications, Square APIs or in Square UIs (including Square Point
+        of Sale applications and Square Dashboard).
+      enum:
+        - SELLER_VISIBILITY_DO_NOT_USE
+        - SELLER_VISIBILITY_HIDDEN
+        - SELLER_VISIBILITY_READ_WRITE_VALUES
+      x-enum-elements:
+        - name: SELLER_VISIBILITY_HIDDEN
+          description: |-
+            Sellers cannot read this custom attribute in Square client
+            applications or Square APIs.
+          x-release-status: BETA
+        - name: SELLER_VISIBILITY_READ_WRITE_VALUES
+          description: |-
+            Sellers can read and write this custom attribute value in catalog objects,
+            but cannot edit the custom attribute definition.
+          x-release-status: BETA
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogCustomAttributeDefinitionSellerVisibility
+    CatalogProductSet:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |-
+            User-defined name for the product set. For example, "Clearance Items"
+            or "Winter Sale Items".
+        product_ids_any:
+          maxItems: 500
+          type: array
+          description: |2-
+             Unique IDs for any `CatalogObject` included in this product set. Any
+            number of these catalog objects can be in an order for a pricing rule to apply.
+          
+            This can be used with `product_ids_all` in a parent `CatalogProductSet` to
+            match groups of products for a bulk discount, such as a discount for an
+            entree and side combo.
+          
+            Only one of `product_ids_all`, `product_ids_any`, or `all_products` can be set.
+          
+            Max: 500 catalog object IDs.
+          items:
+            type: string
+        product_ids_all:
+          maxItems: 500
+          type: array
+          description: |-
+            Unique IDs for any `CatalogObject` included in this product set.
+            All objects in this set must be included in an order for a pricing rule to apply.
+            
+            Only one of `product_ids_all`, `product_ids_any`, or `all_products` can be set.
+            
+            Max: 500 catalog object IDs.
+          items:
+            type: string
+        quantity_exact:
+          type: integer
+          description: |-
+            If set, there must be exactly this many items from `products_any` or `products_all`
+            in the cart for the discount to apply.
+            
+            Cannot be combined with either `quantity_min` or `quantity_max`.
+          format: int64
+        quantity_min:
+          type: integer
+          description: |-
+            If set, there must be at least this many items from `products_any` or `products_all`
+            in a cart for the discount to apply. See `quantity_exact`. Defaults to 0 if
+            `quantity_exact`, `quantity_min` and `quantity_max` are all unspecified.
+          format: int64
+        quantity_max:
+          type: integer
+          description: |-
+            If set, the pricing rule will apply to a maximum of this many items from
+            `products_any` or `products_all`.
+          format: int64
+        all_products:
+          type: boolean
+          description: |-
+            If set to `true`, the product set will include every item in the catalog.
+            Only one of `product_ids_all`, `product_ids_any`, or `all_products` can be set.
+      description: |-
+        Represents a collection of catalog objects for the purpose of applying a
+        `PricingRule`. Including a catalog object will include all of its subtypes.
+        For example, including a category in a product set will include all of its
+        items and associated item variations in the product set. Including an item in
+        a product set will also include its item variations.
+      x-property-order:
+        - name
+        - product_ids_any
+        - product_ids_all
+        - quantity_exact
+        - quantity_min
+        - quantity_max
+        - all_products
+        - match_custom_amounts
+        - is_product_all_tokens_been_cascade_delete
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogProductSet
+    CatalogPricingRule:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |-
+            User-defined name for the pricing rule. For example, "Buy one get one
+            free" or "10% off".
+        time_period_ids:
+          type: array
+          description: |-
+            A list of unique IDs for the catalog time periods when
+            this pricing rule is in effect. If left unset, the pricing rule is always
+            in effect.
+          items:
+            type: string
+        discount_id:
+          type: string
+          description: |-
+            Unique ID for the `CatalogDiscount` to take off
+            the price of all matched items.
+        match_products_id:
+          type: string
+          description: |-
+            Unique ID for the `CatalogProductSet` that will be matched by this rule. A match rule
+            matches within the entire cart, and can match multiple times. This field will always be set.
+        apply_products_id:
+          type: string
+          description: |-
+            __Deprecated__: Please use the `exclude_products_id` field to apply
+            an exclude set instead. Exclude sets allow better control over quantity
+            ranges and offer more flexibility for which matched items receive a discount.
+            
+            `CatalogProductSet` to apply the pricing to.
+            An apply rule matches within the subset of the cart that fits the match rules (the match set).
+            An apply rule can only match once in the match set.
+            If not supplied, the pricing will be applied to all products in the match set.
+            Other products retain their base price, or a price generated by other rules.
+          x-release-status: DEPRECATED
+        exclude_products_id:
+          type: string
+          description: |-
+            `CatalogProductSet` to exclude from the pricing rule.
+            An exclude rule matches within the subset of the cart that fits the match rules (the match set).
+            An exclude rule can only match once in the match set.
+            If not supplied, the pricing will be applied to all products in the match set.
+            Other products retain their base price, or a price generated by other rules.
+        valid_from_date:
+          type: string
+          description: Represents the date the Pricing Rule is valid from. Represented
+            in RFC 3339 full-date format (YYYY-MM-DD).
+        valid_from_local_time:
+          type: string
+          description: |-
+            Represents the local time the pricing rule should be valid from. Represented in RFC 3339 partial-time format
+            (HH:MM:SS). Partial seconds will be truncated.
+        valid_until_date:
+          type: string
+          description: Represents the date the Pricing Rule is valid until. Represented
+            in RFC 3339 full-date format (YYYY-MM-DD).
+        valid_until_local_time:
+          type: string
+          description: |-
+            Represents the local time the pricing rule should be valid until. Represented in RFC 3339 partial-time format
+            (HH:MM:SS). Partial seconds will be truncated.
+        exclude_strategy:
+          $ref: '#/components/schemas/ExcludeStrategy'
+        minimum_order_subtotal_money:
+          $ref: '#/components/schemas/Money'
+        customer_group_ids_any:
+          type: array
+          description: |-
+            A list of IDs of customer groups, the members of which are eligible for discounts specified in this pricing rule.
+            Notice that a group ID is generated by the Customers API.
+            If this field is not set, the specified discount applies to matched products sold to anyone whether the buyer
+            has a customer profile created or not. If this `customer_group_ids_any` field is set, the specified discount
+            applies only to matched products sold to customers belonging to the specified customer groups.
+          items:
+            type: string
+      description: |-
+        Defines how discounts are automatically applied to a set of items that match the pricing rule
+        during the active time period.
+      x-property-order:
+        - name
+        - time_period_ids
+        - discount_id
+        - match_products_id
+        - apply_products_id
+        - stackable
+        - exclude_products_id
+        - valid_from_date
+        - valid_from_local_time
+        - valid_until_date
+        - valid_until_local_time
+        - exclude_strategy
+        - application_mode
+        - discount_target_scope
+        - max_applications_per_attachment
+        - minimum_order_subtotal_money
+        - customer_group_ids_any
+        - service_charge_target_scope
+        - service_charge_id
+        - enabled_pricing_sources
+        - disabled_pricing_sources
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogPricingRule
+    CatalogQuickAmount:
+      required:
+        - amount
+        - type
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CatalogQuickAmountType'
+        amount:
+          $ref: '#/components/schemas/Money'
+        score:
+          type: integer
+          description: |-
+            Describes the ranking of the Quick Amount provided by machine learning model, in the range [0, 100].
+            MANUAL type amount will always have score = 100.
+          format: int64
+        ordinal:
+          type: integer
+          description: The order in which this Quick Amount should be displayed.
+          format: int64
+      description: Represents a Quick Amount in the Catalog.
+      x-property-order:
+        - type
+        - amount
+        - score
+        - ordinal
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogQuickAmount
+    CatalogQuickAmountsSettings:
+      required:
+        - option
+      type: object
+      properties:
+        option:
+          $ref: '#/components/schemas/CatalogQuickAmountsSettingsOption'
+        eligible_for_auto_amounts:
+          type: boolean
+          description: |-
+            Represents location's eligibility for auto amounts
+            The boolean should be consistent with whether there are AUTO amounts in the `amounts`.
+        amounts:
+          type: array
+          description: Represents a set of Quick Amounts at this location.
+          items:
+            $ref: '#/components/schemas/CatalogQuickAmount'
+      description: A parent Catalog Object model represents a set of Quick Amounts
+        and the settings control the amounts.
+      x-property-order:
+        - option
+        - eligible_for_auto_amounts
+        - amounts
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogQuickAmountsSettings
     CreateLocationRequest:
       type: object
       properties:
@@ -1017,6 +2945,78 @@ components:
       x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
       x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
       x-object-name: CreateLocationResponse
+    CatalogSubscriptionPlan:
+      required:
+        - name
+        - phases
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the plan.
+        phases:
+          type: array
+          description: A list of SubscriptionPhase containing the [SubscriptionPhase](entity:SubscriptionPhase)
+            for this plan.
+          items:
+            $ref: '#/components/schemas/SubscriptionPhase'
+      description: |-
+        Describes a subscription plan. For more information, see
+        [Set Up and Manage a Subscription Plan](https://developer.squareup.com/docs/subscriptions-api/setup-plan).
+      x-property-order:
+        - name
+        - phases
+        - tax_info
+        - configuration
+        - subscription_product_id
+        - monthly_billing_anchor_date
+        - can_prorate
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogSubscriptionPlan
+    SubscriptionPhase:
+      required:
+        - cadence
+      type: object
+      properties:
+        uid:
+          type: string
+          description: The Square-assigned ID of the subscription phase. This field
+            cannot be changed after a `SubscriptionPhase` is created.
+        cadence:
+          $ref: '#/components/schemas/SubscriptionCadence'
+        periods:
+          minimum: 0
+          type: integer
+          description: The number of `cadence`s the phase lasts. If not set, the phase
+            never ends. Only the last phase can be indefinite. This field cannot be
+            changed after a `SubscriptionPhase` is created.
+        recurring_price_money:
+          $ref: '#/components/schemas/Money'
+        ordinal:
+          type: integer
+          description: The position this phase appears in the sequence of phases defined
+            for the plan, indexed from 0. This field cannot be changed after a `SubscriptionPhase`
+            is created.
+          format: int64
+      description: |-
+        Describes a phase in a subscription plan. For more information, see
+        [Set Up and Manage a Subscription Plan](https://developer.squareup.com/docs/subscriptions-api/setup-plan).
+      x-property-order:
+        - uid
+        - cadence
+        - periods
+        - recurring_price_money
+        - ordinal
+        - one_time_fee
+        - pricing
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: SubscriptionPhase
     Coordinates:
       type: object
       properties:
@@ -2047,6 +4047,163 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/country.proto
       x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
       x-object-name: Country
+    DeleteCatalogObjectResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Any errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        deleted_object_ids:
+          type: array
+          description: |-
+            The IDs of all catalog objects deleted by this request.
+            Multiple IDs may be returned when associated objects are also deleted, for example
+            a catalog item variation will be deleted (and its ID included in this field)
+            when its parent catalog item is deleted.
+          items:
+            type: string
+        deleted_at:
+          type: string
+          description: |-
+            The database [timestamp](https://developer.squareup.com/docs/build-basics/working-with-dates)
+            of this deletion in RFC 3339 format, e.g., `2016-09-04T23:59:33.123Z`.
+      example:
+        deleted_object_ids:
+          - 7SB3ZQYJ5GDMVFL7JK46JCHT
+          - KQLFFHA6K6J3YQAQAWDQAL57
+        deleted_at: 2016-11-16T22:25:24.878Z
+      x-property-order:
+        - errors
+        - deleted_object_ids
+        - deleted_at
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/interfaces/delete-catalog-obj.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: DeleteCatalogObjectResponse
+      x-sq-sdk-sample-code:
+        python: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.python
+        csharp: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.csharp
+        java: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.java
+        php: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.php
+        javascript: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.javascript
+        ruby: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.ruby
+    ExcludeStrategy:
+      type: string
+      description: |-
+        Indicates which products matched by a CatalogPricingRule
+        will be excluded if the pricing rule uses an exclude set.
+      enum:
+        - EXCLUDE_STRATEGY_DO_NOT_USE
+        - LEAST_EXPENSIVE
+        - MOST_EXPENSIVE
+      x-enum-elements:
+        - name: LEAST_EXPENSIVE
+          description: |-
+            The least expensive matched products are excluded from the pricing. If
+            the pricing rule is set to exclude one product and multiple products in the
+            match set qualify as least expensive, then one will be excluded at random.
+            
+            Excluding the least expensive product gives the best discount value to the buyer.
+          x-release-status: BETA
+        - name: MOST_EXPENSIVE
+          description: |-
+            The most expensive matched product is excluded from the pricing rule.
+            If multiple products have the same price and all qualify as least expensive,
+            one will be excluded at random.
+            
+            This guarantees that the most expensive product is purchased at full price.
+          x-release-status: BETA
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: ExcludeStrategy
+    ItemVariationLocationOverrides:
+      type: object
+      properties:
+        location_id:
+          type: string
+          description: The ID of the `Location`. This can include locations that are
+            deactivated.
+        price_money:
+          $ref: '#/components/schemas/Money'
+        pricing_type:
+          $ref: '#/components/schemas/CatalogPricingType'
+        track_inventory:
+          type: boolean
+          description: If `true`, inventory tracking is active for the `CatalogItemVariation`
+            at this `Location`.
+        inventory_alert_type:
+          $ref: '#/components/schemas/InventoryAlertType'
+        inventory_alert_threshold:
+          type: integer
+          description: |-
+            If the inventory quantity for the variation is less than or equal to this value and `inventory_alert_type`
+            is `LOW_QUANTITY`, the variation displays an alert in the merchant dashboard.
+            
+            This value is always an integer.
+          format: int64
+        sold_out:
+          type: boolean
+          description: |-
+            Indicates whether the overridden item variation is sold out at the specified location.
+            
+            When inventory tracking is enabled on the item variation either globally or at the specified location,
+            the item variation is automatically marked as sold out when its inventory count reaches zero. The seller
+            can manually set the item variation as sold out even when the inventory count is greater than zero.
+            Attempts by an application to set this attribute are ignored. Regardless how the sold-out status is set,
+            applications should treat its inventory count as zero when this attribute value is `true`.
+          readOnly: true
+          x-release-status: BETA
+        sold_out_valid_until:
+          type: string
+          description: |-
+            The seller-assigned timestamp, of the RFC 3339 format, to indicate when this sold-out variation
+            becomes available again at the specified location. Attempts by an application to set this attribute are ignored.
+            When the current time is later than this attribute value, the affected item variation is no longer sold out.
+          readOnly: true
+          x-release-status: BETA
+      description: Price and inventory alerting overrides for a `CatalogItemVariation`
+        at a specific `Location`.
+      x-property-order:
+        - location_id
+        - price_money
+        - pricing_type
+        - track_inventory
+        - inventory_alert_type
+        - inventory_alert_threshold
+        - price_description
+        - resource_tokens
+        - sold_out
+        - sold_out_valid_until
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: ItemVariationLocationOverrides
+    InventoryAlertType:
+      type: string
+      description: Indicates whether Square should alert the merchant when the inventory
+        quantity of a CatalogItemVariation is low.
+      enum:
+        - INVENTORY_ALERT_TYPE_DO_NOT_USE
+        - NONE
+        - LOW_QUANTITY
+      x-enum-elements:
+        - name: NONE
+          description: The variation does not display an alert.
+          x-release-status: PUBLIC
+        - name: LOW_QUANTITY
+          description: The variation generates an alert when its quantity is low.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: InventoryAlertType
     ListLocationsResponse:
       type: object
       properties:
@@ -2347,6 +4504,86 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
       x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
       x-object-name: Location
+    Product:
+      type: string
+      description: Indicates the Square product used to generate a change.
+      enum:
+        - PRODUCT_DO_NOT_USE
+        - SQUARE_POS
+        - EXTERNAL_API
+        - BILLING
+        - APPOINTMENTS
+        - INVOICES
+        - ONLINE_STORE
+        - PAYROLL
+        - DASHBOARD
+        - ITEM_LIBRARY_IMPORT
+        - RETAIL
+        - RESTAURANT
+        - CUSTOMERS_DIRECTORY
+        - OTHER
+      x-enum-elements:
+        - name: SQUARE_POS
+          description: Square Point of Sale application.
+          x-release-status: PUBLIC
+        - name: EXTERNAL_API
+          description: Square Connect APIs (for example, Orders API or Checkout API).
+          x-release-status: PUBLIC
+        - name: BILLING
+          description: A Square subscription (various products).
+          x-release-status: PUBLIC
+        - name: APPOINTMENTS
+          description: Square Appointments.
+          x-release-status: PUBLIC
+        - name: INVOICES
+          description: Square Invoices.
+          x-release-status: PUBLIC
+        - name: ONLINE_STORE
+          description: Square Online Store.
+          x-release-status: PUBLIC
+        - name: PAYROLL
+          description: Square Payroll.
+          x-release-status: PUBLIC
+        - name: DASHBOARD
+          description: Square Dashboard.
+          x-release-status: PUBLIC
+        - name: ITEM_LIBRARY_IMPORT
+          description: Item Library Import.
+          x-release-status: PUBLIC
+        - name: OTHER
+          description: A Square product that does not match any other value.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/common/source_application.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: Product
+    SourceApplication:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        application_id:
+          type: string
+          description: |-
+            __Read only__ The Square-assigned ID of the application. This field is used only if the
+            [product](entity:Product) type is `EXTERNAL_API`.
+        name:
+          type: string
+          description: |-
+            __Read only__ The display name of the application
+            (for example, `"Custom Application"` or `"Square POS 4.74 for Android"`).
+      description: Represents information about the application used to generate a
+        change.
+      x-property-order:
+        - product
+        - application_id
+        - name
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/common/source_application.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: SourceApplication
     SearchOrdersSortField:
       type: string
       description: Specifies which timestamp to use to sort `SearchOrder` results.
@@ -2462,6 +4699,69 @@ components:
       x-proto-location: /orders/orders-service-proto/src/main/proto/squareup/omg/search_orders.proto
       x-proto-sha: 43aa42a4f8fcf3322b75483e78a370f2133aaf14
       x-object-name: SearchOrdersStateFilter
+    SubscriptionCadence:
+      type: string
+      description: Determines the billing cadence of a [Subscription](entity:Subscription)
+      enum:
+        - SUBSCRIPTION_CADENCE_DO_NOT_USE
+        - DAILY
+        - WEEKLY
+        - EVERY_TWO_WEEKS
+        - THIRTY_DAYS
+        - SIXTY_DAYS
+        - NINETY_DAYS
+        - MONTHLY
+        - EVERY_TWO_MONTHS
+        - QUARTERLY
+        - EVERY_FOUR_MONTHS
+        - EVERY_SIX_MONTHS
+        - ANNUAL
+        - EVERY_TWO_YEARS
+      x-enum-elements:
+        - name: DAILY
+          description: Once per day
+          x-release-status: PUBLIC
+        - name: WEEKLY
+          description: Once per week
+          x-release-status: PUBLIC
+        - name: EVERY_TWO_WEEKS
+          description: Every two weeks
+          x-release-status: PUBLIC
+        - name: THIRTY_DAYS
+          description: Once every 30 days
+          x-release-status: PUBLIC
+        - name: SIXTY_DAYS
+          description: Once every 60 days
+          x-release-status: PUBLIC
+        - name: NINETY_DAYS
+          description: Once every 90 days
+          x-release-status: PUBLIC
+        - name: MONTHLY
+          description: Once per month
+          x-release-status: PUBLIC
+        - name: EVERY_TWO_MONTHS
+          description: Once every two months
+          x-release-status: PUBLIC
+        - name: QUARTERLY
+          description: Once every three months
+          x-release-status: PUBLIC
+        - name: EVERY_FOUR_MONTHS
+          description: Once every four months
+          x-release-status: PUBLIC
+        - name: EVERY_SIX_MONTHS
+          description: Once every six months
+          x-release-status: PUBLIC
+        - name: ANNUAL
+          description: Once per year
+          x-release-status: PUBLIC
+        - name: EVERY_TWO_YEARS
+          description: Once every two years
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: SubscriptionCadence
     OrderState:
       type: string
       description: The state of the order.
@@ -7710,6 +10010,522 @@ components:
       x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/refunds_model.proto
       x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
       x-object-name: PaymentRefund
+    RetrieveCatalogObjectResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Any errors that occurred during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        object:
+          $ref: '#/components/schemas/CatalogObject'
+        related_objects:
+          type: array
+          description: A list of `CatalogObject`s referenced by the object in the
+            `object` field.
+          items:
+            $ref: '#/components/schemas/CatalogObject'
+      example:
+        object:
+          type: ITEM
+          id: W62UWFY35CWMYGVWK6TWJDNI
+          updated_at: 2016-11-16T22:25:24.878Z
+          version: 1479335124878
+          is_deleted: false
+          present_at_all_locations: true
+          item_data:
+            name: Tea
+            description: Hot Leaf Juice
+            category_id: BJNQCF2FJ6S6UIDT65ABHLRX
+            tax_ids:
+              - HURXQOOAIC4IZSI2BEXQRYFY
+            variations:
+              - type: ITEM_VARIATION
+                id: 2TZFAOHWGG7PAK2QEXWYPZSP
+                updated_at: 2016-11-16T22:25:24.878Z
+                version: 1479335124878
+                is_deleted: false
+                present_at_all_locations: true
+                item_variation_data:
+                  item_id: W62UWFY35CWMYGVWK6TWJDNI
+                  name: Mug
+                  ordinal: 0
+                  pricing_type: FIXED_PRICING
+                  price_money:
+                    amount: 150
+                    currency: USD
+        related_objects:
+          - type: CATEGORY
+            id: BJNQCF2FJ6S6UIDT65ABHLRX
+            updated_at: 2016-11-16T22:25:24.878Z
+            version: 1479335124878
+            is_deleted: false
+            present_at_all_locations: true
+            category_data:
+              name: Beverages
+          - type: TAX
+            id: HURXQOOAIC4IZSI2BEXQRYFY
+            updated_at: 2016-11-16T22:25:24.878Z
+            version: 1479335124878
+            is_deleted: false
+            present_at_all_locations: true
+            tax_data:
+              name: Sales Tax
+              calculation_phase: TAX_SUBTOTAL_PHASE
+              inclusion_type: ADDITIVE
+              percentage: "5.0"
+              enabled: true
+      x-property-order:
+        - errors
+        - object
+        - related_objects
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/interfaces/retrieve-catalog-obj.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: RetrieveCatalogObjectResponse
+      x-sq-sdk-sample-code:
+        python: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.python
+        csharp: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.csharp
+        java: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.java
+        php: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.php
+        javascript: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.javascript
+        ruby: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.ruby
+    CatalogObject:
+      required:
+        - id
+        - type
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CatalogObjectType'
+        id:
+          minLength: 1
+          type: string
+          description: |-
+            An identifier to reference this object in the catalog. When a new `CatalogObject`
+            is inserted, the client should set the id to a temporary identifier starting with
+            a "`#`" character. Other objects being inserted or updated within the same request
+            may use this identifier to refer to the new object.
+            
+            When the server receives the new object, it will supply a unique identifier that
+            replaces the temporary identifier for all future references.
+        updated_at:
+          type: string
+          description: |-
+            Last modification [timestamp](https://developer.squareup.com/docs/build-basics/working-with-dates) in RFC 3339 format, e.g., `"2016-08-15T23:59:33.123Z"`
+            would indicate the UTC time (denoted by `Z`) of August 15, 2016 at 23:59:33 and 123 milliseconds.
+          readOnly: true
+        version:
+          type: integer
+          description: |-
+            The version of the object. When updating an object, the version supplied
+            must match the version in the database, otherwise the write will be rejected as conflicting.
+          format: int64
+        is_deleted:
+          type: boolean
+          description: |-
+            If `true`, the object has been deleted from the database. Must be `false` for new objects
+            being inserted. When deleted, the `updated_at` field will equal the deletion time.
+        custom_attribute_values:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CatalogCustomAttributeValue'
+          description: |-
+            A map (key-value pairs) of application-defined custom attribute values. The value of a key-value pair
+            is a [CatalogCustomAttributeValue](entity:CatalogCustomAttributeValue) object. The key is the `key` attribute
+            value defined in the associated [CatalogCustomAttributeDefinition](entity:CatalogCustomAttributeDefinition)
+            object defined by the application making the request.
+            
+            If the `CatalogCustomAttributeDefinition` object is
+            defined by another application, the `CatalogCustomAttributeDefinition`'s key attribute value is prefixed by
+            the defining application ID. For example, if the `CatalogCustomAttributeDefinition` has a `key` attribute of
+            `"cocoa_brand"` and the defining application ID is `"abcd1234"`, the key in the map is `"abcd1234:cocoa_brand"`
+            if the application making the request is different from the application defining the custom attribute definition.
+            Otherwise, the key used in the map is simply `"cocoa_brand"`.
+            
+            Application-defined custom attributes are set at a global (location-independent) level.
+            Custom attribute values are intended to store additional information about a catalog object
+            or associations with an entity in another system. Do not use custom attributes
+            to store any sensitive information (personally identifiable information, card details, etc.).
+          x-release-status: BETA
+        catalog_v1_ids:
+          type: array
+          description: |-
+            The Connect v1 IDs for this object at each location where it is present, where they
+            differ from the object's Connect V2 ID. The field will only be present for objects that
+            have been created or modified by legacy APIs.
+          items:
+            $ref: '#/components/schemas/CatalogV1Id'
+        present_at_all_locations:
+          type: boolean
+          description: |-
+            If `true`, this object is present at all locations (including future locations), except where specified in
+            the `absent_at_location_ids` field. If `false`, this object is not present at any locations (including future locations),
+            except where specified in the `present_at_location_ids` field. If not specified, defaults to `true`.
+        present_at_location_ids:
+          type: array
+          description: |-
+            A list of locations where the object is present, even if `present_at_all_locations` is `false`.
+            This can include locations that are deactivated.
+          items:
+            type: string
+        absent_at_location_ids:
+          type: array
+          description: |-
+            A list of locations where the object is not present, even if `present_at_all_locations` is `true`.
+            This can include locations that are deactivated.
+          items:
+            type: string
+        image_id:
+          type: string
+          description: Identifies the `CatalogImage` attached to this `CatalogObject`.
+          x-release-status: RETIRED
+        item_data:
+          $ref: '#/components/schemas/CatalogItem'
+        category_data:
+          $ref: '#/components/schemas/CatalogCategory'
+        item_variation_data:
+          $ref: '#/components/schemas/CatalogItemVariation'
+        tax_data:
+          $ref: '#/components/schemas/CatalogTax'
+        discount_data:
+          $ref: '#/components/schemas/CatalogDiscount'
+        modifier_list_data:
+          $ref: '#/components/schemas/CatalogModifierList'
+        modifier_data:
+          $ref: '#/components/schemas/CatalogModifier'
+        time_period_data:
+          $ref: '#/components/schemas/CatalogTimePeriod'
+        product_set_data:
+          $ref: '#/components/schemas/CatalogProductSet'
+        pricing_rule_data:
+          $ref: '#/components/schemas/CatalogPricingRule'
+        image_data:
+          $ref: '#/components/schemas/CatalogImage'
+        measurement_unit_data:
+          $ref: '#/components/schemas/CatalogMeasurementUnit'
+        subscription_plan_data:
+          $ref: '#/components/schemas/CatalogSubscriptionPlan'
+        item_option_data:
+          $ref: '#/components/schemas/CatalogItemOption'
+        item_option_value_data:
+          $ref: '#/components/schemas/CatalogItemOptionValue'
+        custom_attribute_definition_data:
+          $ref: '#/components/schemas/CatalogCustomAttributeDefinition'
+        quick_amounts_settings_data:
+          $ref: '#/components/schemas/CatalogQuickAmountsSettings'
+      description: |-
+        The wrapper object for the catalog entries of a given object type.
+        
+        Depending on the `type` attribute value, a `CatalogObject` instance assumes a type-specific data to yield the corresponding type of catalog object.
+        
+        For example, if `type=ITEM`, the `CatalogObject` instance must have the ITEM-specific data set on the `item_data` attribute. The resulting `CatalogObject` instance is also a `CatalogItem` instance.
+        
+        In general, if `type=<OBJECT_TYPE>`, the `CatalogObject` instance must have the `<OBJECT_TYPE>`-specific data set on the `<object_type>_data` attribute. The resulting `CatalogObject` instance is also a `Catalog<ObjectType>` instance.
+        
+        For a more detailed discussion of the Catalog data model, please see the
+        [Design a Catalog](https://developer.squareup.com/docs/catalog-api/design-a-catalog) guide.
+      example:
+        catalog_object:
+          type: '{{ [ITEM | ITEM_VARIATION | MODIFIER | MODIFIER_LIST | CATEGORY |
+                DISCOUNT | TAX] }}'
+          id: '{{ set by Catalog during object creation }}'
+          updated_at: '{{ date & time of most recent update }}'
+          version: '{{ version of the CatalogObject }}'
+          is_deleted: '{{ [true | false] }}'
+          connect_v1_ids:
+            catalog_v1_id: '{{ itemID from Catalog v1 }}'
+            location_id: '{{ location where v1 ID is used }}'
+          present_at_all_locations: '{{ [true | false] }}'
+          present_at_location_ids:
+            - '{{ LOCATIONID-1 }}'
+            - '{{ LOCATIONID-N }}'
+          absent_at_location_ids:
+            - '{{ LOCATIONID-1 }}'
+            - '{{ LOCATIONID-N }}'
+          item_data: '{{ CatalogItem object only if type=ITEM }}'
+          item_variation_data: '{{ CatalogItemVariation object only if type=ITEM_VARIATION
+                }}'
+          modifier_data: '{{ CatalogModifier object only if type=MODIFIER }}'
+          modifier_list_data: '{{ CatalogModifierList object only if type=MODIFIER_LIST
+                }}'
+          category_data: '{{ CatalogCategory object only if type=CATEGORY }}'
+          discount_data: '{{ CatalogDiscount object only if type=DISCOUNT }}'
+          tax_data: '{{ CatalogTax object only if type=TAX }}'
+      x-property-order:
+        - type
+        - id
+        - updated_at
+        - created_at
+        - version
+        - is_deleted
+        - DEPRECATED_custom_attributes
+        - custom_attribute_values
+        - catalog_v1_ids
+        - present_at_all_locations
+        - present_at_location_ids
+        - absent_at_location_ids
+        - image_id
+        - item_data
+        - category_data
+        - item_variation_data
+        - tax_data
+        - discount_data
+        - modifier_list_data
+        - modifier_data
+        - time_period_data
+        - product_set_data
+        - pricing_rule_data
+        - image_data
+        - measurement_unit_data
+        - subscription_plan_data
+        - item_option_data
+        - item_option_value_data
+        - custom_attribute_definition_data
+        - quick_amounts_settings_data
+        - tax_exemption_data
+        - dining_option_data
+        - resource_data
+        - composition_data
+        - component_data
+        - service_charge_data
+        - checkout_link_data
+        - address_data
+        - subscription_product_data
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogObject
+    CatalogTax:
+      type: object
+      properties:
+        name:
+          maxLength: 255
+          type: string
+          description: The tax's name. This is a searchable attribute for use in applicable
+            query filters, and its value length is of Unicode code points.
+        calculation_phase:
+          $ref: '#/components/schemas/TaxCalculationPhase'
+        inclusion_type:
+          $ref: '#/components/schemas/TaxInclusionType'
+        percentage:
+          type: string
+          description: |-
+            The percentage of the tax in decimal form, using a `'.'` as the decimal separator and without a `'%'` sign.
+            A value of `7.5` corresponds to 7.5%. For a location-specific tax rate, contact the tax authority of the location or a tax consultant.
+        applies_to_custom_amounts:
+          type: boolean
+          description: |-
+            If `true`, the fee applies to custom amounts entered into the Square Point of Sale
+            app that are not associated with a particular `CatalogItem`.
+        enabled:
+          type: boolean
+          description: A Boolean flag to indicate whether the tax is displayed as
+            enabled (`true`) in the Square Point of Sale app or not (`false`).
+      description: A tax applicable to an item.
+      example:
+        object:
+          type: TAX
+          id: '#SalesTax'
+          present_at_all_locations: true
+          tax_data:
+            name: Sales Tax
+            calculation_phase: TAX_SUBTOTAL_PHASE
+            inclusion_type: ADDITIVE
+            percentage: "5.0"
+            fee_applies_to_custom_amounts: true
+            enabled: true
+      x-property-order:
+        - name
+        - calculation_phase
+        - inclusion_type
+        - percentage
+        - applies_to_custom_amounts
+        - enabled
+        - tax_type_id
+        - tax_type_name
+        - amount
+        - applies_to_product_set_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogTax
+    CatalogObjectType:
+      type: string
+      description: |-
+        Possible types of CatalogObjects returned from the catalog, each
+        containing type-specific properties in the `*_data` field corresponding to the specfied object type.
+      enum:
+        - CATALOG_OBJECT_TYPE_DO_NOT_USE
+        - ITEM
+        - IMAGE
+        - CATEGORY
+        - ITEM_VARIATION
+        - TAX
+        - DISCOUNT
+        - MODIFIER_LIST
+        - MODIFIER
+        - DINING_OPTION
+        - TAX_EXEMPTION
+        - SERVICE_CHARGE
+        - PRICING_RULE
+        - PRODUCT_SET
+        - TIME_PERIOD
+        - MEASUREMENT_UNIT
+        - SUBSCRIPTION_PLAN
+        - ITEM_OPTION
+        - ITEM_OPTION_VAL
+        - CUSTOM_ATTRIBUTE_DEFINITION
+        - QUICK_AMOUNTS_SETTINGS
+        - COMPONENT
+        - COMPOSITION
+        - RESOURCE
+        - CHECKOUT_LINK
+        - ADDRESS
+        - SUBSCRIPTION_PRODUCT
+      x-enum-elements:
+        - name: ITEM
+          description: |-
+            The `CatalogObject` instance is of the [CatalogItem](entity:CatalogItem) type and represents an item. The item-specific data
+            must be set on the `item_data` field.
+          x-release-status: PUBLIC
+        - name: IMAGE
+          description: |-
+            The `CatalogObject` instance is of the [CatalogImage](entity:CatalogImage) type and represents an image. The image-specific data
+            must be set on the `image_data` field.
+          x-release-status: PUBLIC
+        - name: CATEGORY
+          description: |-
+            The `CatalogObject` instance is of the [CatalogCategory](entity:CatalogCategory) type and represents a category. The category-specific data
+            must be set on the `category_data` field.
+          x-release-status: PUBLIC
+        - name: ITEM_VARIATION
+          description: |-
+            The `CatalogObject` instance is of the  [CatalogItemVariation](entity:CatalogItemVariation) type and represents an item variation, also referred to as variation.
+            The item variation-specific data must be set on the `item_variation_data` field.
+          x-release-status: PUBLIC
+        - name: TAX
+          description: |-
+            The `CatalogObject` instance is of the [CatalogTax](entity:CatalogTax) type and represents a tax. The tax-specific data
+            must be set on the `tax_data` field.
+          x-release-status: PUBLIC
+        - name: DISCOUNT
+          description: |-
+            The `CatalogObject` instance is of the [CatalogDiscount](entity:CatalogDiscount) type and represents a discount. The discount-specific data
+            must be set on the `discount_data` field.
+          x-release-status: PUBLIC
+        - name: MODIFIER_LIST
+          description: |-
+            The `CatalogObject` instance is of the [CatalogModifierList](entity:CatalogModifierList) type and represents a modifier list.
+            The modifier-list-specific data must be set on the `modifier_list_data` field.
+          x-release-status: PUBLIC
+        - name: MODIFIER
+          description: |-
+            The `CatalogObject` instance is of the [CatalogModifier](entity:CatalogModifier) type and represents a modifier. The modifier-specific data
+            must be set on the `modifier_data` field.
+          x-release-status: PUBLIC
+        - name: PRICING_RULE
+          description: |-
+            The `CatalogObject` instance is of the [CatalogPricingRule](entity:CatalogPricingRule) type and represents a pricing rule. The pricing-rule-specific data
+            must be set on the `pricing_rule_data` field.
+          x-release-status: BETA
+        - name: PRODUCT_SET
+          description: |-
+            The `CatalogObject` instance is of the [CatalogProductSet](entity:CatalogProductSet) type and represents a product set.
+            The product-set-specific data will be stored in the `product_set_data` field.
+          x-release-status: BETA
+        - name: TIME_PERIOD
+          description: |-
+            The `CatalogObject` instance is of the [CatalogTimePeriod](entity:CatalogTimePeriod) type and represents a time period.
+            The time-period-specific data must be set on the `time_period_data` field.
+          x-release-status: BETA
+        - name: MEASUREMENT_UNIT
+          description: |-
+            The `CatalogObject` instance is of the [CatalogMeasurementUnit](entity:CatalogMeasurementUnit) type and represents a measurement unit specifying the unit of
+            measure and precision in which an item variation is sold. The measurement-unit-specific data must set on the `measurement_unit_data` field.
+          x-release-status: BETA
+        - name: SUBSCRIPTION_PLAN
+          description: |-
+            The `CatalogObject` instance is of the [CatalogSubscriptionPlan](entity:CatalogSubscriptionPlan) type and represents a subscription plan.
+            The subscription-plan-specific data must be stored on the `subscription_plan_data` field.
+          x-release-status: BETA
+        - name: ITEM_OPTION
+          description: "The `CatalogObject` instance is of the [CatalogItemOption](entity:CatalogItemOption)\
+              \ type and represents a list of options (such as a color or size of a T-shirt)\
+              \ \nthat can be assigned to item variations. The item-option-specific data\
+              \ must be on the `item_option_data` field."
+          x-release-status: BETA
+        - name: ITEM_OPTION_VAL
+          description: |-
+            The `CatalogObject` instance is of the [CatalogItemOptionValue](entity:CatalogItemOptionValue) type and represents a value associated with one or more item options.
+            For example, an item option of "Size" may have item option values such as "Small" or "Medium".
+            The item-option-value-specific data must be on the `item_option_value_data` field.
+          x-release-status: BETA
+        - name: CUSTOM_ATTRIBUTE_DEFINITION
+          description: "The `CatalogObject` instance is of the [CatalogCustomAttributeDefinition](entity:CatalogCustomAttributeDefinition)\
+              \ type and represents the definition of a custom attribute. \nThe custom-attribute-definition-specific\
+              \ data must be set on the `custom_attribute_definition_data` field."
+          x-release-status: BETA
+        - name: QUICK_AMOUNTS_SETTINGS
+          description: "The `CatalogObject` instance is of the [CatalogQuickAmountsSettings](entity:CatalogQuickAmountsSettings)\
+              \ type and represents settings to configure preset charges for quick payments\
+              \ at each location.\nFor example, a location may have a list of both AUTO\
+              \ and MANUAL quick amounts that are set to DISABLED. \nThe quick-amounts-settings-specific\
+              \ data must be set on the `quick_amounts_settings_data` field."
+          x-release-status: BETA
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: CatalogObjectType
+    TaxCalculationPhase:
+      type: string
+      description: When to calculate the taxes due on a cart.
+      enum:
+        - TAX_SUBTOTAL_PHASE
+        - TAX_TOTAL_PHASE
+      x-enum-elements:
+        - name: TAX_SUBTOTAL_PHASE
+          description: The fee is calculated based on the payment's subtotal.
+          x-release-status: PUBLIC
+        - name: TAX_TOTAL_PHASE
+          description: The fee is calculated based on the payment's total.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: TaxCalculationPhase
+    TaxInclusionType:
+      type: string
+      description: Whether to the tax amount should be additional to or included in
+        the CatalogItem price.
+      enum:
+        - ADDITIVE
+        - INCLUSIVE
+      x-enum-elements:
+        - name: ADDITIVE
+          description: |-
+            The tax is an additive tax. The tax amount is added on top of the
+            CatalogItemVariation price. For example, a $1.00 item with a 10% additive
+            tax would have a total cost to the buyer of $1.10.
+          x-release-status: PUBLIC
+        - name: INCLUSIVE
+          description: |-
+            The tax is an inclusive tax. The tax amount is included in the
+            CatalogItemVariation price. For example, a $1.00 item with a 10% inclusive
+            tax would have a total cost to the buyer of $1.00, with $0.91 (91 cents) of
+            that total being the cost of the item and $0.09 (9 cents) being tax.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
+      x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
+      x-object-name: TaxInclusionType
     Error:
       required:
         - category
