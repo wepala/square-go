@@ -984,9 +984,377 @@ paths:
                 - 7SB3ZQYJ5GDMVFL7JK46JCHT
                 - KQLFFHA6K6J3YQAQAWDQAL57
               deleted_at: 2016-11-16T22:25:24.878Z
+  /v2/payments:
+    get:
+      tags:
+        - Payments
+      summary: ListPayments
+      description: |-
+        Retrieves a list of payments taken by the account making the request.
+        
+        Results are eventually consistent, and new payments or changes to payments might take several
+        seconds to appear.
+        
+        The maximum results per page is 100.
+      externalDocs:
+        description: Retrieve Payments and Refunds
+        url: https://developer.squareup.com/docs/payments-api/retrieve-payments
+      operationId: ListPayments
+      parameters:
+        - name: begin_time
+          in: query
+          description: |-
+            The timestamp for the beginning of the reporting period, in RFC 3339 format.
+            Inclusive. Default: The current time minus one year.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: end_time
+          in: query
+          description: |-
+            The timestamp for the end of the reporting period, in RFC 3339 format.
+
+            Default: The current time.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: sort_order
+          in: query
+          description: |-
+            The order in which results are listed:
+            - `ASC` - Oldest to newest.
+            - `DESC` - Newest to oldest (default).
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          description: |-
+            A pagination cursor returned by a previous call to this endpoint.
+            Provide this cursor to retrieve the next set of results for the original query.
+
+            For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: location_id
+          in: query
+          description: |-
+            Limit results to the location supplied. By default, results are returned
+            for the default (main) location associated with the seller.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: total
+          in: query
+          description: The exact amount in the `total_money` for a payment.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int64
+        - name: last_4
+          in: query
+          description: The last four digits of a payment card.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: card_brand
+          in: query
+          description: The brand of the payment card (for example, VISA).
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: "The maximum number of results to be returned in a single page.\n\
+            It is possible to receive fewer results than the specified limit on a given\
+            \ page.\n\nThe default value of 100 is also the maximum allowed value. If\
+            \ the provided value is \ngreater than 100, it is ignored and the default\
+            \ value is used instead.\n\nDefault: `100`"
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPaymentsResponse'
+      security:
+        - oauth2:
+            - PAYMENTS_READ
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_service.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+    post:
+      tags:
+        - Payments
+      summary: CreatePayment
+      description: "Creates a payment using the provided source. You can use this\
+          \ endpoint \nto charge a card (credit/debit card or    \nSquare gift card)\
+          \ or record a payment that the seller received outside of Square \n(cash payment\
+          \ from a buyer or a payment that an external entity \nprocessed on behalf\
+          \ of the seller).\n\nThe endpoint creates a \n`Payment` object and returns\
+          \ it in the response."
+      externalDocs:
+        description: Take Payments
+        url: https://developer.squareup.com/docs/payments-api/take-payments
+      operationId: CreatePayment
+      parameters: [ ]
+      requestBody:
+        description: |-
+          An object containing the fields to POST for the request.
+          
+          See the corresponding object definition for field details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePaymentResponse'
+      security:
+        - oauth2:
+            - PAYMENTS_WRITE
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_service.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-endpoint-errors:
+        - error-code: ADDRESS_VERIFICATION_FAILURE
+        - error-code: ALLOWABLE_PIN_TRIES_EXCEEDED
+        - error-code: BAD_EXPIRATION
+        - error-code: CARDHOLDER_INSUFFICIENT_PERMISSIONS
+        - error-code: CARD_DECLINED_VERIFICATION_REQUIRED
+        - error-code: CARD_EXPIRED
+        - error-code: CARD_NOT_SUPPORTED
+        - error-code: CARD_PROCESSING_NOT_ENABLED
+        - error-code: CARD_TOKEN_EXPIRED
+        - error-code: CARD_TOKEN_USED
+        - error-code: CHIP_INSERTION_REQUIRED
+        - error-code: CVV_FAILURE
+        - error-code: EXPIRATION_FAILURE
+        - error-code: GENERIC_DECLINE
+        - error-code: GIFT_CARD_AVAILABLE_AMOUNT
+        - error-code: INSUFFICIENT_FUNDS
+        - error-code: INSUFFICIENT_PERMISSIONS
+        - error-code: INVALID_ACCOUNT
+        - error-code: INVALID_CARD
+        - error-code: INVALID_CARD_DATA
+        - error-code: INVALID_EMAIL_ADDRESS
+        - error-code: INVALID_EXPIRATION
+        - error-code: INVALID_FEES
+        - error-code: INVALID_LOCATION
+        - error-code: INVALID_PIN
+        - error-code: INVALID_POSTAL_CODE
+        - error-code: MANUALLY_ENTERED_PAYMENT_NOT_SUPPORTED
+        - error-code: PAN_FAILURE
+        - error-code: PAYMENT_AMOUNT_MISMATCH
+        - error-code: PAYMENT_LIMIT_EXCEEDED
+        - error-code: TEMPORARY_ERROR
+        - error-code: TRANSACTION_LIMIT
+        - error-code: VOICE_FAILURE
 
 components:
   schemas:
+    ACHDetails:
+      type: object
+      properties:
+        routing_number:
+          maxLength: 50
+          type: string
+          description: The routing number for the bank account.
+        account_number_suffix:
+          maxLength: 4
+          minLength: 1
+          type: string
+          description: The last few digits of the bank account number.
+        account_type:
+          maxLength: 50
+          type: string
+          description: |-
+            The type of the bank account performing the transfer. The account type can be `CHECKING`,
+            `SAVINGS`, or `UNKNOWN`.
+      description: ACH-specific details about `BANK_ACCOUNT` type payments with the
+        `transfer_type` of `ACH`.
+      x-property-order:
+        - routing_number
+        - account_number_suffix
+        - account_type
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: ACHDetails
+    AfterpayDetails:
+      type: object
+      properties:
+        email_address:
+          maxLength: 255
+          type: string
+          description: Email address on the buyer's Afterpay account.
+      description: Additional details about Afterpay payments.
+      x-property-order:
+        - email_address
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: AfterpayDetails
+    ApplicationDetails:
+      type: object
+      properties:
+        square_product:
+          $ref: '#/components/schemas/ApplicationDetailsExternalSquareProduct'
+        application_id:
+          type: string
+          description: "The Square ID assigned to the application used to take the\
+                \ payment. \nApplication developers can use this information to identify\
+                \ payments that \ntheir application processed. \nFor example, if a developer\
+                \ uses a custom application to process payments, \nthis field contains\
+                \ the application ID from the Developer Dashboard. \nIf a seller uses\
+                \ a [Square App Marketplace](https://developer.squareup.com/docs/app-marketplace)\
+                \ \napplication to process payments, the field contains the corresponding\
+                \ application ID."
+      description: Details about the application that took the payment.
+      x-property-order:
+        - square_product
+        - application_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: ApplicationDetails
+    ApplicationDetailsExternalSquareProduct:
+      type: string
+      description: A list of products to return to external callers.
+      enum:
+        - APPOINTMENTS
+        - ECOMMERCE_API
+        - INVOICES
+        - ONLINE_STORE
+        - OTHER
+        - RESTAURANTS
+        - RETAIL
+        - SQUARE_POS
+        - TERMINAL_API
+        - VIRTUAL_TERMINAL
+      x-enum-elements:
+        - name: APPOINTMENTS
+          description: ""
+          x-release-status: PUBLIC
+        - name: ECOMMERCE_API
+          description: ""
+          x-release-status: PUBLIC
+        - name: INVOICES
+          description: ""
+          x-release-status: PUBLIC
+        - name: ONLINE_STORE
+          description: ""
+          x-release-status: PUBLIC
+        - name: OTHER
+          description: ""
+          x-release-status: PUBLIC
+        - name: RESTAURANTS
+          description: ""
+          x-release-status: PUBLIC
+        - name: RETAIL
+          description: ""
+          x-release-status: PUBLIC
+        - name: SQUARE_POS
+          description: ""
+          x-release-status: PUBLIC
+        - name: TERMINAL_API
+          description: ""
+          x-release-status: PUBLIC
+        - name: VIRTUAL_TERMINAL
+          description: ""
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: ApplicationDetailsExternalSquareProduct
+    BankAccountPaymentDetails:
+      type: object
+      properties:
+        bank_name:
+          maxLength: 100
+          type: string
+          description: The name of the bank associated with the bank account.
+        transfer_type:
+          maxLength: 50
+          type: string
+          description: The type of the bank transfer. The type can be `ACH` or `UNKNOWN`.
+        account_ownership_type:
+          maxLength: 50
+          type: string
+          description: |-
+            The ownership type of the bank account performing the transfer.
+            The type can be `INDIVIDUAL`, `COMPANY`, or `UNKNOWN`.
+        fingerprint:
+          maxLength: 255
+          type: string
+          description: |-
+            Uniquely identifies the bank account for this seller and can be used
+            to determine if payments are from the same bank account.
+        country:
+          maxLength: 2
+          minLength: 2
+          type: string
+          description: The two-letter ISO code representing the country the bank account
+            is located in.
+        statement_description:
+          maxLength: 1000
+          type: string
+          description: The statement description as sent to the bank.
+        ach_details:
+          $ref: '#/components/schemas/ACHDetails'
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      description: Additional details about BANK_ACCOUNT type payments.
+      x-property-order:
+        - bank_name
+        - transfer_type
+        - account_ownership_type
+        - fingerprint
+        - country
+        - statement_description
+        - ach_details
+        - errors
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: BankAccountPaymentDetails
     BatchRetrieveOrdersRequest:
       required:
         - order_ids
@@ -1120,6 +1488,29 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
       x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
       x-object-name: BusinessHoursPeriod
+    BuyNowPayLaterDetails:
+      type: object
+      properties:
+        brand:
+          maxLength: 50
+          type: string
+          description: |-
+            The brand used for the Buy Now Pay Later payment.
+            The brand can be `AFTERPAY`, `CLEARPAY` or `UNKNOWN`.
+        afterpay_details:
+          $ref: '#/components/schemas/AfterpayDetails'
+        clearpay_details:
+          $ref: '#/components/schemas/ClearpayDetails'
+      description: Additional details about a Buy Now Pay Later payment type.
+      x-property-order:
+        - brand
+        - afterpay_details
+        - clearpay_details
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: BuyNowPayLaterDetails
     DayOfWeek:
       type: string
       description: Indicates the specific day  of the week.
@@ -1158,6 +1549,437 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/common/day_of_week.proto
       x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
       x-object-name: DayOfWeek
+    Card:
+      type: object
+      properties:
+        id:
+          maxLength: 64
+          type: string
+          description: Unique ID for this card. Generated by Square.
+          readOnly: true
+        card_brand:
+          $ref: '#/components/schemas/CardBrand'
+        last_4:
+          maxLength: 4
+          type: string
+          description: The last 4 digits of the card number.
+          readOnly: true
+        exp_month:
+          type: integer
+          description: The expiration month of the associated card as an integer between
+            1 and 12.
+          format: int64
+        exp_year:
+          type: integer
+          description: The four-digit year of the card's expiration date.
+          format: int64
+        cardholder_name:
+          maxLength: 96
+          type: string
+          description: The name of the cardholder.
+        billing_address:
+          $ref: '#/components/schemas/Address'
+        fingerprint:
+          maxLength: 255
+          type: string
+          description: |-
+            Intended as a Square-assigned identifier, based
+            on the card number, to identify the card across multiple locations within a
+            single application.
+          readOnly: true
+        customer_id:
+          type: string
+          description: '**Required** The ID of a customer created using the Customers
+                API to be associated with the card.'
+        merchant_id:
+          type: string
+          description: The ID of the merchant associated with the card.
+          readOnly: true
+        reference_id:
+          maxLength: 128
+          type: string
+          description: |-
+            An optional user-defined reference ID that associates this card with
+            another entity in an external system. For example, a customer ID from an
+            external customer management system.
+        enabled:
+          type: boolean
+          description: Indicates whether or not a card can be used for payments.
+          readOnly: true
+        card_type:
+          $ref: '#/components/schemas/CardType'
+        prepaid_type:
+          $ref: '#/components/schemas/CardPrepaidType'
+        bin:
+          maxLength: 6
+          type: string
+          description: |-
+            The first six digits of the card number, known as the Bank Identification Number (BIN). Only the Payments API
+            returns this field.
+          readOnly: true
+        version:
+          type: integer
+          description: |-
+            Current version number of the card. Increments with each card update. Requests to update an
+            existing Card object will be rejected unless the version in the request matches the current
+            version for the Card.
+          format: int64
+        card_co_brand:
+          $ref: '#/components/schemas/CardCoBrand'
+      description: |-
+        Represents the payment details of a card to be used for payments. These
+        details are determined by the payment token generated by Web Payments SDK.
+      x-property-order:
+        - id
+        - card_brand
+        - last_4
+        - exp_month
+        - exp_year
+        - cardholder_name
+        - billing_address
+        - fingerprint
+        - customer_id
+        - buyer_id
+        - merchant_id
+        - reference_id
+        - enabled
+        - card_type
+        - prepaid_type
+        - bin
+        - created_at
+        - disabled_at
+        - version
+        - product_history
+        - fidelius_token
+        - payment_account_reference
+        - pan_sequence_number
+        - verification_payment_id
+        - terminal_action_id
+        - card_co_brand
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/card.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: Card
+    CardBrand:
+      type: string
+      description: Indicates a card's brand, such as `VISA` or `MASTERCARD`.
+      enum:
+        - OTHER_BRAND
+        - VISA
+        - MASTERCARD
+        - AMERICAN_EXPRESS
+        - DISCOVER
+        - DISCOVER_DINERS
+        - JCB
+        - CHINA_UNIONPAY
+        - SQUARE_GIFT_CARD
+        - SQUARE_CAPITAL_CARD
+        - INTERAC
+        - EFTPOS
+        - FELICA
+        - EBT
+      x-enum-elements:
+        - name: OTHER_BRAND
+          description: ""
+          x-release-status: PUBLIC
+        - name: VISA
+          description: ""
+          x-release-status: PUBLIC
+        - name: MASTERCARD
+          description: ""
+          x-release-status: PUBLIC
+        - name: AMERICAN_EXPRESS
+          description: ""
+          x-release-status: PUBLIC
+        - name: DISCOVER
+          description: ""
+          x-release-status: PUBLIC
+        - name: DISCOVER_DINERS
+          description: ""
+          x-release-status: PUBLIC
+        - name: JCB
+          description: ""
+          x-release-status: PUBLIC
+        - name: CHINA_UNIONPAY
+          description: ""
+          x-release-status: PUBLIC
+        - name: SQUARE_GIFT_CARD
+          description: ""
+          x-release-status: PUBLIC
+        - name: SQUARE_CAPITAL_CARD
+          description: ""
+          x-release-status: PUBLIC
+        - name: INTERAC
+          description: ""
+          x-release-status: PUBLIC
+        - name: EFTPOS
+          description: ""
+          x-release-status: PUBLIC
+        - name: FELICA
+          description: ""
+          x-release-status: PUBLIC
+        - name: EBT
+          description: ""
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/card.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: CardBrand
+    CardCoBrand:
+      type: string
+      description: Indicates the brand for a co-branded card.
+      enum:
+        - UNKNOWN
+        - AFTERPAY
+        - CLEARPAY
+      x-enum-elements:
+        - name: UNKNOWN
+          description: ""
+          x-release-status: PUBLIC
+        - name: AFTERPAY
+          description: ""
+          x-release-status: PUBLIC
+        - name: CLEARPAY
+          description: ""
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/card.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: CardCoBrand
+    CardPrepaidType:
+      type: string
+      description: Indicates a card's prepaid type, such as `NOT_PREPAID` or `PREPAID`.
+      enum:
+        - UNKNOWN_PREPAID_TYPE
+        - NOT_PREPAID
+        - PREPAID
+      x-enum-elements:
+        - name: UNKNOWN_PREPAID_TYPE
+          description: ""
+          x-release-status: PUBLIC
+        - name: NOT_PREPAID
+          description: ""
+          x-release-status: PUBLIC
+        - name: PREPAID
+          description: ""
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/card.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: CardPrepaidType
+    CardType:
+      type: string
+      description: Indicates a card's type, such as `CREDIT` or `DEBIT`.
+      enum:
+        - UNKNOWN_CARD_TYPE
+        - CREDIT
+        - DEBIT
+      x-enum-elements:
+        - name: UNKNOWN_CARD_TYPE
+          description: ""
+          x-release-status: PUBLIC
+        - name: CREDIT
+          description: ""
+          x-release-status: PUBLIC
+        - name: DEBIT
+          description: ""
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/card.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: CardType
+    CardPaymentDetails:
+      type: object
+      properties:
+        status:
+          maxLength: 50
+          type: string
+          description: |-
+            The card payment's current state. The state can be AUTHORIZED, CAPTURED, VOIDED, or
+            FAILED.
+        card:
+          $ref: '#/components/schemas/Card'
+        entry_method:
+          maxLength: 50
+          type: string
+          description: |-
+            The method used to enter the card's details for the payment. The method can be
+            `KEYED`, `SWIPED`, `EMV`, `ON_FILE`, or `CONTACTLESS`.
+        cvv_status:
+          maxLength: 50
+          type: string
+          description: |-
+            The status code returned from the Card Verification Value (CVV) check. The code can be
+            `CVV_ACCEPTED`, `CVV_REJECTED`, or `CVV_NOT_CHECKED`.
+        avs_status:
+          maxLength: 50
+          type: string
+          description: |-
+            The status code returned from the Address Verification System (AVS) check. The code can be
+            `AVS_ACCEPTED`, `AVS_REJECTED`, or `AVS_NOT_CHECKED`.
+        auth_result_code:
+          maxLength: 10
+          type: string
+          description: |-
+            The status code returned by the card issuer that describes the payment's
+            authorization status.
+        application_identifier:
+          maxLength: 32
+          type: string
+          description: For EMV payments, the application ID identifies the EMV application
+            used for the payment.
+        application_name:
+          maxLength: 16
+          type: string
+          description: For EMV payments, the human-readable name of the EMV application
+            used for the payment.
+        application_cryptogram:
+          maxLength: 16
+          type: string
+          description: For EMV payments, the cryptogram generated for the payment.
+        verification_method:
+          maxLength: 50
+          type: string
+          description: |-
+            For EMV payments, the method used to verify the cardholder's identity. The method can be
+            `PIN`, `SIGNATURE`, `PIN_AND_SIGNATURE`, `ON_DEVICE`, or `NONE`.
+        verification_results:
+          maxLength: 50
+          type: string
+          description: |-
+            For EMV payments, the results of the cardholder verification. The result can be
+            `SUCCESS`, `FAILURE`, or `UNKNOWN`.
+        statement_description:
+          maxLength: 50
+          type: string
+          description: |-
+            The statement description sent to the card networks.
+            
+            Note: The actual statement description varies and is likely to be truncated and appended with
+            additional information on a per issuer basis.
+        device_details:
+          $ref: '#/components/schemas/DeviceDetails'
+        card_payment_timeline:
+          $ref: '#/components/schemas/CardPaymentTimeline'
+        refund_requires_card_presence:
+          type: boolean
+          description: |-
+            Whether the card must be physically present for the payment to
+            be refunded.  If set to `true`, the card must be present.
+          x-release-status: BETA
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      description: Reflects the current status of a card payment. Contains only non-confidential
+        information.
+      x-property-order:
+        - status
+        - card
+        - entry_method
+        - cvv_status
+        - avs_status
+        - auth_result_code
+        - application_identifier
+        - application_name
+        - application_cryptogram
+        - verification_method
+        - verification_results
+        - statement_description
+        - device_details
+        - pan_fidelius_token
+        - card_payment_timeline
+        - refund_requires_card_presence
+        - account_type
+        - signature_behavior
+        - application_transaction_counter
+        - remaining_balance_amount_money
+        - errors
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: CardPaymentDetails
+    CardPaymentTimeline:
+      type: object
+      properties:
+        authorized_at:
+          type: string
+          description: The timestamp when the payment was authorized, in RFC 3339
+            format.
+        captured_at:
+          type: string
+          description: The timestamp when the payment was captured, in RFC 3339 format.
+        voided_at:
+          type: string
+          description: The timestamp when the payment was voided, in RFC 3339 format.
+      description: The timeline for card payments.
+      x-property-order:
+        - authorized_at
+        - captured_at
+        - voided_at
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: CardPaymentTimeline
+    CashAppDetails:
+      type: object
+      properties:
+        buyer_full_name:
+          maxLength: 255
+          type: string
+          description: The name of the Cash App account holder.
+        buyer_country_code:
+          maxLength: 2
+          minLength: 2
+          type: string
+          description: |-
+            The country of the Cash App account holder, in ISO 3166-1-alpha-2 format.
+            
+            For possible values, see [Country](entity:Country).
+        buyer_cashtag:
+          maxLength: 21
+          minLength: 1
+          type: string
+          description: $Cashtag of the Cash App account holder.
+          readOnly: true
+      description: Additional details about `WALLET` type payments with the `brand`
+        of `CASH_APP`.
+      x-property-order:
+        - buyer_full_name
+        - buyer_country_code
+        - buyer_cashtag
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: CashAppDetails
+    CashPaymentDetails:
+      required:
+        - buyer_supplied_money
+      type: object
+      properties:
+        buyer_supplied_money:
+          $ref: '#/components/schemas/Money'
+        change_back_money:
+          $ref: '#/components/schemas/Money'
+      description: "Stores details about a cash payment. Contains only non-confidential\
+            \ information. For more information, see \n[Take Cash Payments](https://developer.squareup.com/docs/payments-api/take-payments/cash-payments)."
+      x-property-order:
+        - buyer_supplied_money
+        - change_back_money
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: CashPaymentDetails
     CatalogCategory:
       type: object
       properties:
@@ -2875,6 +3697,21 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/datatypes.proto
       x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
       x-object-name: CatalogQuickAmountsSettings
+    ClearpayDetails:
+      type: object
+      properties:
+        email_address:
+          maxLength: 255
+          type: string
+          description: Email address on the buyer's Clearpay account.
+      description: Additional details about Clearpay payments.
+      x-property-order:
+        - email_address
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: ClearpayDetails
     CreateLocationRequest:
       type: object
       properties:
@@ -2945,6 +3782,287 @@ components:
       x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
       x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
       x-object-name: CreateLocationResponse
+    CreatePaymentRequest:
+      required:
+        - amount_money
+        - idempotency_key
+        - source_id
+      type: object
+      properties:
+        source_id:
+          minLength: 1
+          type: string
+          description: "The ID for the source of funds for this payment. This can\
+                \ be a payment token \n(card nonce) generated by the Square payment form\
+                \ or a card on file made with the \nCustomers API. If recording a payment\
+                \ that the seller \nreceived outside of Square, specify either \"CASH\"\
+                \ or \"EXTERNAL\". \nFor more information, see \n[Take Payments](https://developer.squareup.com/docs/payments-api/take-payments)."
+        idempotency_key:
+          maxLength: 45
+          minLength: 1
+          type: string
+          description: |-
+            A unique string that identifies this `CreatePayment` request. Keys can be any valid string
+            but must be unique for every `CreatePayment` request.
+            
+            Note: The number of allowed characters might be less than the stated maximum, if multi-byte
+            characters are used.
+            
+            For more information, see [Idempotency](https://developer.squareup.com/docs/working-with-apis/idempotency).
+        amount_money:
+          $ref: '#/components/schemas/Money'
+        tip_money:
+          $ref: '#/components/schemas/Money'
+        app_fee_money:
+          $ref: '#/components/schemas/Money'
+        delay_duration:
+          type: string
+          description: "The duration of time after the payment's creation when Square\
+                \ automatically \neither completes or cancels the payment depending on\
+                \ the `delay_action` field value. \nFor more information, see \n[Time\
+                \ threshold](https://developer.squareup.com/docs/payments-api/take-payments/card-payments/delayed-capture#time-threshold).\
+                \ \n\nThis parameter should be specified as a time duration, in RFC 3339\
+                \ format.\n\nNote: This feature is only supported for card payments. This\
+                \ parameter can only be set for a delayed\ncapture payment (`autocomplete=false`).\n\
+                \nDefault:\n\n- Card-present payments: \"PT36H\" (36 hours) from the creation\
+                \ time.\n- Card-not-present payments: \"P7D\" (7 days) from the creation\
+                \ time."
+        delay_action:
+          type: string
+          description: "The action to be applied to the payment when the `delay_duration`\
+                \ has elapsed. The action must be\nCANCEL or COMPLETE. For more information,\
+                \ see \n[Time Threshold](https://developer.squareup.com/docs/payments-api/take-payments/card-payments/delayed-capture#time-threshold).\
+                \ \n\nDefault: CANCEL"
+        autocomplete:
+          type: boolean
+          description: |-
+            If set to `true`, this payment will be completed when possible. If
+            set to `false`, this payment is held in an approved state until either
+            explicitly completed (captured) or canceled (voided). For more information, see
+            [Delayed capture](https://developer.squareup.com/docs/payments-api/take-payments/card-payments#delayed-capture-of-a-card-payment).
+            
+            Default: true
+        order_id:
+          type: string
+          description: Associates a previously created order with this payment.
+        customer_id:
+          type: string
+          description: |-
+            The [Customer](entity:Customer) ID of the customer associated with the payment.
+            
+            This is required if the `source_id` refers to a card on file created using the Customers API.
+        location_id:
+          type: string
+          description: |-
+            The location ID to associate with the payment. If not specified, the default location is
+            used.
+        team_member_id:
+          type: string
+          description: "An optional [TeamMember](entity:TeamMember) ID to associate\
+                \ with \nthis payment."
+        reference_id:
+          maxLength: 40
+          type: string
+          description: "A user-defined ID to associate with the payment.\n\nYou can\
+                \ use this field to associate the payment to an entity in an external\
+                \ system \n(for example, you might specify an order ID that is generated\
+                \ by a third-party shopping cart)."
+        verification_token:
+          type: string
+          description: |-
+            An identifying token generated by [payments.verifyBuyer()](https://developer.squareup.com/reference/sdks/web/payments/objects/Payments#Payments.verifyBuyer).
+            Verification tokens encapsulate customer device information and 3-D Secure
+            challenge results to indicate that Square has verified the buyer identity.
+            
+            For more information, see [SCA Overview](https://developer.squareup.com/docs/sca-overview).
+        accept_partial_authorization:
+          type: boolean
+          description: |-
+            If set to `true` and charging a Square Gift Card, a payment might be returned with
+            `amount_money` equal to less than what was requested. For example, a request for $20 when charging
+            a Square Gift Card with a balance of $5 results in an APPROVED payment of $5. You might choose
+            to prompt the buyer for an additional payment to cover the remainder or cancel the Gift Card
+            payment. This field cannot be `true` when `autocomplete = true`.
+            
+            For more information, see
+            [Partial amount with Square Gift Cards](https://developer.squareup.com/docs/payments-api/take-payments#partial-payment-gift-card).
+            
+            Default: false
+        buyer_email_address:
+          maxLength: 255
+          type: string
+          description: The buyer's email address.
+        billing_address:
+          $ref: '#/components/schemas/Address'
+        shipping_address:
+          $ref: '#/components/schemas/Address'
+        note:
+          maxLength: 500
+          type: string
+          description: An optional note to be entered by the developer when creating
+            a payment.
+        statement_description_identifier:
+          maxLength: 20
+          type: string
+          description: |-
+            Optional additional payment information to include on the customer's card statement
+            as part of the statement description. This can be, for example, an invoice number, ticket number,
+            or short description that uniquely identifies the purchase.
+            
+            Note that the `statement_description_identifier` might get truncated on the statement description
+            to fit the required information including the Square identifier (SQ *) and name of the
+            seller taking the payment.
+        cash_details:
+          $ref: '#/components/schemas/CashPaymentDetails'
+        external_details:
+          $ref: '#/components/schemas/ExternalPaymentDetails'
+      description: "Describes a request to create a payment using \n[CreatePayment](api-endpoint:Payments-CreatePayment)."
+      example:
+        idempotency_key: 7b0f3ec5-086a-4871-8f13-3c81b3875218
+        amount_money:
+          amount: 1000
+          currency: USD
+        source_id: ccof:GaJGNaZa8x4OgDJn4GB
+        autocomplete: true
+        customer_id: W92WH6P11H4Z77CTET0RNTGFW8
+        location_id: L88917AVBK2S5
+        reference_id: "123456"
+        note: Brief description
+        app_fee_money:
+          amount: 10
+          currency: USD
+      x-property-order:
+        - source_id
+        - card_present_options
+        - idempotency_key
+        - amount_money
+        - tip_money
+        - tax_money
+        - app_fee_money
+        - app_fee_location_id
+        - payment_fees_spec
+        - delay_duration
+        - delay_action
+        - autocomplete
+        - create_order
+        - order_id
+        - customer_id
+        - payment_config_id
+        - location_id
+        - employee_id
+        - team_member_id
+        - reference_id
+        - verification_token
+        - terminal_checkout_id
+        - accept_partial_authorization
+        - buyer_email_address
+        - billing_address
+        - shipping_address
+        - note
+        - statement_description_identifier
+        - requested_statement_description
+        - revenue_association_tags
+        - application_id_attribution
+        - geo_location
+        - auxiliary_info
+        - cash_details
+        - external_details
+        - payin_details
+        - billpay_details
+        - billpay_pull_details
+        - device_details
+        - square_product
+        - fee_plan_product
+        - refund_policy
+        - peripheral_metadata
+        - customer_details
+        - recurring_details
+        - request_context_token
+        - is_offline_request
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: CreatePaymentRequest
+    CreatePaymentResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        payment:
+          $ref: '#/components/schemas/Payment'
+      description: |-
+        Defines the response returned by [CreatePayment](api-endpoint:Payments-CreatePayment).
+        
+        If there are errors processing the request, the `payment` field might not be
+        present, or it might be present with a status of `FAILED`.
+      example:
+        payment:
+          id: R2B3Z8WMVt3EAmzYWLZvz7Y69EbZY
+          created_at: 2021-10-13T21:14:29.577Z
+          updated_at: 2021-10-13T21:14:30.504Z
+          amount_money:
+            amount: 1000
+            currency: USD
+          app_fee_money:
+            amount: 10
+            currency: USD
+          status: COMPLETED
+          delay_duration: PT168H
+          source_type: CARD
+          card_details:
+            status: CAPTURED
+            card:
+              card_brand: VISA
+              last_4: "1111"
+              exp_month: 11
+              exp_year: 2022
+              fingerprint: sq-1-Hxim77tbdcbGejOejnoAklBVJed2YFLTmirfl8Q5XZzObTc8qY_U8RkwzoNL8dCEcQ
+              card_type: DEBIT
+              prepaid_type: NOT_PREPAID
+              bin: "411111"
+            entry_method: ON_FILE
+            cvv_status: CVV_ACCEPTED
+            avs_status: AVS_ACCEPTED
+            auth_result_code: vNEn2f
+            statement_description: SQ *EXAMPLE TEST GOSQ.C
+            card_payment_timeline:
+              authorized_at: 2021-10-13T21:14:29.732Z
+              captured_at: 2021-10-13T21:14:30.504Z
+          location_id: L88917AVBK2S5
+          order_id: pRsjRTgFWATl7so6DxdKBJa7ssbZY
+          reference_id: "123456"
+          risk_evaluation:
+            created_at: 2021-10-13T21:14:30.423Z
+            risk_level: NORMAL
+          note: Brief Description
+          customer_id: W92WH6P11H4Z77CTET0RNTGFW8
+          total_money:
+            amount: 1000
+            currency: USD
+          approved_money:
+            amount: 1000
+            currency: USD
+          receipt_number: R2B3
+          receipt_url: https://squareup.com/receipt/preview/EXAMPLE_RECEIPT_ID
+          delay_action: CANCEL
+          delayed_until: 2021-10-20T21:14:29.577Z
+          application_details:
+            square_product: ECOMMERCE_API
+            application_id: sq0ids-TcgftTEtKxJTRF1lCFJ9TA
+          version_token: TPtNEOBOa6Qq6E3C3IjckSVOM6b3hMbfhjvTxHBQUsB6o
+      x-property-order:
+        - errors
+        - payment
+        - encrypted_emv_data
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: CreatePaymentResponse
     CatalogSubscriptionPlan:
       required:
         - name
@@ -4047,6 +5165,37 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/country.proto
       x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
       x-object-name: Country
+    DigitalWalletDetails:
+      type: object
+      properties:
+        status:
+          maxLength: 50
+          type: string
+          description: |-
+            The status of the `WALLET` payment. The status can be `AUTHORIZED`, `CAPTURED`, `VOIDED`, or
+            `FAILED`.
+        brand:
+          maxLength: 50
+          type: string
+          description: The brand used for the `WALLET` payment. The brand can be `CASH_APP`,
+            `PAYPAY` or `UNKNOWN`.
+        cash_app_details:
+          $ref: '#/components/schemas/CashAppDetails'
+      description: Additional details about `WALLET` type payments. Contains only
+        non-confidential information.
+      x-property-order:
+        - status
+        - brand
+        - statement_description
+        - device_details
+        - cash_app_details
+        - alipay_details
+        - paypay_details
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: DigitalWalletDetails
     DeleteCatalogObjectResponse:
       type: object
       properties:
@@ -4090,6 +5239,32 @@ components:
         php: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.php
         javascript: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.javascript
         ruby: /sdk_samples/Catalog/DeleteCatalogObject/DeleteCatalogObjectResponse.ruby
+    DeviceDetails:
+      type: object
+      properties:
+        device_id:
+          maxLength: 255
+          type: string
+          description: The Square-issued ID of the device.
+        device_installation_id:
+          maxLength: 255
+          type: string
+          description: The Square-issued installation ID for the device.
+        device_name:
+          maxLength: 255
+          type: string
+          description: The name of the device set by the seller.
+      description: Details about the device that took the payment.
+      x-property-order:
+        - device_id
+        - device_installation_id
+        - device_name
+        - device_credential
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: DeviceDetails
     ExcludeStrategy:
       type: string
       description: |-
@@ -4121,6 +5296,52 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/catalog/resources/enums.proto
       x-proto-sha: 32daf8eb9cffd0b4bb203b0088a414a113a5c813
       x-object-name: ExcludeStrategy
+    ExternalPaymentDetails:
+      required:
+        - source
+        - type
+      type: object
+      properties:
+        type:
+          maxLength: 50
+          type: string
+          description: |-
+            The type of external payment the seller received. It can be one of the following:
+            - CHECK - Paid using a physical check.
+            - BANK_TRANSFER - Paid using external bank transfer.
+            - OTHER\_GIFT\_CARD - Paid using a non-Square gift card.
+            - CRYPTO - Paid using a crypto currency.
+            - SQUARE_CASH - Paid using Square Cash App.
+            - SOCIAL - Paid using peer-to-peer payment applications.
+            - EXTERNAL - A third-party application gathered this payment outside of Square.
+            - EMONEY - Paid using an E-money provider.
+            - CARD - A credit or debit card that Square does not support.
+            - STORED_BALANCE - Use for house accounts, store credit, and so forth.
+            - FOOD_VOUCHER - Restaurant voucher provided by employers to employees to pay for meals
+            - OTHER - A type not listed here.
+        source:
+          maxLength: 255
+          type: string
+          description: "A description of the external payment source. For example,\
+                \ \n\"Food Delivery Service\"."
+        source_id:
+          maxLength: 255
+          type: string
+          description: An ID to associate the payment to its originating source.
+        source_fee_money:
+          $ref: '#/components/schemas/Money'
+      description: "Stores details about an external payment. Contains only non-confidential\
+            \ information.\nFor more information, see \n[Take External Payments](https://developer.squareup.com/docs/payments-api/take-payments/external-payments)."
+      x-property-order:
+        - type
+        - source
+        - source_id
+        - source_fee_money
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: ExternalPaymentDetails
     ItemVariationLocationOverrides:
       type: object
       properties:
@@ -4274,6 +5495,91 @@ components:
       x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
       x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
       x-object-name: ListLocationsResponse
+    ListPaymentsResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+        payments:
+          type: array
+          description: The requested list of payments.
+          items:
+            $ref: '#/components/schemas/Payment'
+        cursor:
+          type: string
+          description: |-
+            The pagination cursor to be used in a subsequent request. If empty,
+            this is the final response.
+            
+            For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+      description: Defines the response returned by [ListPayments](api-endpoint:Payments-ListPayments).
+      example:
+        payments:
+          - id: bP9mAsEMYPUGjjGNaNO5ZDVyLhSZY
+            created_at: 2021-10-13T19:34:33.524Z
+            updated_at: 2021-10-13T19:34:37.261Z
+            amount_money:
+              amount: 555
+              currency: USD
+            status: COMPLETED
+            delay_duration: PT168H
+            source_type: CARD
+            card_details:
+              status: CAPTURED
+              card:
+                card_brand: VISA
+                last_4: "1111"
+                exp_month: 11
+                exp_year: 2022
+                fingerprint: sq-1-Hxim77tbdcbGejOejnoAklBVJed2YFLTmirfl8Q5XZzObTc8qY_U8RkwzoNL8dCEcQ
+                card_type: DEBIT
+                prepaid_type: NOT_PREPAID
+                bin: "411111"
+              entry_method: KEYED
+              cvv_status: CVV_ACCEPTED
+              avs_status: AVS_ACCEPTED
+              auth_result_code: 2Nkw7q
+              statement_description: SQ *EXAMPLE TEST GOSQ.C
+              card_payment_timeline:
+                authorized_at: 2021-10-13T19:34:33.680Z
+                captured_at: 2021-10-13T19:34:34.340Z
+            location_id: L88917AVBK2S5
+            order_id: d7eKah653Z579f3gVtjlxpSlmUcZY
+            processing_fee:
+              - effective_at: 2021-10-13T21:34:35.000Z
+                type: INITIAL
+                amount_money:
+                  amount: 34
+                  currency: USD
+            note: Test Note
+            total_money:
+              amount: 555
+              currency: USD
+            approved_money:
+              amount: 555
+              currency: USD
+            employee_id: TMoK_ogh6rH1o4dV
+            receipt_number: bP9m
+            receipt_url: https://squareup.com/receipt/preview/bP9mAsEMYPUGjjGNaNO5ZDVyLhSZY
+            delay_action: CANCEL
+            delayed_until: 2021-10-20T19:34:33.524Z
+            team_member_id: TMoK_ogh6rH1o4dV
+            application_details:
+              square_product: VIRTUAL_TERMINAL
+              application_id: sq0ids-Pw67AZAlLVB7hsRmwlJPuA
+            version_token: vguW2km0KpVCdAXZcNTZ438qg5LlVPTP4HO5OpiHNfa6o
+      x-property-order:
+        - errors
+        - payments
+        - cursor
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_api.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: ListPaymentsResponse
     LocationCapability:
       type: string
       description: The capabilities a location might have.
@@ -4504,6 +5810,318 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
       x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
       x-object-name: Location
+    Payment:
+      type: object
+      properties:
+        id:
+          maxLength: 192
+          type: string
+          description: A unique ID for the payment.
+          readOnly: true
+        created_at:
+          maxLength: 32
+          type: string
+          description: The timestamp of when the payment was created, in RFC 3339
+            format.
+          readOnly: true
+        updated_at:
+          maxLength: 32
+          type: string
+          description: The timestamp of when the payment was last updated, in RFC
+            3339 format.
+          readOnly: true
+        amount_money:
+          $ref: '#/components/schemas/Money'
+        tip_money:
+          $ref: '#/components/schemas/Money'
+        total_money:
+          $ref: '#/components/schemas/Money'
+        app_fee_money:
+          $ref: '#/components/schemas/Money'
+        approved_money:
+          $ref: '#/components/schemas/Money'
+        processing_fee:
+          type: array
+          description: The processing fees and fee adjustments assessed by Square
+            for this payment.
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/ProcessingFee'
+        refunded_money:
+          $ref: '#/components/schemas/Money'
+        status:
+          maxLength: 50
+          type: string
+          description: Indicates whether the payment is APPROVED, PENDING, COMPLETED,
+            CANCELED, or FAILED.
+          readOnly: true
+        delay_duration:
+          type: string
+          description: |-
+            The duration of time after the payment's creation when Square automatically applies the
+            `delay_action` to the payment. This automatic `delay_action` applies only to payments that
+            do not reach a terminal state (COMPLETED, CANCELED, or FAILED) before the `delay_duration`
+            time period.
+            
+            This field is specified as a time duration, in RFC 3339 format.
+            
+            Notes:
+            This feature is only supported for card payments.
+            
+            Default:
+            
+            - Card-present payments: "PT36H" (36 hours) from the creation time.
+            - Card-not-present payments: "P7D" (7 days) from the creation time.
+          readOnly: true
+        delay_action:
+          type: string
+          description: |-
+            The action to be applied to the payment when the `delay_duration` has elapsed.
+            
+            Current values include `CANCEL` and `COMPLETE`.
+        delayed_until:
+          type: string
+          description: |-
+            The read-only timestamp of when the `delay_action` is automatically applied,
+            in RFC 3339 format.
+            
+            Note that this field is calculated by summing the payment's `delay_duration` and `created_at`
+            fields. The `created_at` field is generated by Square and might not exactly match the
+            time on your local machine.
+          readOnly: true
+        source_type:
+          maxLength: 50
+          type: string
+          description: "The source type for this payment.\n\nCurrent values include\
+                \ `CARD`, `BANK_ACCOUNT`, `WALLET`, `BUY_NOW_PAY_LATER`, `CASH`, or\n\
+                `EXTERNAL`. For information about these payment source types, \nsee [Take\
+                \ Payments](https://developer.squareup.com/docs/payments-api/take-payments)."
+          readOnly: true
+        card_details:
+          $ref: '#/components/schemas/CardPaymentDetails'
+        cash_details:
+          $ref: '#/components/schemas/CashPaymentDetails'
+        bank_account_details:
+          $ref: '#/components/schemas/BankAccountPaymentDetails'
+        external_details:
+          $ref: '#/components/schemas/ExternalPaymentDetails'
+        wallet_details:
+          $ref: '#/components/schemas/DigitalWalletDetails'
+        buy_now_pay_later_details:
+          $ref: '#/components/schemas/BuyNowPayLaterDetails'
+        location_id:
+          maxLength: 50
+          type: string
+          description: The ID of the location associated with the payment.
+          readOnly: true
+        order_id:
+          maxLength: 192
+          type: string
+          description: The ID of the order associated with the payment.
+          readOnly: true
+        reference_id:
+          maxLength: 40
+          type: string
+          description: |-
+            An optional ID that associates the payment with an entity in
+            another system.
+          readOnly: true
+        customer_id:
+          maxLength: 191
+          type: string
+          description: The [Customer](entity:Customer) ID of the customer associated
+            with the payment.
+          readOnly: true
+        employee_id:
+          maxLength: 192
+          type: string
+          description: |-
+            __Deprecated__: Use `Payment.team_member_id` instead.
+            
+            An optional ID of the employee associated with taking the payment.
+          readOnly: true
+          x-release-status: DEPRECATED
+        team_member_id:
+          maxLength: 192
+          type: string
+          description: An optional ID of the [TeamMember](entity:TeamMember) associated
+            with taking the payment.
+          readOnly: true
+        refund_ids:
+          type: array
+          description: A list of `refund_id`s identifying refunds for the payment.
+          readOnly: true
+          items:
+            type: string
+        risk_evaluation:
+          $ref: '#/components/schemas/RiskEvaluation'
+        buyer_email_address:
+          maxLength: 255
+          type: string
+          description: The buyer's email address.
+          readOnly: true
+        billing_address:
+          $ref: '#/components/schemas/Address'
+        shipping_address:
+          $ref: '#/components/schemas/Address'
+        note:
+          maxLength: 500
+          type: string
+          description: An optional note to include when creating a payment.
+          readOnly: true
+        statement_description_identifier:
+          type: string
+          description: |-
+            Additional payment information that gets added to the customer's card statement
+            as part of the statement description.
+            
+            Note that the `statement_description_identifier` might get truncated on the statement description
+            to fit the required information including the Square identifier (SQ *) and the name of the
+            seller taking the payment.
+          readOnly: true
+        capabilities:
+          type: array
+          description: |-
+            Actions that can be performed on this payment:
+            - `EDIT_AMOUNT_UP` - The payment amount can be edited up.
+            - `EDIT_AMOUNT_DOWN` - The payment amount can be edited down.
+            - `EDIT_TIP_AMOUNT_UP` - The tip amount can be edited up.
+            - `EDIT_TIP_AMOUNT_DOWN` - The tip amount can be edited down.
+            - `EDIT_DELAY_ACTION` - The delay_action can be edited.
+          readOnly: true
+          items:
+            type: string
+        receipt_number:
+          maxLength: 4
+          type: string
+          description: |-
+            The payment's receipt number.
+            The field is missing if a payment is canceled.
+          readOnly: true
+        receipt_url:
+          maxLength: 255
+          type: string
+          description: |-
+            The URL for the payment's receipt.
+            The field is only populated for COMPLETED payments.
+          readOnly: true
+        device_details:
+          $ref: '#/components/schemas/DeviceDetails'
+        application_details:
+          $ref: '#/components/schemas/ApplicationDetails'
+        version_token:
+          type: string
+          description: |-
+            Used for optimistic concurrency. This opaque token identifies a specific version of the
+            `Payment` object.
+      description: Represents a payment processed by the Square API.
+      x-property-order:
+        - id
+        - created_at
+        - updated_at
+        - amount_money
+        - tip_money
+        - tax_money
+        - total_money
+        - app_fee_money
+        - approved_money
+        - payment_fees_spec
+        - processing_fee
+        - app_processing_fee
+        - refunded_money
+        - status
+        - delay_duration
+        - delay_action
+        - delayed_until
+        - source_type
+        - card_details
+        - balance_details
+        - cash_details
+        - bank_account_details
+        - external_details
+        - wallet_details
+        - buy_now_pay_later_details
+        - square_account_details
+        - location_id
+        - order_id
+        - reference_id
+        - customer_id
+        - employee_id
+        - team_member_id
+        - refund_ids
+        - dispute_ids
+        - risk_evaluation
+        - terminal_checkout_id
+        - account_id
+        - buyer_email_address
+        - billing_address
+        - shipping_address
+        - note
+        - statement_description_identifier
+        - capabilities
+        - disabled_capabilities
+        - receipt_number
+        - receipt_url
+        - refund_policy
+        - recurring_details
+        - device_details
+        - application_details
+        - foreign_exchange
+        - version_token
+        - version
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: Payment
+    PaymentOptions:
+      type: object
+      properties:
+        autocomplete:
+          type: boolean
+          description: |-
+            Indicates whether the `Payment` objects created from this `TerminalCheckout` are automatically
+            `COMPLETED` or left in an `APPROVED` state for later modification.
+        delay_duration:
+          type: string
+          description: |-
+            The duration of time after the payment's creation when Square automatically cancels the
+            payment. This automatic cancellation applies only to payments that do not reach a terminal state
+            (COMPLETED, CANCELED, or FAILED) before the `delay_duration` time period.
+            
+            This parameter should be specified as a time duration, in RFC 3339 format, with a minimum value
+            of 1 minute.
+            
+            Note: This feature is only supported for card payments. This parameter can only be set for a delayed
+            capture payment (`autocomplete=false`).
+            Default:
+            - Card-present payments: "PT36H" (36 hours) from the creation time.
+            - Card-not-present payments: "P7D" (7 days) from the creation time.
+        accept_partial_authorization:
+          type: boolean
+          description: |-
+            If set to `true` and charging a Square Gift Card, a payment might be returned with
+            `amount_money` equal to less than what was requested. For example, a request for $20 when charging
+            a Square Gift Card with a balance of $5 results in an APPROVED payment of $5. You might choose
+            to prompt the buyer for an additional payment to cover the remainder or cancel the Gift Card
+            payment.
+            
+            This field cannot be `true` when `autocomplete = true`.
+            This field cannot be `true` when an `order_id` isn't specified.
+            
+            For more information, see
+            [Take Partial Payments](https://developer.squareup.com/docs/payments-api/take-payments/card-payments/partial-payments-with-gift-cards).
+            
+            Default: false
+      x-property-order:
+        - autocomplete
+        - delay_duration
+        - accept_partial_authorization
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /mango/mango-proto/src/main/proto/squareup/mango/external/terminal_checkout_options.proto
+      x-proto-sha: 6bbdf4243b30eab4ffb0bf4c066bbb30c5c99b71
+      x-object-name: PaymentOptions
     Product:
       type: string
       description: Indicates the Square product used to generate a change.
@@ -10092,6 +11710,65 @@ components:
         php: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.php
         javascript: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.javascript
         ruby: /sdk_samples/Catalog/RetrieveCatalogObject/RetrieveCatalogObjectResponse.ruby
+    RiskEvaluation:
+      required:
+        - status
+      type: object
+      properties:
+        created_at:
+          type: string
+          description: The timestamp when payment risk was evaluated, in RFC 3339
+            format.
+          readOnly: true
+        risk_level:
+          $ref: '#/components/schemas/RiskEvaluationRiskLevel'
+      description: |-
+        Represents fraud risk information for the associated payment.
+        
+        When you take a payment through Square's Payments API (using the `CreatePayment`
+        endpoint), Square evaluates it and assigns a risk level to the payment. Sellers
+        can use this information to determine the course of action (for example,
+        provide the goods/services or refund the payment).
+      x-property-order:
+        - status
+        - level
+        - numeric_score
+        - reasons
+        - rules_flagged
+        - action
+        - created_at
+        - risk_level
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /riskml-common/risk-evaluation-external/src/main/proto/squareup/riskevaluation/external/risk_evaluation.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: RiskEvaluation
+    RiskEvaluationRiskLevel:
+      type: string
+      enum:
+        - DO_NOT_USE
+        - PENDING
+        - NORMAL
+        - MODERATE
+        - HIGH
+      x-enum-elements:
+        - name: PENDING
+          description: Indicates Square is still evaluating the payment.
+          x-release-status: BETA
+        - name: NORMAL
+          description: Indicates payment risk is within the normal range.
+          x-release-status: BETA
+        - name: MODERATE
+          description: Indicates elevated risk level associated with the payment.
+          x-release-status: BETA
+        - name: HIGH
+          description: Indicates significantly elevated risk level with the payment.
+          x-release-status: BETA
+      x-release-status: BETA
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /riskml-common/risk-evaluation-external/src/main/proto/squareup/riskevaluation/external/risk_evaluation.proto
+      x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
+      x-object-name: RiskEvaluationRiskLevel
     CatalogObject:
       required:
         - id

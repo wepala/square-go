@@ -8,6 +8,54 @@ import (
 	core "github.com/wepala/square-go/api/core"
 )
 
+// ACH-specific details about `BANK_ACCOUNT` type payments with the `transfer_type` of `ACH`.
+type AchDetails struct {
+	// The routing number for the bank account.
+	RoutingNumber *string `json:"routing_number,omitempty" url:"routing_number,omitempty"`
+	// The last few digits of the bank account number.
+	AccountNumberSuffix *string `json:"account_number_suffix,omitempty" url:"account_number_suffix,omitempty"`
+	// The type of the bank account performing the transfer. The account type can be `CHECKING`,
+	// `SAVINGS`, or `UNKNOWN`.
+	AccountType *string `json:"account_type,omitempty" url:"account_type,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AchDetails) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AchDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler AchDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AchDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AchDetails) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
 // Represents an additional recipient (other than the merchant) receiving a portion of this tender.
 type AdditionalRecipient struct {
 	// The location ID for a recipient (other than the merchant) receiving a portion of this tender.
@@ -131,6 +179,204 @@ func (a *Address) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", a)
+}
+
+// Additional details about Afterpay payments.
+type AfterpayDetails struct {
+	// Email address on the buyer's Afterpay account.
+	EmailAddress *string `json:"email_address,omitempty" url:"email_address,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AfterpayDetails) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AfterpayDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler AfterpayDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AfterpayDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AfterpayDetails) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+// Details about the application that took the payment.
+type ApplicationDetails struct {
+	SquareProduct *ApplicationDetailsExternalSquareProduct `json:"square_product,omitempty" url:"square_product,omitempty"`
+	// The Square ID assigned to the application used to take the payment.
+	// Application developers can use this information to identify payments that
+	// their application processed.
+	// For example, if a developer uses a custom application to process payments,
+	// this field contains the application ID from the Developer Dashboard.
+	// If a seller uses a [Square App Marketplace](https://developer.squareup.com/docs/app-marketplace)
+	// application to process payments, the field contains the corresponding application ID.
+	ApplicationId *string `json:"application_id,omitempty" url:"application_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *ApplicationDetails) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *ApplicationDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler ApplicationDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = ApplicationDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *ApplicationDetails) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+// A list of products to return to external callers.
+type ApplicationDetailsExternalSquareProduct string
+
+const (
+	ApplicationDetailsExternalSquareProductAppointments    ApplicationDetailsExternalSquareProduct = "APPOINTMENTS"
+	ApplicationDetailsExternalSquareProductEcommerceApi    ApplicationDetailsExternalSquareProduct = "ECOMMERCE_API"
+	ApplicationDetailsExternalSquareProductInvoices        ApplicationDetailsExternalSquareProduct = "INVOICES"
+	ApplicationDetailsExternalSquareProductOnlineStore     ApplicationDetailsExternalSquareProduct = "ONLINE_STORE"
+	ApplicationDetailsExternalSquareProductOther           ApplicationDetailsExternalSquareProduct = "OTHER"
+	ApplicationDetailsExternalSquareProductRestaurants     ApplicationDetailsExternalSquareProduct = "RESTAURANTS"
+	ApplicationDetailsExternalSquareProductRetail          ApplicationDetailsExternalSquareProduct = "RETAIL"
+	ApplicationDetailsExternalSquareProductSquarePos       ApplicationDetailsExternalSquareProduct = "SQUARE_POS"
+	ApplicationDetailsExternalSquareProductTerminalApi     ApplicationDetailsExternalSquareProduct = "TERMINAL_API"
+	ApplicationDetailsExternalSquareProductVirtualTerminal ApplicationDetailsExternalSquareProduct = "VIRTUAL_TERMINAL"
+)
+
+func NewApplicationDetailsExternalSquareProductFromString(s string) (ApplicationDetailsExternalSquareProduct, error) {
+	switch s {
+	case "APPOINTMENTS":
+		return ApplicationDetailsExternalSquareProductAppointments, nil
+	case "ECOMMERCE_API":
+		return ApplicationDetailsExternalSquareProductEcommerceApi, nil
+	case "INVOICES":
+		return ApplicationDetailsExternalSquareProductInvoices, nil
+	case "ONLINE_STORE":
+		return ApplicationDetailsExternalSquareProductOnlineStore, nil
+	case "OTHER":
+		return ApplicationDetailsExternalSquareProductOther, nil
+	case "RESTAURANTS":
+		return ApplicationDetailsExternalSquareProductRestaurants, nil
+	case "RETAIL":
+		return ApplicationDetailsExternalSquareProductRetail, nil
+	case "SQUARE_POS":
+		return ApplicationDetailsExternalSquareProductSquarePos, nil
+	case "TERMINAL_API":
+		return ApplicationDetailsExternalSquareProductTerminalApi, nil
+	case "VIRTUAL_TERMINAL":
+		return ApplicationDetailsExternalSquareProductVirtualTerminal, nil
+	}
+	var t ApplicationDetailsExternalSquareProduct
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a ApplicationDetailsExternalSquareProduct) Ptr() *ApplicationDetailsExternalSquareProduct {
+	return &a
+}
+
+// Additional details about BANK_ACCOUNT type payments.
+type BankAccountPaymentDetails struct {
+	// The name of the bank associated with the bank account.
+	BankName *string `json:"bank_name,omitempty" url:"bank_name,omitempty"`
+	// The type of the bank transfer. The type can be `ACH` or `UNKNOWN`.
+	TransferType *string `json:"transfer_type,omitempty" url:"transfer_type,omitempty"`
+	// The ownership type of the bank account performing the transfer.
+	// The type can be `INDIVIDUAL`, `COMPANY`, or `UNKNOWN`.
+	AccountOwnershipType *string `json:"account_ownership_type,omitempty" url:"account_ownership_type,omitempty"`
+	// Uniquely identifies the bank account for this seller and can be used
+	// to determine if payments are from the same bank account.
+	Fingerprint *string `json:"fingerprint,omitempty" url:"fingerprint,omitempty"`
+	// The two-letter ISO code representing the country the bank account is located in.
+	Country *string `json:"country,omitempty" url:"country,omitempty"`
+	// The statement description as sent to the bank.
+	StatementDescription *string     `json:"statement_description,omitempty" url:"statement_description,omitempty"`
+	AchDetails           *AchDetails `json:"ach_details,omitempty" url:"ach_details,omitempty"`
+	// Information about errors encountered during the request.
+	Errors []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BankAccountPaymentDetails) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BankAccountPaymentDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler BankAccountPaymentDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BankAccountPaymentDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BankAccountPaymentDetails) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
 }
 
 // Defines the fields that are included in the response body of
@@ -270,6 +516,488 @@ func (b *BusinessHoursPeriod) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+// Additional details about a Buy Now Pay Later payment type.
+type BuyNowPayLaterDetails struct {
+	// The brand used for the Buy Now Pay Later payment.
+	// The brand can be `AFTERPAY`, `CLEARPAY` or `UNKNOWN`.
+	Brand           *string          `json:"brand,omitempty" url:"brand,omitempty"`
+	AfterpayDetails *AfterpayDetails `json:"afterpay_details,omitempty" url:"afterpay_details,omitempty"`
+	ClearpayDetails *ClearpayDetails `json:"clearpay_details,omitempty" url:"clearpay_details,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BuyNowPayLaterDetails) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BuyNowPayLaterDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler BuyNowPayLaterDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BuyNowPayLaterDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BuyNowPayLaterDetails) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+// Represents the payment details of a card to be used for payments. These
+// details are determined by the payment token generated by Web Payments SDK.
+type Card struct {
+	// Unique ID for this card. Generated by Square.
+	Id        *string    `json:"id,omitempty" url:"id,omitempty"`
+	CardBrand *CardBrand `json:"card_brand,omitempty" url:"card_brand,omitempty"`
+	// The last 4 digits of the card number.
+	Last4 *string `json:"last_4,omitempty" url:"last_4,omitempty"`
+	// The expiration month of the associated card as an integer between 1 and 12.
+	ExpMonth *int64 `json:"exp_month,omitempty" url:"exp_month,omitempty"`
+	// The four-digit year of the card's expiration date.
+	ExpYear *int64 `json:"exp_year,omitempty" url:"exp_year,omitempty"`
+	// The name of the cardholder.
+	CardholderName *string  `json:"cardholder_name,omitempty" url:"cardholder_name,omitempty"`
+	BillingAddress *Address `json:"billing_address,omitempty" url:"billing_address,omitempty"`
+	// Intended as a Square-assigned identifier, based
+	// on the card number, to identify the card across multiple locations within a
+	// single application.
+	Fingerprint *string `json:"fingerprint,omitempty" url:"fingerprint,omitempty"`
+	// **Required** The ID of a customer created using the Customers API to be associated with the card.
+	CustomerId *string `json:"customer_id,omitempty" url:"customer_id,omitempty"`
+	// The ID of the merchant associated with the card.
+	MerchantId *string `json:"merchant_id,omitempty" url:"merchant_id,omitempty"`
+	// An optional user-defined reference ID that associates this card with
+	// another entity in an external system. For example, a customer ID from an
+	// external customer management system.
+	ReferenceId *string `json:"reference_id,omitempty" url:"reference_id,omitempty"`
+	// Indicates whether or not a card can be used for payments.
+	Enabled     *bool            `json:"enabled,omitempty" url:"enabled,omitempty"`
+	CardType    *CardType        `json:"card_type,omitempty" url:"card_type,omitempty"`
+	PrepaidType *CardPrepaidType `json:"prepaid_type,omitempty" url:"prepaid_type,omitempty"`
+	// The first six digits of the card number, known as the Bank Identification Number (BIN). Only the Payments API
+	// returns this field.
+	Bin *string `json:"bin,omitempty" url:"bin,omitempty"`
+	// Current version number of the card. Increments with each card update. Requests to update an
+	// existing Card object will be rejected unless the version in the request matches the current
+	// version for the Card.
+	Version     *int64       `json:"version,omitempty" url:"version,omitempty"`
+	CardCoBrand *CardCoBrand `json:"card_co_brand,omitempty" url:"card_co_brand,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *Card) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *Card) UnmarshalJSON(data []byte) error {
+	type unmarshaler Card
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = Card(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *Card) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Indicates a card's brand, such as `VISA` or `MASTERCARD`.
+type CardBrand string
+
+const (
+	CardBrandOtherBrand        CardBrand = "OTHER_BRAND"
+	CardBrandVisa              CardBrand = "VISA"
+	CardBrandMastercard        CardBrand = "MASTERCARD"
+	CardBrandAmericanExpress   CardBrand = "AMERICAN_EXPRESS"
+	CardBrandDiscover          CardBrand = "DISCOVER"
+	CardBrandDiscoverDiners    CardBrand = "DISCOVER_DINERS"
+	CardBrandJcb               CardBrand = "JCB"
+	CardBrandChinaUnionpay     CardBrand = "CHINA_UNIONPAY"
+	CardBrandSquareGiftCard    CardBrand = "SQUARE_GIFT_CARD"
+	CardBrandSquareCapitalCard CardBrand = "SQUARE_CAPITAL_CARD"
+	CardBrandInterac           CardBrand = "INTERAC"
+	CardBrandEftpos            CardBrand = "EFTPOS"
+	CardBrandFelica            CardBrand = "FELICA"
+	CardBrandEbt               CardBrand = "EBT"
+)
+
+func NewCardBrandFromString(s string) (CardBrand, error) {
+	switch s {
+	case "OTHER_BRAND":
+		return CardBrandOtherBrand, nil
+	case "VISA":
+		return CardBrandVisa, nil
+	case "MASTERCARD":
+		return CardBrandMastercard, nil
+	case "AMERICAN_EXPRESS":
+		return CardBrandAmericanExpress, nil
+	case "DISCOVER":
+		return CardBrandDiscover, nil
+	case "DISCOVER_DINERS":
+		return CardBrandDiscoverDiners, nil
+	case "JCB":
+		return CardBrandJcb, nil
+	case "CHINA_UNIONPAY":
+		return CardBrandChinaUnionpay, nil
+	case "SQUARE_GIFT_CARD":
+		return CardBrandSquareGiftCard, nil
+	case "SQUARE_CAPITAL_CARD":
+		return CardBrandSquareCapitalCard, nil
+	case "INTERAC":
+		return CardBrandInterac, nil
+	case "EFTPOS":
+		return CardBrandEftpos, nil
+	case "FELICA":
+		return CardBrandFelica, nil
+	case "EBT":
+		return CardBrandEbt, nil
+	}
+	var t CardBrand
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CardBrand) Ptr() *CardBrand {
+	return &c
+}
+
+// Indicates the brand for a co-branded card.
+type CardCoBrand string
+
+const (
+	CardCoBrandUnknown  CardCoBrand = "UNKNOWN"
+	CardCoBrandAfterpay CardCoBrand = "AFTERPAY"
+	CardCoBrandClearpay CardCoBrand = "CLEARPAY"
+)
+
+func NewCardCoBrandFromString(s string) (CardCoBrand, error) {
+	switch s {
+	case "UNKNOWN":
+		return CardCoBrandUnknown, nil
+	case "AFTERPAY":
+		return CardCoBrandAfterpay, nil
+	case "CLEARPAY":
+		return CardCoBrandClearpay, nil
+	}
+	var t CardCoBrand
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CardCoBrand) Ptr() *CardCoBrand {
+	return &c
+}
+
+// Reflects the current status of a card payment. Contains only non-confidential information.
+type CardPaymentDetails struct {
+	// The card payment's current state. The state can be AUTHORIZED, CAPTURED, VOIDED, or
+	// FAILED.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	Card   *Card   `json:"card,omitempty" url:"card,omitempty"`
+	// The method used to enter the card's details for the payment. The method can be
+	// `KEYED`, `SWIPED`, `EMV`, `ON_FILE`, or `CONTACTLESS`.
+	EntryMethod *string `json:"entry_method,omitempty" url:"entry_method,omitempty"`
+	// The status code returned from the Card Verification Value (CVV) check. The code can be
+	// `CVV_ACCEPTED`, `CVV_REJECTED`, or `CVV_NOT_CHECKED`.
+	CvvStatus *string `json:"cvv_status,omitempty" url:"cvv_status,omitempty"`
+	// The status code returned from the Address Verification System (AVS) check. The code can be
+	// `AVS_ACCEPTED`, `AVS_REJECTED`, or `AVS_NOT_CHECKED`.
+	AvsStatus *string `json:"avs_status,omitempty" url:"avs_status,omitempty"`
+	// The status code returned by the card issuer that describes the payment's
+	// authorization status.
+	AuthResultCode *string `json:"auth_result_code,omitempty" url:"auth_result_code,omitempty"`
+	// For EMV payments, the application ID identifies the EMV application used for the payment.
+	ApplicationIdentifier *string `json:"application_identifier,omitempty" url:"application_identifier,omitempty"`
+	// For EMV payments, the human-readable name of the EMV application used for the payment.
+	ApplicationName *string `json:"application_name,omitempty" url:"application_name,omitempty"`
+	// For EMV payments, the cryptogram generated for the payment.
+	ApplicationCryptogram *string `json:"application_cryptogram,omitempty" url:"application_cryptogram,omitempty"`
+	// For EMV payments, the method used to verify the cardholder's identity. The method can be
+	// `PIN`, `SIGNATURE`, `PIN_AND_SIGNATURE`, `ON_DEVICE`, or `NONE`.
+	VerificationMethod *string `json:"verification_method,omitempty" url:"verification_method,omitempty"`
+	// For EMV payments, the results of the cardholder verification. The result can be
+	// `SUCCESS`, `FAILURE`, or `UNKNOWN`.
+	VerificationResults *string `json:"verification_results,omitempty" url:"verification_results,omitempty"`
+	// The statement description sent to the card networks.
+	//
+	// Note: The actual statement description varies and is likely to be truncated and appended with
+	// additional information on a per issuer basis.
+	StatementDescription *string              `json:"statement_description,omitempty" url:"statement_description,omitempty"`
+	DeviceDetails        *DeviceDetails       `json:"device_details,omitempty" url:"device_details,omitempty"`
+	CardPaymentTimeline  *CardPaymentTimeline `json:"card_payment_timeline,omitempty" url:"card_payment_timeline,omitempty"`
+	// Whether the card must be physically present for the payment to
+	// be refunded. If set to `true`, the card must be present.
+	RefundRequiresCardPresence *bool `json:"refund_requires_card_presence,omitempty" url:"refund_requires_card_presence,omitempty"`
+	// Information about errors encountered during the request.
+	Errors []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CardPaymentDetails) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CardPaymentDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler CardPaymentDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CardPaymentDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CardPaymentDetails) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// The timeline for card payments.
+type CardPaymentTimeline struct {
+	// The timestamp when the payment was authorized, in RFC 3339 format.
+	AuthorizedAt *string `json:"authorized_at,omitempty" url:"authorized_at,omitempty"`
+	// The timestamp when the payment was captured, in RFC 3339 format.
+	CapturedAt *string `json:"captured_at,omitempty" url:"captured_at,omitempty"`
+	// The timestamp when the payment was voided, in RFC 3339 format.
+	VoidedAt *string `json:"voided_at,omitempty" url:"voided_at,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CardPaymentTimeline) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CardPaymentTimeline) UnmarshalJSON(data []byte) error {
+	type unmarshaler CardPaymentTimeline
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CardPaymentTimeline(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CardPaymentTimeline) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Indicates a card's prepaid type, such as `NOT_PREPAID` or `PREPAID`.
+type CardPrepaidType string
+
+const (
+	CardPrepaidTypeUnknownPrepaidType CardPrepaidType = "UNKNOWN_PREPAID_TYPE"
+	CardPrepaidTypeNotPrepaid         CardPrepaidType = "NOT_PREPAID"
+	CardPrepaidTypePrepaid            CardPrepaidType = "PREPAID"
+)
+
+func NewCardPrepaidTypeFromString(s string) (CardPrepaidType, error) {
+	switch s {
+	case "UNKNOWN_PREPAID_TYPE":
+		return CardPrepaidTypeUnknownPrepaidType, nil
+	case "NOT_PREPAID":
+		return CardPrepaidTypeNotPrepaid, nil
+	case "PREPAID":
+		return CardPrepaidTypePrepaid, nil
+	}
+	var t CardPrepaidType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CardPrepaidType) Ptr() *CardPrepaidType {
+	return &c
+}
+
+// Indicates a card's type, such as `CREDIT` or `DEBIT`.
+type CardType string
+
+const (
+	CardTypeUnknownCardType CardType = "UNKNOWN_CARD_TYPE"
+	CardTypeCredit          CardType = "CREDIT"
+	CardTypeDebit           CardType = "DEBIT"
+)
+
+func NewCardTypeFromString(s string) (CardType, error) {
+	switch s {
+	case "UNKNOWN_CARD_TYPE":
+		return CardTypeUnknownCardType, nil
+	case "CREDIT":
+		return CardTypeCredit, nil
+	case "DEBIT":
+		return CardTypeDebit, nil
+	}
+	var t CardType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CardType) Ptr() *CardType {
+	return &c
+}
+
+// Additional details about `WALLET` type payments with the `brand` of `CASH_APP`.
+type CashAppDetails struct {
+	// The name of the Cash App account holder.
+	BuyerFullName *string `json:"buyer_full_name,omitempty" url:"buyer_full_name,omitempty"`
+	// The country of the Cash App account holder, in ISO 3166-1-alpha-2 format.
+	//
+	// For possible values, see [Country](entity:Country).
+	BuyerCountryCode *string `json:"buyer_country_code,omitempty" url:"buyer_country_code,omitempty"`
+	// $Cashtag of the Cash App account holder.
+	BuyerCashtag *string `json:"buyer_cashtag,omitempty" url:"buyer_cashtag,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CashAppDetails) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CashAppDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler CashAppDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CashAppDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CashAppDetails) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Stores details about a cash payment. Contains only non-confidential information. For more information, see
+// [Take Cash Payments](https://developer.squareup.com/docs/payments-api/take-payments/cash-payments).
+type CashPaymentDetails struct {
+	BuyerSuppliedMoney *Money `json:"buyer_supplied_money,omitempty" url:"buyer_supplied_money,omitempty"`
+	ChangeBackMoney    *Money `json:"change_back_money,omitempty" url:"change_back_money,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CashPaymentDetails) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CashPaymentDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler CashPaymentDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CashPaymentDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CashPaymentDetails) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
 }
 
 // A category to which a `CatalogItem` instance belongs.
@@ -2549,6 +3277,49 @@ func (c *CatalogV1Id) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
+// Additional details about Clearpay payments.
+type ClearpayDetails struct {
+	// Email address on the buyer's Clearpay account.
+	EmailAddress *string `json:"email_address,omitempty" url:"email_address,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *ClearpayDetails) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *ClearpayDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler ClearpayDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ClearpayDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ClearpayDetails) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 // Latitude and longitude coordinates.
 type Coordinates struct {
 	// The latitude of the coordinate expressed in degrees.
@@ -3453,6 +4224,53 @@ func (c *CreateOrderResponse) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
+// Defines the response returned by [CreatePayment](api-endpoint:Payments-CreatePayment).
+//
+// If there are errors processing the request, the `payment` field might not be
+// present, or it might be present with a status of `FAILED`.
+type CreatePaymentResponse struct {
+	// Information about errors encountered during the request.
+	Errors  []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+	Payment *Payment `json:"payment,omitempty" url:"payment,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CreatePaymentResponse) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CreatePaymentResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreatePaymentResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CreatePaymentResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CreatePaymentResponse) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 // Indicates the associated currency for an amount of money. Values correspond
 // to [ISO 4217](https://wikipedia.org/wiki/ISO_4217).
 type Currency string
@@ -4178,6 +4996,100 @@ func (d DestinationType) Ptr() *DestinationType {
 	return &d
 }
 
+// Details about the device that took the payment.
+type DeviceDetails struct {
+	// The Square-issued ID of the device.
+	DeviceId *string `json:"device_id,omitempty" url:"device_id,omitempty"`
+	// The Square-issued installation ID for the device.
+	DeviceInstallationId *string `json:"device_installation_id,omitempty" url:"device_installation_id,omitempty"`
+	// The name of the device set by the seller.
+	DeviceName *string `json:"device_name,omitempty" url:"device_name,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *DeviceDetails) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DeviceDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler DeviceDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DeviceDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DeviceDetails) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+// Additional details about `WALLET` type payments. Contains only non-confidential information.
+type DigitalWalletDetails struct {
+	// The status of the `WALLET` payment. The status can be `AUTHORIZED`, `CAPTURED`, `VOIDED`, or
+	// `FAILED`.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// The brand used for the `WALLET` payment. The brand can be `CASH_APP`, `PAYPAY` or `UNKNOWN`.
+	Brand          *string         `json:"brand,omitempty" url:"brand,omitempty"`
+	CashAppDetails *CashAppDetails `json:"cash_app_details,omitempty" url:"cash_app_details,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *DigitalWalletDetails) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DigitalWalletDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler DigitalWalletDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DigitalWalletDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DigitalWalletDetails) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
 // Represents an error encountered during a request to the Connect API.
 //
 // See [Handling errors](https://developer.squareup.com/docs/build-basics/handling-errors) for more information.
@@ -4816,6 +5728,70 @@ func (e ExcludeStrategy) Ptr() *ExcludeStrategy {
 	return &e
 }
 
+// Stores details about an external payment. Contains only non-confidential information.
+// For more information, see
+// [Take External Payments](https://developer.squareup.com/docs/payments-api/take-payments/external-payments).
+type ExternalPaymentDetails struct {
+	// The type of external payment the seller received. It can be one of the following:
+	//
+	// - CHECK - Paid using a physical check.
+	// - BANK_TRANSFER - Paid using external bank transfer.
+	// - OTHER_GIFT_CARD - Paid using a non-Square gift card.
+	// - CRYPTO - Paid using a crypto currency.
+	// - SQUARE_CASH - Paid using Square Cash App.
+	// - SOCIAL - Paid using peer-to-peer payment applications.
+	// - EXTERNAL - A third-party application gathered this payment outside of Square.
+	// - EMONEY - Paid using an E-money provider.
+	// - CARD - A credit or debit card that Square does not support.
+	// - STORED_BALANCE - Use for house accounts, store credit, and so forth.
+	// - FOOD_VOUCHER - Restaurant voucher provided by employers to employees to pay for meals
+	// - OTHER - A type not listed here.
+	Type string `json:"type" url:"type"`
+	// A description of the external payment source. For example,
+	// "Food Delivery Service".
+	Source string `json:"source" url:"source"`
+	// An ID to associate the payment to its originating source.
+	SourceId       *string `json:"source_id,omitempty" url:"source_id,omitempty"`
+	SourceFeeMoney *Money  `json:"source_fee_money,omitempty" url:"source_fee_money,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *ExternalPaymentDetails) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *ExternalPaymentDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler ExternalPaymentDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = ExternalPaymentDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *ExternalPaymentDetails) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
 // Defines the response returned by [GetRefund](api-endpoint:Refunds-GetPaymentRefund).
 //
 // Note: If there are errors processing the request, the refund field might not be
@@ -5086,6 +6062,56 @@ func (l *ListPaymentRefundsResponse) UnmarshalJSON(data []byte) error {
 }
 
 func (l *ListPaymentRefundsResponse) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
+// Defines the response returned by [ListPayments](api-endpoint:Payments-ListPayments).
+type ListPaymentsResponse struct {
+	// Information about errors encountered during the request.
+	Errors []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+	// The requested list of payments.
+	Payments []*Payment `json:"payments,omitempty" url:"payments,omitempty"`
+	// The pagination cursor to be used in a subsequent request. If empty,
+	// this is the final response.
+	//
+	// For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (l *ListPaymentsResponse) GetExtraProperties() map[string]interface{} {
+	return l.extraProperties
+}
+
+func (l *ListPaymentsResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ListPaymentsResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = ListPaymentsResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *l)
+	if err != nil {
+		return err
+	}
+	l.extraProperties = extraProperties
+
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListPaymentsResponse) String() string {
 	if len(l._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
 			return value
@@ -8520,6 +9546,222 @@ func (o OrderState) Ptr() *OrderState {
 	return &o
 }
 
+// Represents a payment processed by the Square API.
+type Payment struct {
+	// A unique ID for the payment.
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
+	// The timestamp of when the payment was created, in RFC 3339 format.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The timestamp of when the payment was last updated, in RFC 3339 format.
+	UpdatedAt     *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	AmountMoney   *Money  `json:"amount_money,omitempty" url:"amount_money,omitempty"`
+	TipMoney      *Money  `json:"tip_money,omitempty" url:"tip_money,omitempty"`
+	TotalMoney    *Money  `json:"total_money,omitempty" url:"total_money,omitempty"`
+	AppFeeMoney   *Money  `json:"app_fee_money,omitempty" url:"app_fee_money,omitempty"`
+	ApprovedMoney *Money  `json:"approved_money,omitempty" url:"approved_money,omitempty"`
+	// The processing fees and fee adjustments assessed by Square for this payment.
+	ProcessingFee []*ProcessingFee `json:"processing_fee,omitempty" url:"processing_fee,omitempty"`
+	RefundedMoney *Money           `json:"refunded_money,omitempty" url:"refunded_money,omitempty"`
+	// Indicates whether the payment is APPROVED, PENDING, COMPLETED, CANCELED, or FAILED.
+	Status *string `json:"status,omitempty" url:"status,omitempty"`
+	// The duration of time after the payment's creation when Square automatically applies the
+	// `delay_action` to the payment. This automatic `delay_action` applies only to payments that
+	// do not reach a terminal state (COMPLETED, CANCELED, or FAILED) before the `delay_duration`
+	// time period.
+	//
+	// This field is specified as a time duration, in RFC 3339 format.
+	//
+	// Notes:
+	// This feature is only supported for card payments.
+	//
+	// Default:
+	//
+	// - Card-present payments: "PT36H" (36 hours) from the creation time.
+	// - Card-not-present payments: "P7D" (7 days) from the creation time.
+	DelayDuration *string `json:"delay_duration,omitempty" url:"delay_duration,omitempty"`
+	// The action to be applied to the payment when the `delay_duration` has elapsed.
+	//
+	// Current values include `CANCEL` and `COMPLETE`.
+	DelayAction *string `json:"delay_action,omitempty" url:"delay_action,omitempty"`
+	// The read-only timestamp of when the `delay_action` is automatically applied,
+	// in RFC 3339 format.
+	//
+	// Note that this field is calculated by summing the payment's `delay_duration` and `created_at`
+	// fields. The `created_at` field is generated by Square and might not exactly match the
+	// time on your local machine.
+	DelayedUntil *string `json:"delayed_until,omitempty" url:"delayed_until,omitempty"`
+	// The source type for this payment.
+	//
+	// Current values include `CARD`, `BANK_ACCOUNT`, `WALLET`, `BUY_NOW_PAY_LATER`, `CASH`, or
+	// `EXTERNAL`. For information about these payment source types,
+	// see [Take Payments](https://developer.squareup.com/docs/payments-api/take-payments).
+	SourceType            *string                    `json:"source_type,omitempty" url:"source_type,omitempty"`
+	CardDetails           *CardPaymentDetails        `json:"card_details,omitempty" url:"card_details,omitempty"`
+	CashDetails           *CashPaymentDetails        `json:"cash_details,omitempty" url:"cash_details,omitempty"`
+	BankAccountDetails    *BankAccountPaymentDetails `json:"bank_account_details,omitempty" url:"bank_account_details,omitempty"`
+	ExternalDetails       *ExternalPaymentDetails    `json:"external_details,omitempty" url:"external_details,omitempty"`
+	WalletDetails         *DigitalWalletDetails      `json:"wallet_details,omitempty" url:"wallet_details,omitempty"`
+	BuyNowPayLaterDetails *BuyNowPayLaterDetails     `json:"buy_now_pay_later_details,omitempty" url:"buy_now_pay_later_details,omitempty"`
+	// The ID of the location associated with the payment.
+	LocationId *string `json:"location_id,omitempty" url:"location_id,omitempty"`
+	// The ID of the order associated with the payment.
+	OrderId *string `json:"order_id,omitempty" url:"order_id,omitempty"`
+	// An optional ID that associates the payment with an entity in
+	// another system.
+	ReferenceId *string `json:"reference_id,omitempty" url:"reference_id,omitempty"`
+	// The [Customer](entity:Customer) ID of the customer associated with the payment.
+	CustomerId *string `json:"customer_id,omitempty" url:"customer_id,omitempty"`
+	// **Deprecated**: Use `Payment.team_member_id` instead.
+	//
+	// An optional ID of the employee associated with taking the payment.
+	EmployeeId *string `json:"employee_id,omitempty" url:"employee_id,omitempty"`
+	// An optional ID of the [TeamMember](entity:TeamMember) associated with taking the payment.
+	TeamMemberId *string `json:"team_member_id,omitempty" url:"team_member_id,omitempty"`
+	// A list of `refund_id`s identifying refunds for the payment.
+	RefundIds      []string        `json:"refund_ids,omitempty" url:"refund_ids,omitempty"`
+	RiskEvaluation *RiskEvaluation `json:"risk_evaluation,omitempty" url:"risk_evaluation,omitempty"`
+	// The buyer's email address.
+	BuyerEmailAddress *string  `json:"buyer_email_address,omitempty" url:"buyer_email_address,omitempty"`
+	BillingAddress    *Address `json:"billing_address,omitempty" url:"billing_address,omitempty"`
+	ShippingAddress   *Address `json:"shipping_address,omitempty" url:"shipping_address,omitempty"`
+	// An optional note to include when creating a payment.
+	Note *string `json:"note,omitempty" url:"note,omitempty"`
+	// Additional payment information that gets added to the customer's card statement
+	// as part of the statement description.
+	//
+	// Note that the `statement_description_identifier` might get truncated on the statement description
+	// to fit the required information including the Square identifier (SQ \*) and the name of the
+	// seller taking the payment.
+	StatementDescriptionIdentifier *string `json:"statement_description_identifier,omitempty" url:"statement_description_identifier,omitempty"`
+	// Actions that can be performed on this payment:
+	//
+	// - `EDIT_AMOUNT_UP` - The payment amount can be edited up.
+	// - `EDIT_AMOUNT_DOWN` - The payment amount can be edited down.
+	// - `EDIT_TIP_AMOUNT_UP` - The tip amount can be edited up.
+	// - `EDIT_TIP_AMOUNT_DOWN` - The tip amount can be edited down.
+	// - `EDIT_DELAY_ACTION` - The delay_action can be edited.
+	Capabilities []string `json:"capabilities,omitempty" url:"capabilities,omitempty"`
+	// The payment's receipt number.
+	// The field is missing if a payment is canceled.
+	ReceiptNumber *string `json:"receipt_number,omitempty" url:"receipt_number,omitempty"`
+	// The URL for the payment's receipt.
+	// The field is only populated for COMPLETED payments.
+	ReceiptUrl         *string             `json:"receipt_url,omitempty" url:"receipt_url,omitempty"`
+	DeviceDetails      *DeviceDetails      `json:"device_details,omitempty" url:"device_details,omitempty"`
+	ApplicationDetails *ApplicationDetails `json:"application_details,omitempty" url:"application_details,omitempty"`
+	// Used for optimistic concurrency. This opaque token identifies a specific version of the
+	// `Payment` object.
+	VersionToken *string `json:"version_token,omitempty" url:"version_token,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *Payment) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *Payment) UnmarshalJSON(data []byte) error {
+	type unmarshaler Payment
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Payment(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Payment) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentOptions struct {
+	// Indicates whether the `Payment` objects created from this `TerminalCheckout` are automatically
+	// `COMPLETED` or left in an `APPROVED` state for later modification.
+	Autocomplete *bool `json:"autocomplete,omitempty" url:"autocomplete,omitempty"`
+	// The duration of time after the payment's creation when Square automatically cancels the
+	// payment. This automatic cancellation applies only to payments that do not reach a terminal state
+	// (COMPLETED, CANCELED, or FAILED) before the `delay_duration` time period.
+	//
+	// This parameter should be specified as a time duration, in RFC 3339 format, with a minimum value
+	// of 1 minute.
+	//
+	// Note: This feature is only supported for card payments. This parameter can only be set for a delayed
+	// capture payment (`autocomplete=false`).
+	// Default:
+	//
+	// - Card-present payments: "PT36H" (36 hours) from the creation time.
+	// - Card-not-present payments: "P7D" (7 days) from the creation time.
+	DelayDuration *string `json:"delay_duration,omitempty" url:"delay_duration,omitempty"`
+	// If set to `true` and charging a Square Gift Card, a payment might be returned with
+	// `amount_money` equal to less than what was requested. For example, a request for $20 when charging
+	// a Square Gift Card with a balance of $5 results in an APPROVED payment of $5. You might choose
+	// to prompt the buyer for an additional payment to cover the remainder or cancel the Gift Card
+	// payment.
+	//
+	// This field cannot be `true` when `autocomplete = true`.
+	// This field cannot be `true` when an `order_id` isn't specified.
+	//
+	// For more information, see
+	// [Take Partial Payments](https://developer.squareup.com/docs/payments-api/take-payments/card-payments/partial-payments-with-gift-cards).
+	//
+	// Default: false
+	AcceptPartialAuthorization *bool `json:"accept_partial_authorization,omitempty" url:"accept_partial_authorization,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentOptions) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentOptions) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentOptions
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentOptions(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentOptions) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 // Represents a refund of a payment made using Square. Contains information about
 // the original payment and the amount of money refunded.
 type PaymentRefund struct {
@@ -9150,6 +10392,86 @@ func (r *RetrieveOrderResponse) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", r)
+}
+
+// Represents fraud risk information for the associated payment.
+//
+// When you take a payment through Square's Payments API (using the `CreatePayment`
+// endpoint), Square evaluates it and assigns a risk level to the payment. Sellers
+// can use this information to determine the course of action (for example,
+// provide the goods/services or refund the payment).
+type RiskEvaluation struct {
+	// The timestamp when payment risk was evaluated, in RFC 3339 format.
+	CreatedAt *string                  `json:"created_at,omitempty" url:"created_at,omitempty"`
+	RiskLevel *RiskEvaluationRiskLevel `json:"risk_level,omitempty" url:"risk_level,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *RiskEvaluation) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *RiskEvaluation) UnmarshalJSON(data []byte) error {
+	type unmarshaler RiskEvaluation
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RiskEvaluation(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RiskEvaluation) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type RiskEvaluationRiskLevel string
+
+const (
+	RiskEvaluationRiskLevelDoNotUse RiskEvaluationRiskLevel = "DO_NOT_USE"
+	RiskEvaluationRiskLevelPending  RiskEvaluationRiskLevel = "PENDING"
+	RiskEvaluationRiskLevelNormal   RiskEvaluationRiskLevel = "NORMAL"
+	RiskEvaluationRiskLevelModerate RiskEvaluationRiskLevel = "MODERATE"
+	RiskEvaluationRiskLevelHigh     RiskEvaluationRiskLevel = "HIGH"
+)
+
+func NewRiskEvaluationRiskLevelFromString(s string) (RiskEvaluationRiskLevel, error) {
+	switch s {
+	case "DO_NOT_USE":
+		return RiskEvaluationRiskLevelDoNotUse, nil
+	case "PENDING":
+		return RiskEvaluationRiskLevelPending, nil
+	case "NORMAL":
+		return RiskEvaluationRiskLevelNormal, nil
+	case "MODERATE":
+		return RiskEvaluationRiskLevelModerate, nil
+	case "HIGH":
+		return RiskEvaluationRiskLevelHigh, nil
+	}
+	var t RiskEvaluationRiskLevel
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (r RiskEvaluationRiskLevel) Ptr() *RiskEvaluationRiskLevel {
+	return &r
 }
 
 // A filter based on the order `customer_id` and any tender `customer_id`
