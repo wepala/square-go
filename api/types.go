@@ -56,6 +56,127 @@ func (a *AchDetails) String() string {
 	return fmt.Sprintf("%#v", a)
 }
 
+type ActivityType string
+
+const (
+	ActivityTypeUnknownPayoutEntryTypeDoNotUse ActivityType = "UNKNOWN_PAYOUT_ENTRY_TYPE_DO_NOT_USE"
+	ActivityTypeAdjustment                     ActivityType = "ADJUSTMENT"
+	ActivityTypeAppFeeRefund                   ActivityType = "APP_FEE_REFUND"
+	ActivityTypeAppFeeRevenue                  ActivityType = "APP_FEE_REVENUE"
+	ActivityTypeAutomaticSavings               ActivityType = "AUTOMATIC_SAVINGS"
+	ActivityTypeAutomaticSavingsReversed       ActivityType = "AUTOMATIC_SAVINGS_REVERSED"
+	ActivityTypeCharge                         ActivityType = "CHARGE"
+	ActivityTypeDepositFee                     ActivityType = "DEPOSIT_FEE"
+	ActivityTypeDispute                        ActivityType = "DISPUTE"
+	ActivityTypeEscheatment                    ActivityType = "ESCHEATMENT"
+	ActivityTypeFee                            ActivityType = "FEE"
+	ActivityTypeFreeProcessing                 ActivityType = "FREE_PROCESSING"
+	ActivityTypeHoldAdjustment                 ActivityType = "HOLD_ADJUSTMENT"
+	ActivityTypeInitialBalanceChange           ActivityType = "INITIAL_BALANCE_CHANGE"
+	ActivityTypeMoneyTransfer                  ActivityType = "MONEY_TRANSFER"
+	ActivityTypeMoneyTransferReversal          ActivityType = "MONEY_TRANSFER_REVERSAL"
+	ActivityTypeOpenDispute                    ActivityType = "OPEN_DISPUTE"
+	ActivityTypeOther                          ActivityType = "OTHER"
+	ActivityTypeOtherAdjustment                ActivityType = "OTHER_ADJUSTMENT"
+	ActivityTypePaidServiceFee                 ActivityType = "PAID_SERVICE_FEE"
+	ActivityTypePaidServiceFeeRefund           ActivityType = "PAID_SERVICE_FEE_REFUND"
+	ActivityTypeRedemptionCode                 ActivityType = "REDEMPTION_CODE"
+	ActivityTypeRefund                         ActivityType = "REFUND"
+	ActivityTypeReleaseAdjustment              ActivityType = "RELEASE_ADJUSTMENT"
+	ActivityTypeReserveHold                    ActivityType = "RESERVE_HOLD"
+	ActivityTypeReserveRelease                 ActivityType = "RESERVE_RELEASE"
+	ActivityTypeReturnedPayout                 ActivityType = "RETURNED_PAYOUT"
+	ActivityTypeSquareCapitalPayment           ActivityType = "SQUARE_CAPITAL_PAYMENT"
+	ActivityTypeSquareCapitalReversedPayment   ActivityType = "SQUARE_CAPITAL_REVERSED_PAYMENT"
+	ActivityTypeSubscriptionFee                ActivityType = "SUBSCRIPTION_FEE"
+	ActivityTypeSubscriptionFeePaidRefund      ActivityType = "SUBSCRIPTION_FEE_PAID_REFUND"
+	ActivityTypeSubscriptionFeeRefund          ActivityType = "SUBSCRIPTION_FEE_REFUND"
+	ActivityTypeTaxOnFee                       ActivityType = "TAX_ON_FEE"
+	ActivityTypeThirdPartyFee                  ActivityType = "THIRD_PARTY_FEE"
+	ActivityTypeThirdPartyFeeRefund            ActivityType = "THIRD_PARTY_FEE_REFUND"
+)
+
+func NewActivityTypeFromString(s string) (ActivityType, error) {
+	switch s {
+	case "UNKNOWN_PAYOUT_ENTRY_TYPE_DO_NOT_USE":
+		return ActivityTypeUnknownPayoutEntryTypeDoNotUse, nil
+	case "ADJUSTMENT":
+		return ActivityTypeAdjustment, nil
+	case "APP_FEE_REFUND":
+		return ActivityTypeAppFeeRefund, nil
+	case "APP_FEE_REVENUE":
+		return ActivityTypeAppFeeRevenue, nil
+	case "AUTOMATIC_SAVINGS":
+		return ActivityTypeAutomaticSavings, nil
+	case "AUTOMATIC_SAVINGS_REVERSED":
+		return ActivityTypeAutomaticSavingsReversed, nil
+	case "CHARGE":
+		return ActivityTypeCharge, nil
+	case "DEPOSIT_FEE":
+		return ActivityTypeDepositFee, nil
+	case "DISPUTE":
+		return ActivityTypeDispute, nil
+	case "ESCHEATMENT":
+		return ActivityTypeEscheatment, nil
+	case "FEE":
+		return ActivityTypeFee, nil
+	case "FREE_PROCESSING":
+		return ActivityTypeFreeProcessing, nil
+	case "HOLD_ADJUSTMENT":
+		return ActivityTypeHoldAdjustment, nil
+	case "INITIAL_BALANCE_CHANGE":
+		return ActivityTypeInitialBalanceChange, nil
+	case "MONEY_TRANSFER":
+		return ActivityTypeMoneyTransfer, nil
+	case "MONEY_TRANSFER_REVERSAL":
+		return ActivityTypeMoneyTransferReversal, nil
+	case "OPEN_DISPUTE":
+		return ActivityTypeOpenDispute, nil
+	case "OTHER":
+		return ActivityTypeOther, nil
+	case "OTHER_ADJUSTMENT":
+		return ActivityTypeOtherAdjustment, nil
+	case "PAID_SERVICE_FEE":
+		return ActivityTypePaidServiceFee, nil
+	case "PAID_SERVICE_FEE_REFUND":
+		return ActivityTypePaidServiceFeeRefund, nil
+	case "REDEMPTION_CODE":
+		return ActivityTypeRedemptionCode, nil
+	case "REFUND":
+		return ActivityTypeRefund, nil
+	case "RELEASE_ADJUSTMENT":
+		return ActivityTypeReleaseAdjustment, nil
+	case "RESERVE_HOLD":
+		return ActivityTypeReserveHold, nil
+	case "RESERVE_RELEASE":
+		return ActivityTypeReserveRelease, nil
+	case "RETURNED_PAYOUT":
+		return ActivityTypeReturnedPayout, nil
+	case "SQUARE_CAPITAL_PAYMENT":
+		return ActivityTypeSquareCapitalPayment, nil
+	case "SQUARE_CAPITAL_REVERSED_PAYMENT":
+		return ActivityTypeSquareCapitalReversedPayment, nil
+	case "SUBSCRIPTION_FEE":
+		return ActivityTypeSubscriptionFee, nil
+	case "SUBSCRIPTION_FEE_PAID_REFUND":
+		return ActivityTypeSubscriptionFeePaidRefund, nil
+	case "SUBSCRIPTION_FEE_REFUND":
+		return ActivityTypeSubscriptionFeeRefund, nil
+	case "TAX_ON_FEE":
+		return ActivityTypeTaxOnFee, nil
+	case "THIRD_PARTY_FEE":
+		return ActivityTypeThirdPartyFee, nil
+	case "THIRD_PARTY_FEE_REFUND":
+		return ActivityTypeThirdPartyFeeRefund, nil
+	}
+	var t ActivityType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (a ActivityType) Ptr() *ActivityType {
+	return &a
+}
+
 // Represents an additional recipient (other than the merchant) receiving a portion of this tender.
 type AdditionalRecipient struct {
 	// The location ID for a recipient (other than the merchant) receiving a portion of this tender.
@@ -6506,6 +6627,54 @@ func (l *ListPaymentsResponse) String() string {
 }
 
 // The response to retrieve payout records entries.
+type ListPayoutEntriesResponse struct {
+	// The requested list of payout entries, ordered with the given or default sort order.
+	PayoutEntries []*PayoutEntry `json:"payout_entries,omitempty" url:"payout_entries,omitempty"`
+	// The pagination cursor to be used in a subsequent request. If empty, this is the final response.
+	// For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+	Cursor *string `json:"cursor,omitempty" url:"cursor,omitempty"`
+	// Information about errors encountered during the request.
+	Errors []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (l *ListPayoutEntriesResponse) GetExtraProperties() map[string]interface{} {
+	return l.extraProperties
+}
+
+func (l *ListPayoutEntriesResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ListPayoutEntriesResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = ListPayoutEntriesResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *l)
+	if err != nil {
+		return err
+	}
+	l.extraProperties = extraProperties
+
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *ListPayoutEntriesResponse) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
+// The response to retrieve payout records entries.
 type ListPayoutsResponse struct {
 	// The requested list of payouts.
 	Payouts []*Payout `json:"payouts,omitempty" url:"payouts,omitempty"`
@@ -10073,6 +10242,857 @@ func (p *Payment) String() string {
 	return fmt.Sprintf("%#v", p)
 }
 
+type PaymentBalanceActivityAutomaticSavingsDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+	// The ID of the payout associated with this activity.
+	PayoutId *string `json:"payout_id,omitempty" url:"payout_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityAutomaticSavingsDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityAutomaticSavingsDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityAutomaticSavingsDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityAutomaticSavingsDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityAutomaticSavingsDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityAutomaticSavingsReversedDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+	// The ID of the payout associated with this activity.
+	PayoutId *string `json:"payout_id,omitempty" url:"payout_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityAutomaticSavingsReversedDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityAutomaticSavingsReversedDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityAutomaticSavingsReversedDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityAutomaticSavingsReversedDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityAutomaticSavingsReversedDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+// DESCRIPTION OF PaymentBalanceActivityChargeDetail
+type PaymentBalanceActivityChargeDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityChargeDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityChargeDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityChargeDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityChargeDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityChargeDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityDepositFeeDetail struct {
+	// The ID of the payout that triggered this deposit fee activity.
+	PayoutId *string `json:"payout_id,omitempty" url:"payout_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityDepositFeeDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityDepositFeeDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityDepositFeeDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityDepositFeeDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityDepositFeeDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityDisputeDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+	// The ID of the dispute associated with this activity.
+	DisputeId *string `json:"dispute_id,omitempty" url:"dispute_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityDisputeDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityDisputeDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityDisputeDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityDisputeDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityDisputeDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityFeeDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityFeeDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityFeeDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityFeeDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityFeeDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityFeeDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityFreeProcessingDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityFreeProcessingDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityFreeProcessingDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityFreeProcessingDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityFreeProcessingDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityFreeProcessingDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityHoldAdjustmentDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityHoldAdjustmentDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityHoldAdjustmentDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityHoldAdjustmentDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityHoldAdjustmentDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityHoldAdjustmentDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityOpenDisputeDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+	// The ID of the dispute associated with this activity.
+	DisputeId *string `json:"dispute_id,omitempty" url:"dispute_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityOpenDisputeDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityOpenDisputeDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityOpenDisputeDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityOpenDisputeDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityOpenDisputeDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityOtherAdjustmentDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityOtherAdjustmentDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityOtherAdjustmentDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityOtherAdjustmentDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityOtherAdjustmentDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityOtherAdjustmentDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityOtherDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityOtherDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityOtherDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityOtherDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityOtherDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityOtherDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityRefundDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+	// The ID of the refund associated with this activity.
+	RefundId *string `json:"refund_id,omitempty" url:"refund_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityRefundDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityRefundDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityRefundDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityRefundDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityRefundDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityReleaseAdjustmentDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityReleaseAdjustmentDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityReleaseAdjustmentDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityReleaseAdjustmentDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityReleaseAdjustmentDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityReleaseAdjustmentDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityReserveHoldDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityReserveHoldDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityReserveHoldDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityReserveHoldDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityReserveHoldDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityReserveHoldDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityReserveReleaseDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityReserveReleaseDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityReserveReleaseDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityReserveReleaseDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityReserveReleaseDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityReserveReleaseDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivitySquareCapitalPaymentDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivitySquareCapitalPaymentDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivitySquareCapitalPaymentDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivitySquareCapitalPaymentDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivitySquareCapitalPaymentDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivitySquareCapitalPaymentDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivitySquareCapitalReversedPaymentDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivitySquareCapitalReversedPaymentDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivitySquareCapitalReversedPaymentDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivitySquareCapitalReversedPaymentDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivitySquareCapitalReversedPaymentDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivitySquareCapitalReversedPaymentDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityTaxOnFeeDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityTaxOnFeeDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityTaxOnFeeDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityTaxOnFeeDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityTaxOnFeeDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityTaxOnFeeDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityThirdPartyFeeDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityThirdPartyFeeDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityThirdPartyFeeDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityThirdPartyFeeDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityThirdPartyFeeDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityThirdPartyFeeDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentBalanceActivityThirdPartyFeeRefundDetail struct {
+	// The ID of the payment associated with this activity.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentBalanceActivityThirdPartyFeeRefundDetail) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentBalanceActivityThirdPartyFeeRefundDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentBalanceActivityThirdPartyFeeRefundDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentBalanceActivityThirdPartyFeeRefundDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentBalanceActivityThirdPartyFeeRefundDetail) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type PaymentOptions struct {
 	// Indicates whether the `Payment` objects created from this `TerminalCheckout` are automatically
 	// `COMPLETED` or left in an `APPROVED` state for later modification.
@@ -10263,6 +11283,78 @@ func (p *Payout) UnmarshalJSON(data []byte) error {
 }
 
 func (p *Payout) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+// One or more PayoutEntries that make up a Payout. Each one has a date, amount, and type of activity.
+// The total amount of the payout will equal the sum of the payout entries for a batch payout
+type PayoutEntry struct {
+	// A unique ID for the payout entry.
+	Id string `json:"id" url:"id"`
+	// The ID of the payout entries’ associated payout.
+	PayoutId string `json:"payout_id" url:"payout_id"`
+	// The timestamp of when the payout entry affected the balance, in RFC 3339 format.
+	EffectiveAt                             *string                                                   `json:"effective_at,omitempty" url:"effective_at,omitempty"`
+	Type                                    *ActivityType                                             `json:"type,omitempty" url:"type,omitempty"`
+	GrossAmountMoney                        *Money                                                    `json:"gross_amount_money,omitempty" url:"gross_amount_money,omitempty"`
+	FeeAmountMoney                          *Money                                                    `json:"fee_amount_money,omitempty" url:"fee_amount_money,omitempty"`
+	NetAmountMoney                          *Money                                                    `json:"net_amount_money,omitempty" url:"net_amount_money,omitempty"`
+	TypeAutomaticSavingsDetails             *PaymentBalanceActivityAutomaticSavingsDetail             `json:"type_automatic_savings_details,omitempty" url:"type_automatic_savings_details,omitempty"`
+	TypeAutomaticSavingsReversedDetails     *PaymentBalanceActivityAutomaticSavingsReversedDetail     `json:"type_automatic_savings_reversed_details,omitempty" url:"type_automatic_savings_reversed_details,omitempty"`
+	TypeChargeDetails                       *PaymentBalanceActivityChargeDetail                       `json:"type_charge_details,omitempty" url:"type_charge_details,omitempty"`
+	TypeDepositFeeDetails                   *PaymentBalanceActivityDepositFeeDetail                   `json:"type_deposit_fee_details,omitempty" url:"type_deposit_fee_details,omitempty"`
+	TypeDisputeDetails                      *PaymentBalanceActivityDisputeDetail                      `json:"type_dispute_details,omitempty" url:"type_dispute_details,omitempty"`
+	TypeFeeDetails                          *PaymentBalanceActivityFeeDetail                          `json:"type_fee_details,omitempty" url:"type_fee_details,omitempty"`
+	TypeFreeProcessingDetails               *PaymentBalanceActivityFreeProcessingDetail               `json:"type_free_processing_details,omitempty" url:"type_free_processing_details,omitempty"`
+	TypeHoldAdjustmentDetails               *PaymentBalanceActivityHoldAdjustmentDetail               `json:"type_hold_adjustment_details,omitempty" url:"type_hold_adjustment_details,omitempty"`
+	TypeOpenDisputeDetails                  *PaymentBalanceActivityOpenDisputeDetail                  `json:"type_open_dispute_details,omitempty" url:"type_open_dispute_details,omitempty"`
+	TypeOtherDetails                        *PaymentBalanceActivityOtherDetail                        `json:"type_other_details,omitempty" url:"type_other_details,omitempty"`
+	TypeOtherAdjustmentDetails              *PaymentBalanceActivityOtherAdjustmentDetail              `json:"type_other_adjustment_details,omitempty" url:"type_other_adjustment_details,omitempty"`
+	TypeRefundDetails                       *PaymentBalanceActivityRefundDetail                       `json:"type_refund_details,omitempty" url:"type_refund_details,omitempty"`
+	TypeReleaseAdjustmentDetails            *PaymentBalanceActivityReleaseAdjustmentDetail            `json:"type_release_adjustment_details,omitempty" url:"type_release_adjustment_details,omitempty"`
+	TypeReserveHoldDetails                  *PaymentBalanceActivityReserveHoldDetail                  `json:"type_reserve_hold_details,omitempty" url:"type_reserve_hold_details,omitempty"`
+	TypeReserveReleaseDetails               *PaymentBalanceActivityReserveReleaseDetail               `json:"type_reserve_release_details,omitempty" url:"type_reserve_release_details,omitempty"`
+	TypeSquareCapitalPaymentDetails         *PaymentBalanceActivitySquareCapitalPaymentDetail         `json:"type_square_capital_payment_details,omitempty" url:"type_square_capital_payment_details,omitempty"`
+	TypeSquareCapitalReversedPaymentDetails *PaymentBalanceActivitySquareCapitalReversedPaymentDetail `json:"type_square_capital_reversed_payment_details,omitempty" url:"type_square_capital_reversed_payment_details,omitempty"`
+	TypeTaxOnFeeDetails                     *PaymentBalanceActivityTaxOnFeeDetail                     `json:"type_tax_on_fee_details,omitempty" url:"type_tax_on_fee_details,omitempty"`
+	TypeThirdPartyFeeDetails                *PaymentBalanceActivityThirdPartyFeeDetail                `json:"type_third_party_fee_details,omitempty" url:"type_third_party_fee_details,omitempty"`
+	TypeThirdPartyFeeRefundDetails          *PaymentBalanceActivityThirdPartyFeeRefundDetail          `json:"type_third_party_fee_refund_details,omitempty" url:"type_third_party_fee_refund_details,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PayoutEntry) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PayoutEntry) UnmarshalJSON(data []byte) error {
+	type unmarshaler PayoutEntry
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PayoutEntry(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PayoutEntry) String() string {
 	if len(p._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
 			return value

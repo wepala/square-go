@@ -117,3 +117,52 @@ func (c *Client) GetPayout(
 	}
 	return response, nil
 }
+
+// Retrieves a list of all payout entries for a specific payout.
+// To call this endpoint, set `PAYOUTS_READ` for the OAuth scope.
+func (c *Client) ListPayoutEntries(
+	ctx context.Context,
+	// The ID of the payout to retrieve the information for.
+	payoutId string,
+	request *api.ListPayoutEntriesRequest,
+	opts ...option.RequestOption,
+) (*api.ListPayoutEntriesResponse, error) {
+	options := core.NewRequestOptions(opts...)
+
+	baseURL := "https://connect.squareup.com"
+	if c.baseURL != "" {
+		baseURL = c.baseURL
+	}
+	if options.BaseURL != "" {
+		baseURL = options.BaseURL
+	}
+	endpointURL := core.EncodeURL(baseURL+"/v2/payouts/%v/payout-entries", payoutId)
+
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
+
+	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
+
+	var response *api.ListPayoutEntriesResponse
+	if err := c.caller.Call(
+		ctx,
+		&core.CallParams{
+			URL:             endpointURL,
+			Method:          http.MethodGet,
+			MaxAttempts:     options.MaxAttempts,
+			Headers:         headers,
+			BodyProperties:  options.BodyProperties,
+			QueryParameters: options.QueryParameters,
+			Client:          options.HTTPClient,
+			Response:        &response,
+		},
+	); err != nil {
+		return nil, err
+	}
+	return response, nil
+}

@@ -1404,6 +1404,73 @@ paths:
       x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
       x-proto-location: /connectcustomers/connectcustomers-proto/src/main/proto/squareup/connectcustomers/service.proto
       x-proto-sha: 79199e987d3b1a8dfdc136268703d85fdba0b505
+  /v2/payouts/{payout_id}/payout-entries:
+    get:
+      tags:
+        - Payouts
+      summary: ListPayoutEntries
+      description: |-
+        Retrieves a list of all payout entries for a specific payout.
+        To call this endpoint, set `PAYOUTS_READ` for the OAuth scope.
+      externalDocs:
+        description: Payouts Guide
+        url: https://developer.squareup.com/docs/payouts-api/overview#list-payout-entries
+      operationId: ListPayoutEntries
+      parameters:
+        - name: payout_id
+          in: path
+          description: The ID of the payout to retrieve the information for.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: sort_order
+          in: query
+          description: The order in which payout entries are listed.
+          required: false
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/SortOrder'
+        - name: cursor
+          in: query
+          description: |-
+            A pagination cursor returned by a previous call to this endpoint.
+            Provide this cursor to retrieve the next set of results for the original query.
+            For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+            If request parameters change between requests, subsequent results may contain duplicates or missing records.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: |-
+            The maximum number of results to be returned in a single page.
+            It is possible to receive fewer results than the specified limit on a given page.
+            The default value of 100 is also the maximum allowed value. If the provided value is
+            greater than 100, it is ignored and the default value is used instead.
+            Default: `100`
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPayoutEntriesResponse'
+      security:
+        - oauth2: [ ]
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/service.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
 
 components:
   schemas:
@@ -1451,6 +1518,169 @@ components:
       x-proto-location: /pago/pago-proto/src/main/proto/squareup/pago/external/payments_model.proto
       x-proto-sha: 495d56e2121254e62dae996ec2126fee007e4ecd
       x-object-name: AfterpayDetails
+    ActivityType:
+      type: string
+      enum:
+        - UNKNOWN_PAYOUT_ENTRY_TYPE_DO_NOT_USE
+        - ADJUSTMENT
+        - APP_FEE_REFUND
+        - APP_FEE_REVENUE
+        - AUTOMATIC_SAVINGS
+        - AUTOMATIC_SAVINGS_REVERSED
+        - CHARGE
+        - DEPOSIT_FEE
+        - DISPUTE
+        - ESCHEATMENT
+        - FEE
+        - FREE_PROCESSING
+        - HOLD_ADJUSTMENT
+        - INITIAL_BALANCE_CHANGE
+        - MONEY_TRANSFER
+        - MONEY_TRANSFER_REVERSAL
+        - OPEN_DISPUTE
+        - OTHER
+        - OTHER_ADJUSTMENT
+        - PAID_SERVICE_FEE
+        - PAID_SERVICE_FEE_REFUND
+        - REDEMPTION_CODE
+        - REFUND
+        - RELEASE_ADJUSTMENT
+        - RESERVE_HOLD
+        - RESERVE_RELEASE
+        - RETURNED_PAYOUT
+        - SQUARE_CAPITAL_PAYMENT
+        - SQUARE_CAPITAL_REVERSED_PAYMENT
+        - SUBSCRIPTION_FEE
+        - SUBSCRIPTION_FEE_PAID_REFUND
+        - SUBSCRIPTION_FEE_REFUND
+        - TAX_ON_FEE
+        - THIRD_PARTY_FEE
+        - THIRD_PARTY_FEE_REFUND
+      x-enum-elements:
+        - name: ADJUSTMENT
+          description: A manual adjustment applied to the seller's account by Square.
+          x-release-status: PUBLIC
+        - name: APP_FEE_REFUND
+          description: A refund for an application fee on a payment.
+          x-release-status: PUBLIC
+        - name: APP_FEE_REVENUE
+          description: Revenue generated from an application fee on a payment.
+          x-release-status: PUBLIC
+        - name: AUTOMATIC_SAVINGS
+          description: |-
+            An automatic transfer from the payment processing balance to the Square Savings account.
+            These are, generally, proportional to the seller's sales.
+          x-release-status: PUBLIC
+        - name: AUTOMATIC_SAVINGS_REVERSED
+          description: |-
+            An automatic transfer from the Square Savings account back to the processing balance.
+            These are, generally, proportional to the seller's refunds.
+          x-release-status: PUBLIC
+        - name: CHARGE
+          description: A credit card payment capture.
+          x-release-status: PUBLIC
+        - name: DEPOSIT_FEE
+          description: Any fees involved with deposits such as instant deposits.
+          x-release-status: PUBLIC
+        - name: DISPUTE
+          description: The balance change due to a dispute event.
+          x-release-status: PUBLIC
+        - name: ESCHEATMENT
+          description: An escheatment entry for remittance.
+          x-release-status: PUBLIC
+        - name: FEE
+          description: The Square processing fee.
+          x-release-status: PUBLIC
+        - name: FREE_PROCESSING
+          description: |-
+            Square offers free payments processing for a variety of business scenarios, including seller
+            referrals or when Square wants to apologize (for example, for a bug, customer service, or repricing complication).
+            This entry represents a credit to the seller for the purposes of free processing.
+          x-release-status: PUBLIC
+        - name: HOLD_ADJUSTMENT
+          description: An adjustment made by Square related to holding a payment.
+          x-release-status: PUBLIC
+        - name: INITIAL_BALANCE_CHANGE
+          description: |-
+            An external change to a seller's balance. Initial, in the sense that it
+            causes the creation of the other activity types, such as hold and refund.
+          x-release-status: PUBLIC
+        - name: MONEY_TRANSFER
+          description: The balance change from a money transfer.
+          x-release-status: PUBLIC
+        - name: MONEY_TRANSFER_REVERSAL
+          description: The reversal of a money transfer.
+          x-release-status: PUBLIC
+        - name: OPEN_DISPUTE
+          description: The balance change for a chargeback that has been filed.
+          x-release-status: PUBLIC
+        - name: OTHER
+          description: Any other type that does not belong in the rest of the types.
+          x-release-status: PUBLIC
+        - name: OTHER_ADJUSTMENT
+          description: Any other type of adjustment that does not fall under existing
+            types.
+          x-release-status: PUBLIC
+        - name: PAID_SERVICE_FEE
+          description: A fee paid to a third-party merchant.
+          x-release-status: PUBLIC
+        - name: PAID_SERVICE_FEE_REFUND
+          description: A fee paid to a third-party merchant.
+          x-release-status: PUBLIC
+        - name: REDEMPTION_CODE
+          description: Repayment for a redemption code.
+          x-release-status: PUBLIC
+        - name: REFUND
+          description: A refund for an existing card payment.
+          x-release-status: PUBLIC
+        - name: RELEASE_ADJUSTMENT
+          description: An adjustment made by Square related to releasing a payment.
+          x-release-status: PUBLIC
+        - name: RESERVE_HOLD
+          description: Fees paid for funding risk reserve.
+          x-release-status: PUBLIC
+        - name: RESERVE_RELEASE
+          description: Fees released from risk reserve.
+          x-release-status: PUBLIC
+        - name: RETURNED_PAYOUT
+          description: |-
+            An entry created when Square receives a response for the ACH file that Square sent indicating that the
+            settlement of the original entry failed.
+          x-release-status: PUBLIC
+        - name: SQUARE_CAPITAL_PAYMENT
+          description: |-
+            A capital merchant cash advance (MCA) assessment. These are, generally,
+            proportional to the merchant's sales but can be issued for other reasons related to the MCA.
+          x-release-status: PUBLIC
+        - name: SQUARE_CAPITAL_REVERSED_PAYMENT
+          description: |-
+            A capital merchant cash advance (MCA) assessment refund. These are, generally,
+            proportional to the merchant's refunds but can be issued for other reasons related to the MCA.
+          x-release-status: PUBLIC
+        - name: SUBSCRIPTION_FEE
+          description: A fee charged for subscription to a Square product.
+          x-release-status: PUBLIC
+        - name: SUBSCRIPTION_FEE_PAID_REFUND
+          description: A Square subscription fee that has been refunded.
+          x-release-status: PUBLIC
+        - name: SUBSCRIPTION_FEE_REFUND
+          description: The refund of a previously charged Square product subscription
+            fee.
+          x-release-status: PUBLIC
+        - name: TAX_ON_FEE
+          description: The tax paid on fee amounts.
+          x-release-status: PUBLIC
+        - name: THIRD_PARTY_FEE
+          description: Fees collected by a third-party platform.
+          x-release-status: PUBLIC
+        - name: THIRD_PARTY_FEE_REFUND
+          description: Refunded fees from a third-party platform.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: ActivityType
     ApplicationDetails:
       type: object
       properties:
@@ -6129,6 +6359,69 @@ components:
       x-proto-location: /roster/frontend/api/src/main/proto/squareup/roster/frontend/external/location.proto
       x-proto-sha: 11ffb68a94888890036e716f133f695e495ad962
       x-object-name: ListLocationsResponse
+    ListPayoutEntriesResponse:
+      type: object
+      properties:
+        payout_entries:
+          type: array
+          description: The requested list of payout entries, ordered with the given
+            or default sort order.
+          items:
+            $ref: '#/components/schemas/PayoutEntry'
+        cursor:
+          type: string
+          description: |-
+            The pagination cursor to be used in a subsequent request. If empty, this is the final response.
+            For more information, see [Pagination](https://developer.squareup.com/docs/basics/api101/pagination).
+        errors:
+          type: array
+          description: Information about errors encountered during the request.
+          items:
+            $ref: '#/components/schemas/Error'
+      description: The response to retrieve payout records entries.
+      example:
+        payout_entries:
+          - id: poe_ZQWcw41d0SGJS6IWd4cSi8mKHk
+            payout_id: po_4d28e6c4-7dd5-4de4-8ec9-a059277646a6
+            effective_at: 2021-12-14T23:31:49Z
+            type: REFUND
+            gross_amount_money:
+              amount: -50
+              currency_code: USD
+            fee_amount_money:
+              amount: -2
+              currency_code: USD
+            net_amount_money:
+              amount: -48
+              currency_code: USD
+            type_refund_details:
+              payment_id: HVdG62HeMlti8YYf94oxrN
+              refund_id: HVdG62HeMlti8YYf94oxrN_dR8Nztxg7umf94oxrN12Ji5r2KW14FAY
+          - id: poe_EibbY9Ob1d0SGJS6IWd4cSiSi6wkaPk
+            payout_id: po_4d28e6c4-7dd5-4de4-8ec9-a059277646a6
+            effective_at: 2021-12-14T23:31:49Z
+            type: CHARGE
+            gross_amount_money:
+              amount: 100
+              currency_code: USD
+            fee_amount_money:
+              amount: 19
+              currency_code: USD
+            net_amount_money:
+              amount: 81
+              currency_code: USD
+            type_charge_details:
+              payment_id: HVdG62H5K3291d0SGJS6IWd4cSi8YY
+        cursor: TbfI80z98Xc2LdApCyZ2NvCYLpkPurYLR16GRIttpMJ55mrSIMzHgtkcRQdT0mOnTtfHO
+      x-property-order:
+        - payout_entries
+        - cursor
+        - errors
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/service.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: ListPayoutEntriesResponse
     ListPaymentsResponse:
       type: object
       properties:
@@ -6756,6 +7049,390 @@ components:
       x-proto-location: /mango/mango-proto/src/main/proto/squareup/mango/external/terminal_checkout_options.proto
       x-proto-sha: 6bbdf4243b30eab4ffb0bf4c066bbb30c5c99b71
       x-object-name: PaymentOptions
+    PaymentBalanceActivityAutomaticSavingsDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+        payout_id:
+          type: string
+          description: The ID of the payout associated with this activity.
+      x-property-order:
+        - payment_id
+        - payout_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityAutomaticSavingsDetail
+    PaymentBalanceActivityAutomaticSavingsReversedDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+        payout_id:
+          type: string
+          description: The ID of the payout associated with this activity.
+      x-property-order:
+        - payment_id
+        - payout_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityAutomaticSavingsReversedDetail
+    PaymentBalanceActivityChargeDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      description: DESCRIPTION OF PaymentBalanceActivityChargeDetail
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityChargeDetail
+    PaymentBalanceActivityDepositFeeDetail:
+      type: object
+      properties:
+        payout_id:
+          type: string
+          description: The ID of the payout that triggered this deposit fee activity.
+      x-property-order:
+        - payout_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityDepositFeeDetail
+    PaymentBalanceActivityDisputeDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+        dispute_id:
+          type: string
+          description: The ID of the dispute associated with this activity.
+      x-property-order:
+        - payment_id
+        - dispute_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityDisputeDetail
+    PaymentBalanceActivityFeeDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityFeeDetail
+    PaymentBalanceActivityFreeProcessingDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityFreeProcessingDetail
+    PaymentBalanceActivityHoldAdjustmentDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityHoldAdjustmentDetail
+    PaymentBalanceActivityOpenDisputeDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+        dispute_id:
+          type: string
+          description: The ID of the dispute associated with this activity.
+      x-property-order:
+        - payment_id
+        - dispute_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityOpenDisputeDetail
+    PaymentBalanceActivityOtherDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityOtherDetail
+    PaymentBalanceActivityOtherAdjustmentDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityOtherAdjustmentDetail
+    PaymentBalanceActivityReleaseAdjustmentDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityReleaseAdjustmentDetail
+    PaymentBalanceActivityRefundDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+        refund_id:
+          type: string
+          description: The ID of the refund associated with this activity.
+      x-property-order:
+        - payment_id
+        - refund_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityRefundDetail
+    PaymentBalanceActivityReserveHoldDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityReserveHoldDetail
+    PaymentBalanceActivityReserveReleaseDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityReserveReleaseDetail
+    PaymentBalanceActivitySquareCapitalPaymentDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivitySquareCapitalPaymentDetail
+    PaymentBalanceActivitySquareCapitalReversedPaymentDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivitySquareCapitalReversedPaymentDetail
+    PaymentBalanceActivityTaxOnFeeDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityTaxOnFeeDetail
+    PaymentBalanceActivityThirdPartyFeeDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityThirdPartyFeeDetail
+    PaymentBalanceActivityThirdPartyFeeRefundDetail:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          description: The ID of the payment associated with this activity.
+      x-property-order:
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payment-balances/payment-balances-proto/src/main/proto/squareup/paymentbalances/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PaymentBalanceActivityThirdPartyFeeRefundDetail
+    PayoutEntry:
+      required:
+        - id
+        - payout_id
+      type: object
+      properties:
+        id:
+          minLength: 1
+          type: string
+          description: A unique ID for the payout entry.
+        payout_id:
+          minLength: 1
+          type: string
+          description: The ID of the payout entries’ associated payout.
+        effective_at:
+          type: string
+          description: The timestamp of when the payout entry affected the balance,
+            in RFC 3339 format.
+        type:
+          $ref: '#/components/schemas/ActivityType'
+        gross_amount_money:
+          $ref: '#/components/schemas/Money'
+        fee_amount_money:
+          $ref: '#/components/schemas/Money'
+        net_amount_money:
+          $ref: '#/components/schemas/Money'
+        type_automatic_savings_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityAutomaticSavingsDetail'
+        type_automatic_savings_reversed_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityAutomaticSavingsReversedDetail'
+        type_charge_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityChargeDetail'
+        type_deposit_fee_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityDepositFeeDetail'
+        type_dispute_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityDisputeDetail'
+        type_fee_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityFeeDetail'
+        type_free_processing_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityFreeProcessingDetail'
+        type_hold_adjustment_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityHoldAdjustmentDetail'
+        type_open_dispute_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityOpenDisputeDetail'
+        type_other_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityOtherDetail'
+        type_other_adjustment_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityOtherAdjustmentDetail'
+        type_refund_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityRefundDetail'
+        type_release_adjustment_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityReleaseAdjustmentDetail'
+        type_reserve_hold_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityReserveHoldDetail'
+        type_reserve_release_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityReserveReleaseDetail'
+        type_square_capital_payment_details:
+          $ref: '#/components/schemas/PaymentBalanceActivitySquareCapitalPaymentDetail'
+        type_square_capital_reversed_payment_details:
+          $ref: '#/components/schemas/PaymentBalanceActivitySquareCapitalReversedPaymentDetail'
+        type_tax_on_fee_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityTaxOnFeeDetail'
+        type_third_party_fee_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityThirdPartyFeeDetail'
+        type_third_party_fee_refund_details:
+          $ref: '#/components/schemas/PaymentBalanceActivityThirdPartyFeeRefundDetail'
+      description: |-
+        One or more PayoutEntries that make up a Payout. Each one has a date, amount, and type of activity.
+        The total amount of the payout will equal the sum of the payout entries for a batch payout
+      x-property-order:
+        - id
+        - payout_id
+        - effective_at
+        - type
+        - gross_amount_money
+        - fee_amount_money
+        - net_amount_money
+        - payment_id
+        - type_automatic_savings_details
+        - type_automatic_savings_reversed_details
+        - type_charge_details
+        - type_deposit_fee_details
+        - type_dispute_details
+        - type_fee_details
+        - type_free_processing_details
+        - type_hold_adjustment_details
+        - type_open_dispute_details
+        - type_other_details
+        - type_other_adjustment_details
+        - type_refund_details
+        - type_release_adjustment_details
+        - type_reserve_hold_details
+        - type_reserve_release_details
+        - type_square_capital_payment_details
+        - type_square_capital_reversed_payment_details
+        - type_tax_on_fee_details
+        - type_third_party_fee_details
+        - type_third_party_fee_refund_details
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/SQ/repos/java/browse
+      x-proto-location: /payouts/payouts-proto/src/main/proto/squareup/payouts/model.proto
+      x-proto-sha: 63e5a6095134dbb40e75b7c133622fb29aa6e1e2
+      x-object-name: PayoutEntry
     Product:
       type: string
       description: Indicates the Square product used to generate a change.
