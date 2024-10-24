@@ -4832,6 +4832,300 @@ func (c Currency) Ptr() *Currency {
 	return &c
 }
 
+// Represents a Square customer profile in the Customer Directory of a Square seller.
+type Customer struct {
+	// A unique Square-assigned ID for the customer profile.
+	//
+	// If you need this ID for an API request, use the ID returned when you created the customer profile or call the [SearchCustomers](api-endpoint:Customers-SearchCustomers)
+	// or [ListCustomers](api-endpoint:Customers-ListCustomers) endpoint.
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
+	// The timestamp when the customer profile was created, in RFC 3339 format.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// The timestamp when the customer profile was last updated, in RFC 3339 format.
+	UpdatedAt *string `json:"updated_at,omitempty" url:"updated_at,omitempty"`
+	// Payment details of the credit, debit, and gift cards stored on file for the customer profile.
+	//
+	// DEPRECATED at version 2021-06-16. Replaced by calling [ListCards](api-endpoint:Cards-ListCards) (for credit and debit cards on file)
+	// or [ListGiftCards](api-endpoint:GiftCards-ListGiftCards) (for gift cards on file) and including the `customer_id` query parameter.
+	// For more information, see [Migration notes](https://developer.squareup.com/docs/customers-api/what-it-does#migrate-customer-cards).
+	Cards []*Card `json:"cards,omitempty" url:"cards,omitempty"`
+	// The given name (that is, the first name) associated with the customer profile.
+	GivenName *string `json:"given_name,omitempty" url:"given_name,omitempty"`
+	// The family name (that is, the last name) associated with the customer profile.
+	FamilyName *string `json:"family_name,omitempty" url:"family_name,omitempty"`
+	// A nickname for the customer profile.
+	Nickname *string `json:"nickname,omitempty" url:"nickname,omitempty"`
+	// A business name associated with the customer profile.
+	CompanyName *string `json:"company_name,omitempty" url:"company_name,omitempty"`
+	// The email address associated with the customer profile.
+	EmailAddress *string  `json:"email_address,omitempty" url:"email_address,omitempty"`
+	Address      *Address `json:"address,omitempty" url:"address,omitempty"`
+	// The phone number associated with the customer profile. A phone number can contain 9–16 digits, with an optional `+` prefix.
+	PhoneNumber *string `json:"phone_number,omitempty" url:"phone_number,omitempty"`
+	// The birthday associated with the customer profile, in RFC 3339 format. The year is optional. The timezone and time are not allowed.
+	// For example, `0000-09-21T00:00:00-00:00` represents a birthday on September 21 and `1998-09-21T00:00:00-00:00` represents a birthday on September 21, 1998.
+	Birthday *string `json:"birthday,omitempty" url:"birthday,omitempty"`
+	// An optional second ID used to associate the customer profile with an
+	// entity in another system.
+	ReferenceId *string `json:"reference_id,omitempty" url:"reference_id,omitempty"`
+	// A custom note associated with the customer profile.
+	Note        *string              `json:"note,omitempty" url:"note,omitempty"`
+	Preferences *CustomerPreferences `json:"preferences,omitempty" url:"preferences,omitempty"`
+	// The customer groups and segments the customer belongs to. This deprecated field has been replaced with the dedicated `group_ids` for customer groups and the dedicated `segment_ids` field for customer segments. You can retrieve information about a given customer group and segment respectively using the Customer Groups API and Customer Segments API.
+	Groups         []*CustomerGroupInfo    `json:"groups,omitempty" url:"groups,omitempty"`
+	CreationSource *CustomerCreationSource `json:"creation_source,omitempty" url:"creation_source,omitempty"`
+	// The IDs of customer groups the customer belongs to.
+	GroupIds []string `json:"group_ids,omitempty" url:"group_ids,omitempty"`
+	// The IDs of segments the customer belongs to.
+	SegmentIds []string `json:"segment_ids,omitempty" url:"segment_ids,omitempty"`
+	// The Square-assigned version number of the customer profile. The version number is incremented each time an update is committed to the customer profile, except for changes to customer segment membership and cards on file.
+	Version *int64          `json:"version,omitempty" url:"version,omitempty"`
+	TaxIds  *CustomerTaxIds `json:"tax_ids,omitempty" url:"tax_ids,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *Customer) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *Customer) UnmarshalJSON(data []byte) error {
+	type unmarshaler Customer
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = Customer(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *Customer) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Indicates the method used to create the customer profile.
+type CustomerCreationSource string
+
+const (
+	CustomerCreationSourceOther            CustomerCreationSource = "OTHER"
+	CustomerCreationSourceAppointments     CustomerCreationSource = "APPOINTMENTS"
+	CustomerCreationSourceCoupon           CustomerCreationSource = "COUPON"
+	CustomerCreationSourceDeletionRecovery CustomerCreationSource = "DELETION_RECOVERY"
+	CustomerCreationSourceDirectory        CustomerCreationSource = "DIRECTORY"
+	CustomerCreationSourceEgifting         CustomerCreationSource = "EGIFTING"
+	CustomerCreationSourceEmailCollection  CustomerCreationSource = "EMAIL_COLLECTION"
+	CustomerCreationSourceFeedback         CustomerCreationSource = "FEEDBACK"
+	CustomerCreationSourceImport           CustomerCreationSource = "IMPORT"
+	CustomerCreationSourceInvoices         CustomerCreationSource = "INVOICES"
+	CustomerCreationSourceLoyalty          CustomerCreationSource = "LOYALTY"
+	CustomerCreationSourceMarketing        CustomerCreationSource = "MARKETING"
+	CustomerCreationSourceMerge            CustomerCreationSource = "MERGE"
+	CustomerCreationSourceOnlineStore      CustomerCreationSource = "ONLINE_STORE"
+	CustomerCreationSourceInstantProfile   CustomerCreationSource = "INSTANT_PROFILE"
+	CustomerCreationSourceTerminal         CustomerCreationSource = "TERMINAL"
+	CustomerCreationSourceThirdParty       CustomerCreationSource = "THIRD_PARTY"
+	CustomerCreationSourceThirdPartyImport CustomerCreationSource = "THIRD_PARTY_IMPORT"
+	CustomerCreationSourceUnmergeRecovery  CustomerCreationSource = "UNMERGE_RECOVERY"
+)
+
+func NewCustomerCreationSourceFromString(s string) (CustomerCreationSource, error) {
+	switch s {
+	case "OTHER":
+		return CustomerCreationSourceOther, nil
+	case "APPOINTMENTS":
+		return CustomerCreationSourceAppointments, nil
+	case "COUPON":
+		return CustomerCreationSourceCoupon, nil
+	case "DELETION_RECOVERY":
+		return CustomerCreationSourceDeletionRecovery, nil
+	case "DIRECTORY":
+		return CustomerCreationSourceDirectory, nil
+	case "EGIFTING":
+		return CustomerCreationSourceEgifting, nil
+	case "EMAIL_COLLECTION":
+		return CustomerCreationSourceEmailCollection, nil
+	case "FEEDBACK":
+		return CustomerCreationSourceFeedback, nil
+	case "IMPORT":
+		return CustomerCreationSourceImport, nil
+	case "INVOICES":
+		return CustomerCreationSourceInvoices, nil
+	case "LOYALTY":
+		return CustomerCreationSourceLoyalty, nil
+	case "MARKETING":
+		return CustomerCreationSourceMarketing, nil
+	case "MERGE":
+		return CustomerCreationSourceMerge, nil
+	case "ONLINE_STORE":
+		return CustomerCreationSourceOnlineStore, nil
+	case "INSTANT_PROFILE":
+		return CustomerCreationSourceInstantProfile, nil
+	case "TERMINAL":
+		return CustomerCreationSourceTerminal, nil
+	case "THIRD_PARTY":
+		return CustomerCreationSourceThirdParty, nil
+	case "THIRD_PARTY_IMPORT":
+		return CustomerCreationSourceThirdPartyImport, nil
+	case "UNMERGE_RECOVERY":
+		return CustomerCreationSourceUnmergeRecovery, nil
+	}
+	var t CustomerCreationSource
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c CustomerCreationSource) Ptr() *CustomerCreationSource {
+	return &c
+}
+
+// Contains some brief information about a Customer Group with its identifier included.
+type CustomerGroupInfo struct {
+	// The ID of the Customer Group.
+	Id string `json:"id" url:"id"`
+	// The name of the Customer Group.
+	Name string `json:"name" url:"name"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerGroupInfo) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerGroupInfo) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerGroupInfo
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerGroupInfo(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerGroupInfo) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Represents communication preferences for the customer profile.
+type CustomerPreferences struct {
+	// Indicates whether the customer has unsubscribed from marketing campaign emails. A value of `true` means that the customer chose to opt out of email marketing from the current Square seller or from all Square sellers. This value is read-only from the Customers API.
+	EmailUnsubscribed *bool `json:"email_unsubscribed,omitempty" url:"email_unsubscribed,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerPreferences) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerPreferences) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerPreferences
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerPreferences(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerPreferences) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Represents the tax ID associated with a [customer profile](entity:Customer). The corresponding `tax_ids` field is available only for customers of sellers in EU countries or the United Kingdom.
+// For more information, see [Customer tax IDs](https://developer.squareup.com/docs/customers-api/what-it-does#customer-tax-ids).
+type CustomerTaxIds struct {
+	// The EU VAT identification number for the customer. For example, `IE3426675K`. The ID can contain alphanumeric characters only.
+	EuVat *string `json:"eu_vat,omitempty" url:"eu_vat,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerTaxIds) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerTaxIds) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerTaxIds
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerTaxIds(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerTaxIds) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 // Indicates the specific day of the week.
 type DayOfWeek string
 
@@ -4909,6 +5203,50 @@ func (d *DeleteCatalogObjectResponse) UnmarshalJSON(data []byte) error {
 }
 
 func (d *DeleteCatalogObjectResponse) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+// Defines the fields that are included in the response body of
+// a request to the `DeleteCustomer` endpoint.
+type DeleteCustomerResponse struct {
+	// Any errors that occurred during the request.
+	Errors []*Error `json:"errors,omitempty" url:"errors,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *DeleteCustomerResponse) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DeleteCustomerResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler DeleteCustomerResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DeleteCustomerResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DeleteCustomerResponse) String() string {
 	if len(d._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
 			return value
@@ -10351,6 +10689,53 @@ func (r *RetrieveCatalogObjectResponse) String() string {
 	return fmt.Sprintf("%#v", r)
 }
 
+// Defines the fields that are included in the response body of
+// a request to the `RetrieveCustomer` endpoint.
+//
+// Either `errors` or `customer` is present in a given response (never both).
+type RetrieveCustomerResponse struct {
+	// Any errors that occurred during the request.
+	Errors   []*Error  `json:"errors,omitempty" url:"errors,omitempty"`
+	Customer *Customer `json:"customer,omitempty" url:"customer,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *RetrieveCustomerResponse) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *RetrieveCustomerResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler RetrieveCustomerResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RetrieveCustomerResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RetrieveCustomerResponse) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
 // The response object returned by the [RetrieveMerchant](api-endpoint:Merchants-RetrieveMerchant) endpoint.
 type RetrieveMerchantResponse struct {
 	// Information on errors encountered during the request.
@@ -11311,6 +11696,53 @@ func (t *TimeRange) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+// Defines the fields that are included in the response body of
+// a request to the `UpdateCustomer` endpoint.
+//
+// Either `errors` or `customer` is present in a given response (never both).
+type UpdateCustomerResponse struct {
+	// Any errors that occurred during the request.
+	Errors   []*Error  `json:"errors,omitempty" url:"errors,omitempty"`
+	Customer *Customer `json:"customer,omitempty" url:"customer,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (u *UpdateCustomerResponse) GetExtraProperties() map[string]interface{} {
+	return u.extraProperties
+}
+
+func (u *UpdateCustomerResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler UpdateCustomerResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*u = UpdateCustomerResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *u)
+	if err != nil {
+		return err
+	}
+	u.extraProperties = extraProperties
+
+	u._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (u *UpdateCustomerResponse) String() string {
+	if len(u._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(u._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(u); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", u)
 }
 
 // Defines the fields that are included in the response body of
