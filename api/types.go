@@ -11255,6 +11255,9 @@ type Payout struct {
 	PayoutFee []*PayoutFee `json:"payout_fee,omitempty" url:"payout_fee,omitempty"`
 	// The calendar date, in ISO 8601 format (YYYY-MM-DD), when the payout is due to arrive in the seller’s banking destination.
 	ArrivalDate *string `json:"arrival_date,omitempty" url:"arrival_date,omitempty"`
+	// A unique ID that identifies this payout in the seller's bank statement.
+	// The ID is not unique to the payout and may be reused in the future.
+	EndToEndId *string `json:"end_to_end_id,omitempty" url:"end_to_end_id,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

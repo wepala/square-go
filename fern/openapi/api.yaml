@@ -12385,6 +12385,11 @@ components:
           type: string
           description: The calendar date, in ISO 8601 format (YYYY-MM-DD), when the
             payout is due to arrive in the seller’s banking destination.
+        end_to_end_id:
+          type: string
+          description: |-
+            A unique ID that identifies this payout in the seller's bank statement.
+            The ID is not unique to the payout and may be reused in the future.
       description: |-
         An accounting of the amount owed the seller and record of the actual transfer to their
         external bank account or to the Square balance.
