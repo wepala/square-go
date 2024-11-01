@@ -7848,6 +7848,8 @@ type Order struct {
 	// A set-like list of Rewards that have been added to the Order.
 	Rewards           []*OrderReward `json:"rewards,omitempty" url:"rewards,omitempty"`
 	NetAmountDueMoney *Money         `json:"net_amount_due_money,omitempty" url:"net_amount_due_money,omitempty"`
+	// The tenders that are part of this order.
+	Tenders []*Tender `json:"tenders,omitempty" url:"tenders,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -12739,6 +12741,276 @@ func NewTaxInclusionTypeFromString(s string) (TaxInclusionType, error) {
 }
 
 func (t TaxInclusionType) Ptr() *TaxInclusionType {
+	return &t
+}
+
+// Represents a tender (i.e., a method of payment) used in a Square transaction.
+type Tender struct {
+	// The tender's unique ID. It is the associated payment ID.
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
+	// The ID of the transaction's associated location.
+	LocationId *string `json:"location_id,omitempty" url:"location_id,omitempty"`
+	// The ID of the tender's associated transaction.
+	TransactionId *string `json:"transaction_id,omitempty" url:"transaction_id,omitempty"`
+	// The timestamp for when the tender was created, in RFC 3339 format.
+	CreatedAt *string `json:"created_at,omitempty" url:"created_at,omitempty"`
+	// An optional note associated with the tender at the time of payment.
+	Note               *string `json:"note,omitempty" url:"note,omitempty"`
+	AmountMoney        *Money  `json:"amount_money,omitempty" url:"amount_money,omitempty"`
+	TipMoney           *Money  `json:"tip_money,omitempty" url:"tip_money,omitempty"`
+	ProcessingFeeMoney *Money  `json:"processing_fee_money,omitempty" url:"processing_fee_money,omitempty"`
+	// If the tender is associated with a customer or represents a customer's card on file,
+	// this is the ID of the associated customer.
+	CustomerId  *string            `json:"customer_id,omitempty" url:"customer_id,omitempty"`
+	Type        TenderType         `json:"type" url:"type"`
+	CardDetails *TenderCardDetails `json:"card_details,omitempty" url:"card_details,omitempty"`
+	CashDetails *TenderCashDetails `json:"cash_details,omitempty" url:"cash_details,omitempty"`
+	// Additional recipients (other than the merchant) receiving a portion of this tender.
+	// For example, fees assessed on the purchase by a third party integration.
+	AdditionalRecipients []*AdditionalRecipient `json:"additional_recipients,omitempty" url:"additional_recipients,omitempty"`
+	// The ID of the [Payment](entity:Payment) that corresponds to this tender.
+	// This value is only present for payments created with the v2 Payments API.
+	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (t *Tender) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *Tender) UnmarshalJSON(data []byte) error {
+	type unmarshaler Tender
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = Tender(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *Tender) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// Represents additional details of a tender with `type` `CARD` or `SQUARE_GIFT_CARD`
+type TenderCardDetails struct {
+	Status      *TenderCardDetailsStatus      `json:"status,omitempty" url:"status,omitempty"`
+	Card        *Card                         `json:"card,omitempty" url:"card,omitempty"`
+	EntryMethod *TenderCardDetailsEntryMethod `json:"entry_method,omitempty" url:"entry_method,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (t *TenderCardDetails) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *TenderCardDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler TenderCardDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TenderCardDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TenderCardDetails) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// Indicates the method used to enter the card's details.
+type TenderCardDetailsEntryMethod string
+
+const (
+	TenderCardDetailsEntryMethodSwiped      TenderCardDetailsEntryMethod = "SWIPED"
+	TenderCardDetailsEntryMethodKeyed       TenderCardDetailsEntryMethod = "KEYED"
+	TenderCardDetailsEntryMethodEmv         TenderCardDetailsEntryMethod = "EMV"
+	TenderCardDetailsEntryMethodOnFile      TenderCardDetailsEntryMethod = "ON_FILE"
+	TenderCardDetailsEntryMethodContactless TenderCardDetailsEntryMethod = "CONTACTLESS"
+)
+
+func NewTenderCardDetailsEntryMethodFromString(s string) (TenderCardDetailsEntryMethod, error) {
+	switch s {
+	case "SWIPED":
+		return TenderCardDetailsEntryMethodSwiped, nil
+	case "KEYED":
+		return TenderCardDetailsEntryMethodKeyed, nil
+	case "EMV":
+		return TenderCardDetailsEntryMethodEmv, nil
+	case "ON_FILE":
+		return TenderCardDetailsEntryMethodOnFile, nil
+	case "CONTACTLESS":
+		return TenderCardDetailsEntryMethodContactless, nil
+	}
+	var t TenderCardDetailsEntryMethod
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TenderCardDetailsEntryMethod) Ptr() *TenderCardDetailsEntryMethod {
+	return &t
+}
+
+// Indicates the card transaction's current status.
+type TenderCardDetailsStatus string
+
+const (
+	TenderCardDetailsStatusAuthorized TenderCardDetailsStatus = "AUTHORIZED"
+	TenderCardDetailsStatusCaptured   TenderCardDetailsStatus = "CAPTURED"
+	TenderCardDetailsStatusVoided     TenderCardDetailsStatus = "VOIDED"
+	TenderCardDetailsStatusFailed     TenderCardDetailsStatus = "FAILED"
+)
+
+func NewTenderCardDetailsStatusFromString(s string) (TenderCardDetailsStatus, error) {
+	switch s {
+	case "AUTHORIZED":
+		return TenderCardDetailsStatusAuthorized, nil
+	case "CAPTURED":
+		return TenderCardDetailsStatusCaptured, nil
+	case "VOIDED":
+		return TenderCardDetailsStatusVoided, nil
+	case "FAILED":
+		return TenderCardDetailsStatusFailed, nil
+	}
+	var t TenderCardDetailsStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TenderCardDetailsStatus) Ptr() *TenderCardDetailsStatus {
+	return &t
+}
+
+// Represents the details of a tender with `type` `CASH`.
+type TenderCashDetails struct {
+	BuyerTenderedMoney *Money `json:"buyer_tendered_money,omitempty" url:"buyer_tendered_money,omitempty"`
+	ChangeBackMoney    *Money `json:"change_back_money,omitempty" url:"change_back_money,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (t *TenderCashDetails) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *TenderCashDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler TenderCashDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TenderCashDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TenderCashDetails) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// Indicates a tender's type.
+type TenderType string
+
+const (
+	TenderTypeCard             TenderType = "CARD"
+	TenderTypeCash             TenderType = "CASH"
+	TenderTypeThirdPartyCard   TenderType = "THIRD_PARTY_CARD"
+	TenderTypeSquareGiftCard   TenderType = "SQUARE_GIFT_CARD"
+	TenderTypeNoSale           TenderType = "NO_SALE"
+	TenderTypeCheck            TenderType = "CHECK"
+	TenderTypeMerchantGiftCard TenderType = "MERCHANT_GIFT_CARD"
+	TenderTypeThirdPartyEMoney TenderType = "THIRD_PARTY_E_MONEY"
+	TenderTypeBankAccount      TenderType = "BANK_ACCOUNT"
+	TenderTypeWallet           TenderType = "WALLET"
+	TenderTypeBuyNowPayLater   TenderType = "BUY_NOW_PAY_LATER"
+	TenderTypeSquareAccount    TenderType = "SQUARE_ACCOUNT"
+	TenderTypeOther            TenderType = "OTHER"
+)
+
+func NewTenderTypeFromString(s string) (TenderType, error) {
+	switch s {
+	case "CARD":
+		return TenderTypeCard, nil
+	case "CASH":
+		return TenderTypeCash, nil
+	case "THIRD_PARTY_CARD":
+		return TenderTypeThirdPartyCard, nil
+	case "SQUARE_GIFT_CARD":
+		return TenderTypeSquareGiftCard, nil
+	case "NO_SALE":
+		return TenderTypeNoSale, nil
+	case "CHECK":
+		return TenderTypeCheck, nil
+	case "MERCHANT_GIFT_CARD":
+		return TenderTypeMerchantGiftCard, nil
+	case "THIRD_PARTY_E_MONEY":
+		return TenderTypeThirdPartyEMoney, nil
+	case "BANK_ACCOUNT":
+		return TenderTypeBankAccount, nil
+	case "WALLET":
+		return TenderTypeWallet, nil
+	case "BUY_NOW_PAY_LATER":
+		return TenderTypeBuyNowPayLater, nil
+	case "SQUARE_ACCOUNT":
+		return TenderTypeSquareAccount, nil
+	case "OTHER":
+		return TenderTypeOther, nil
+	}
+	var t TenderType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TenderType) Ptr() *TenderType {
 	return &t
 }
 

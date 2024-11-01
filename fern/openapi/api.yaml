@@ -7901,6 +7901,246 @@ components:
       x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/location.proto
       x-proto-sha: 8239a09bf9fffc9b344c259c62b98d688ef2d107
       x-object-name: TaxIds
+    Tender:
+      required:
+        - type
+      type: object
+      properties:
+        id:
+          maxLength: 192
+          type: string
+          description: The tender's unique ID. It is the associated payment ID.
+        location_id:
+          maxLength: 50
+          type: string
+          description: The ID of the transaction's associated location.
+        transaction_id:
+          maxLength: 192
+          type: string
+          description: The ID of the tender's associated transaction.
+        created_at:
+          maxLength: 32
+          type: string
+          description: The timestamp for when the tender was created, in RFC 3339
+            format.
+          readOnly: true
+        note:
+          maxLength: 500
+          type: string
+          description: An optional note associated with the tender at the time of
+            payment.
+        amount_money:
+          $ref: '#/components/schemas/Money'
+        tip_money:
+          $ref: '#/components/schemas/Money'
+        processing_fee_money:
+          $ref: '#/components/schemas/Money'
+        customer_id:
+          maxLength: 191
+          type: string
+          description: |-
+            If the tender is associated with a customer or represents a customer's card on file,
+            this is the ID of the associated customer.
+        type:
+          $ref: '#/components/schemas/TenderType'
+        card_details:
+          $ref: '#/components/schemas/TenderCardDetails'
+        cash_details:
+          $ref: '#/components/schemas/TenderCashDetails'
+        additional_recipients:
+          type: array
+          description: |-
+            Additional recipients (other than the merchant) receiving a portion of this tender.
+            For example, fees assessed on the purchase by a third party integration.
+          items:
+            $ref: '#/components/schemas/AdditionalRecipient'
+          x-release-status: DEPRECATED
+        payment_id:
+          maxLength: 192
+          type: string
+          description: |-
+            The ID of the [Payment](entity:Payment) that corresponds to this tender.
+            This value is only present for payments created with the v2 Payments API.
+      description: Represents a tender (i.e., a method of payment) used in a Square
+        transaction.
+      x-property-order:
+        - id
+        - uid
+        - location_id
+        - transaction_id
+        - created_at
+        - note
+        - amount_money
+        - tip_money
+        - processing_fee_money
+        - customer_id
+        - type
+        - card_details
+        - cash_details
+        - bank_account_details
+        - wallet_details
+        - buy_now_pay_later_details
+        - square_account_details
+        - additional_recipients
+        - source
+        - risk_evaluation
+        - payment_id
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/tender.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: Tender
+    TenderCardDetails:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/TenderCardDetailsStatus'
+        card:
+          $ref: '#/components/schemas/Card'
+        entry_method:
+          $ref: '#/components/schemas/TenderCardDetailsEntryMethod'
+      description: Represents additional details of a tender with `type` `CARD` or
+        `SQUARE_GIFT_CARD`
+      x-property-order:
+        - status
+        - card
+        - entry_method
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/tender.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: TenderCardDetails
+    TenderCardDetailsEntryMethod:
+      type: string
+      description: Indicates the method used to enter the card's details.
+      enum:
+        - SWIPED
+        - KEYED
+        - EMV
+        - ON_FILE
+        - CONTACTLESS
+      x-enum-elements:
+        - name: SWIPED
+          description: The card was swiped through a Square reader or Square stand.
+          x-release-status: PUBLIC
+        - name: KEYED
+          description: |-
+            The card information was keyed manually into Square Point of Sale or a
+            Square-hosted web form.
+          x-release-status: PUBLIC
+        - name: EMV
+          description: The card was processed via EMV with a Square reader.
+          x-release-status: PUBLIC
+        - name: ON_FILE
+          description: The buyer's card details were already on file with Square.
+          x-release-status: PUBLIC
+        - name: CONTACTLESS
+          description: |-
+            The card was processed via a contactless (i.e., NFC) transaction
+            with a Square reader.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/tender.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: TenderCardDetailsEntryMethod
+    TenderCardDetailsStatus:
+      type: string
+      description: Indicates the card transaction's current status.
+      enum:
+        - AUTHORIZED
+        - CAPTURED
+        - VOIDED
+        - FAILED
+      x-enum-elements:
+        - name: AUTHORIZED
+          description: The card transaction has been authorized but not yet captured.
+          x-release-status: PUBLIC
+        - name: CAPTURED
+          description: The card transaction was authorized and subsequently captured
+            (i.e., completed).
+          x-release-status: PUBLIC
+        - name: VOIDED
+          description: The card transaction was authorized and subsequently voided (i.e.,
+            canceled).
+          x-release-status: PUBLIC
+        - name: FAILED
+          description: The card transaction failed.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/tender.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: TenderCardDetailsStatus
+    TenderType:
+      type: string
+      description: Indicates a tender's type.
+      enum:
+        - CARD
+        - CASH
+        - THIRD_PARTY_CARD
+        - SQUARE_GIFT_CARD
+        - NO_SALE
+        - CHECK
+        - MERCHANT_GIFT_CARD
+        - THIRD_PARTY_E_MONEY
+        - BANK_ACCOUNT
+        - WALLET
+        - BUY_NOW_PAY_LATER
+        - SQUARE_ACCOUNT
+        - OTHER
+      x-enum-elements:
+        - name: CARD
+          description: A credit card.
+          x-release-status: PUBLIC
+        - name: CASH
+          description: Cash.
+          x-release-status: PUBLIC
+        - name: THIRD_PARTY_CARD
+          description: |-
+            A credit card processed with a card processor other than Square.
+            
+            This value applies only to merchants in countries where Square does not
+            yet provide card processing.
+          x-release-status: PUBLIC
+        - name: SQUARE_GIFT_CARD
+          description: A Square gift card.
+          x-release-status: PUBLIC
+        - name: NO_SALE
+          description: This tender represents the register being opened for a "no sale"
+            event.
+          x-release-status: PUBLIC
+        - name: WALLET
+          description: |-
+            A payment from a digital wallet, e.g. Cash App.
+            
+            Note: Some "digital wallets", including Google Pay and Apple Pay, facilitate
+            card payments.  Those payments have the `CARD` type.
+          x-release-status: PUBLIC
+        - name: OTHER
+          description: A form of tender that does not match any other value.
+          x-release-status: PUBLIC
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/tender.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: TenderType
+    TenderCashDetails:
+      type: object
+      properties:
+        buyer_tendered_money:
+          $ref: '#/components/schemas/Money'
+        change_back_money:
+          $ref: '#/components/schemas/Money'
+      description: Represents the details of a tender with `type` `CASH`.
+      x-property-order:
+        - buyer_tendered_money
+        - change_back_money
+      x-release-status: PUBLIC
+      x-proto-repo: https://git.sqcorp.co/projects/GO/repos/square/browse
+      x-proto-location: /xp/connect-public-protos/protos/squareup/connect/v2/resources/tender.proto
+      x-proto-sha: 0dc06ead30b08ce7dca3c13fb793c722ee6d5160
+      x-object-name: TenderCashDetails
     TimeRange:
       type: object
       properties:
@@ -10970,6 +11210,13 @@ components:
           x-release-status: BETA
         net_amount_due_money:
           $ref: '#/components/schemas/Money'
+        tenders:
+          type: array
+          description: The tenders that are part of this order.
+          readOnly: true
+          items:
+              $ref: '#/components/schemas/Tender'
+          x-release-status: BETA
       description: |-
         Contains all information related to a single order to process with Square,
         including line items that specify the products to purchase. `Order` objects also
