@@ -12770,7 +12770,10 @@ type Tender struct {
 	AdditionalRecipients []*AdditionalRecipient `json:"additional_recipients,omitempty" url:"additional_recipients,omitempty"`
 	// The ID of the [Payment](entity:Payment) that corresponds to this tender.
 	// This value is only present for payments created with the v2 Payments API.
-	PaymentId *string `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+	PaymentId             *string                      `json:"payment_id,omitempty" url:"payment_id,omitempty"`
+	BankAccountDetails    *TenderBankAccountDetails    `json:"bank_account_details,omitempty" url:"bank_account_details,omitempty"`
+	BuyNowPayLaterDetails *TenderBuyNowPayLaterDetails `json:"buy_now_pay_later_details,omitempty" url:"buy_now_pay_later_details,omitempty"`
+	SquareAccountDetails  *TenderSquareAccountDetails  `json:"square_account_details,omitempty" url:"square_account_details,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -12808,6 +12811,163 @@ func (t *Tender) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+type TenderBankAccountDetails struct {
+	Status *TenderBankAccountDetailsStatus `json:"status,omitempty" url:"status,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (t *TenderBankAccountDetails) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *TenderBankAccountDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler TenderBankAccountDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TenderBankAccountDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TenderBankAccountDetails) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type TenderBankAccountDetailsStatus string
+
+const (
+	TenderBankAccountDetailsStatusPending   TenderBankAccountDetailsStatus = "PENDING"
+	TenderBankAccountDetailsStatusFailed    TenderBankAccountDetailsStatus = "FAILED"
+	TenderBankAccountDetailsStatusCompleted TenderBankAccountDetailsStatus = "COMPLETED"
+)
+
+func NewTenderBankAccountDetailsStatusFromString(s string) (TenderBankAccountDetailsStatus, error) {
+	switch s {
+	case "PENDING":
+		return TenderBankAccountDetailsStatusPending, nil
+	case "FAILED":
+		return TenderBankAccountDetailsStatusFailed, nil
+	case "COMPLETED":
+		return TenderBankAccountDetailsStatusCompleted, nil
+	}
+	var t TenderBankAccountDetailsStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TenderBankAccountDetailsStatus) Ptr() *TenderBankAccountDetailsStatus {
+	return &t
+}
+
+type TenderBuyNowPayLaterDetails struct {
+	// The brand of the buy now, pay later service.
+	BuyNowPayLaterBrand *TenderBuyNowPayLaterDetailsBuyNowPayLaterBrand `json:"buy_now_pay_later_brand,omitempty" url:"buy_now_pay_later_brand,omitempty"`
+	Status              *TenderBuyNowPayLaterDetailsStatus              `json:"status,omitempty" url:"status,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (t *TenderBuyNowPayLaterDetails) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *TenderBuyNowPayLaterDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler TenderBuyNowPayLaterDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TenderBuyNowPayLaterDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TenderBuyNowPayLaterDetails) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// The brand of the buy now, pay later service.
+type TenderBuyNowPayLaterDetailsBuyNowPayLaterBrand string
+
+const (
+	TenderBuyNowPayLaterDetailsBuyNowPayLaterBrandOther    TenderBuyNowPayLaterDetailsBuyNowPayLaterBrand = "OTHER"
+	TenderBuyNowPayLaterDetailsBuyNowPayLaterBrandAfterpay TenderBuyNowPayLaterDetailsBuyNowPayLaterBrand = "AFTERPAY"
+)
+
+func NewTenderBuyNowPayLaterDetailsBuyNowPayLaterBrandFromString(s string) (TenderBuyNowPayLaterDetailsBuyNowPayLaterBrand, error) {
+	switch s {
+	case "OTHER":
+		return TenderBuyNowPayLaterDetailsBuyNowPayLaterBrandOther, nil
+	case "AFTERPAY":
+		return TenderBuyNowPayLaterDetailsBuyNowPayLaterBrandAfterpay, nil
+	}
+	var t TenderBuyNowPayLaterDetailsBuyNowPayLaterBrand
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TenderBuyNowPayLaterDetailsBuyNowPayLaterBrand) Ptr() *TenderBuyNowPayLaterDetailsBuyNowPayLaterBrand {
+	return &t
+}
+
+type TenderBuyNowPayLaterDetailsStatus string
+
+const (
+	TenderBuyNowPayLaterDetailsStatusPending   TenderBuyNowPayLaterDetailsStatus = "PENDING"
+	TenderBuyNowPayLaterDetailsStatusFailed    TenderBuyNowPayLaterDetailsStatus = "FAILED"
+	TenderBuyNowPayLaterDetailsStatusCompleted TenderBuyNowPayLaterDetailsStatus = "COMPLETED"
+)
+
+func NewTenderBuyNowPayLaterDetailsStatusFromString(s string) (TenderBuyNowPayLaterDetailsStatus, error) {
+	switch s {
+	case "PENDING":
+		return TenderBuyNowPayLaterDetailsStatusPending, nil
+	case "FAILED":
+		return TenderBuyNowPayLaterDetailsStatusFailed, nil
+	case "COMPLETED":
+		return TenderBuyNowPayLaterDetailsStatusCompleted, nil
+	}
+	var t TenderBuyNowPayLaterDetailsStatus
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TenderBuyNowPayLaterDetailsStatus) Ptr() *TenderBuyNowPayLaterDetailsStatus {
+	return &t
 }
 
 // Represents additional details of a tender with `type` `CARD` or `SQUARE_GIFT_CARD`
@@ -12956,6 +13116,77 @@ func (t *TenderCashDetails) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", t)
+}
+
+type TenderSquareAccountDetails struct {
+	// The ID of the Square account associated with the tender.
+	SquareAccountId *TenderSquareAccountDetailsSquareAccountId `json:"square_account_id,omitempty" url:"square_account_id,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (t *TenderSquareAccountDetails) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *TenderSquareAccountDetails) UnmarshalJSON(data []byte) error {
+	type unmarshaler TenderSquareAccountDetails
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TenderSquareAccountDetails(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TenderSquareAccountDetails) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+// The ID of the Square account associated with the tender.
+type TenderSquareAccountDetailsSquareAccountId string
+
+const (
+	TenderSquareAccountDetailsSquareAccountIdCaptured   TenderSquareAccountDetailsSquareAccountId = "CAPTURED"
+	TenderSquareAccountDetailsSquareAccountIdAuthorized TenderSquareAccountDetailsSquareAccountId = "AUTHORIZED"
+	TenderSquareAccountDetailsSquareAccountIdFailed     TenderSquareAccountDetailsSquareAccountId = "FAILED"
+	TenderSquareAccountDetailsSquareAccountIdVoided     TenderSquareAccountDetailsSquareAccountId = "VOIDED"
+)
+
+func NewTenderSquareAccountDetailsSquareAccountIdFromString(s string) (TenderSquareAccountDetailsSquareAccountId, error) {
+	switch s {
+	case "CAPTURED":
+		return TenderSquareAccountDetailsSquareAccountIdCaptured, nil
+	case "AUTHORIZED":
+		return TenderSquareAccountDetailsSquareAccountIdAuthorized, nil
+	case "FAILED":
+		return TenderSquareAccountDetailsSquareAccountIdFailed, nil
+	case "VOIDED":
+		return TenderSquareAccountDetailsSquareAccountIdVoided, nil
+	}
+	var t TenderSquareAccountDetailsSquareAccountId
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (t TenderSquareAccountDetailsSquareAccountId) Ptr() *TenderSquareAccountDetailsSquareAccountId {
+	return &t
 }
 
 // Indicates a tender's type.
